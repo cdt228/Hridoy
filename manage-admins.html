@@ -1,0 +1,609 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Admins</title>
+
+<style>
+#pageContainer .admin-wrap{width:100%;color:var(--text)}
+#pageContainer .admin-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+#pageContainer .admin-heading h2{font-size:20px;font-weight:800}
+#pageContainer .admin-heading p{font-size:12px;color:var(--muted);margin-top:5px}
+#pageContainer .admin-btn{border:0;border-radius:8px;padding:10px 15px;background:var(--primary);color:white;font-size:12px;font-weight:800;cursor:pointer}
+#pageContainer .admin-btn.secondary{background:var(--hover);color:var(--text);border:1px solid var(--border)}
+#pageContainer .admin-btn.danger{background:#dc2626}
+#pageContainer .admin-btn:disabled{opacity:.55;cursor:wait}
+#pageContainer .admin-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}
+#pageContainer .admin-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:17px;box-shadow:var(--shadow)}
+#pageContainer .admin-stat span{display:block;color:var(--muted);font-size:11px;font-weight:700}
+#pageContainer .admin-stat strong{display:block;font-size:23px;margin-top:7px}
+#pageContainer .admin-panel{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;margin-bottom:18px;box-shadow:var(--shadow)}
+#pageContainer .admin-panel h3{font-size:15px;margin-bottom:15px}
+#pageContainer .admin-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+#pageContainer .admin-search{height:39px;min-width:200px;flex:1;border:1px solid var(--border);border-radius:8px;padding:0 12px;background:var(--bg);color:var(--text);outline:none}
+#pageContainer .admin-table-wrap{width:100%;overflow-x:auto}
+#pageContainer .admin-table{width:100%;border-collapse:collapse;min-width:650px}
+#pageContainer .admin-table th,#pageContainer .admin-table td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--border);font-size:12px;white-space:nowrap}
+#pageContainer .admin-table th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+#pageContainer .admin-table tr:last-child td{border-bottom:0}
+#pageContainer .admin-name{font-weight:800}
+#pageContainer .admin-email{font-size:11px;color:var(--muted);margin-top:4px}
+#pageContainer .admin-badge{display:inline-block;padding:5px 9px;border-radius:20px;background:var(--primary-light);color:var(--primary);font-size:10px;font-weight:800}
+#pageContainer .admin-badge.inactive{background:#fff1f1;color:#dc2626}
+#pageContainer .admin-badge.deleted{background:#eee;color:#666}
+#pageContainer .admin-actions{display:flex;gap:6px}
+#pageContainer .admin-actions button{padding:7px 9px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:6px;font-size:10px;font-weight:700;cursor:pointer}
+#pageContainer .admin-actions button:hover{color:var(--primary);border-color:var(--primary)}
+#pageContainer .admin-empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+#pageContainer .admin-message{padding:11px 13px;border-radius:8px;font-size:12px;margin-bottom:14px;display:none;line-height:1.5}
+#pageContainer .admin-message.success{display:block;background:var(--primary-light);color:var(--primary)}
+#pageContainer .admin-message.error{display:block;background:#fff0f0;color:#c62828}
+#pageContainer .admin-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+#pageContainer .admin-field label{display:block;font-size:11px;font-weight:800;margin-bottom:6px}
+#pageContainer .admin-field input,#pageContainer .admin-field select{width:100%;height:40px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);padding:0 11px;outline:none}
+#pageContainer .admin-field input:focus,#pageContainer .admin-field select:focus{border-color:var(--primary)}
+#pageContainer .admin-field.full{grid-column:1/-1}
+#pageContainer .permission-box{margin-top:17px;border:1px solid var(--border);border-radius:10px;padding:14px}
+#pageContainer .permission-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#pageContainer .permission-head strong{font-size:13px}
+#pageContainer .permission-tools{display:flex;gap:7px}
+#pageContainer .permission-tools button{border:1px solid var(--border);background:var(--hover);color:var(--text);border-radius:6px;padding:6px 9px;font-size:10px;cursor:pointer}
+#pageContainer .permission-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#pageContainer .permission-item{display:flex;align-items:center;gap:8px;padding:9px;background:var(--bg);border:1px solid var(--border);border-radius:7px;font-size:11px;cursor:pointer}
+#pageContainer .permission-item input{accent-color:var(--primary);width:15px;height:15px}
+#pageContainer .admin-form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+#pageContainer .admin-note{font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px}
+#pageContainer .admin-loading{text-align:center;padding:35px;color:var(--muted);font-size:12px}
+@media(max-width:700px){
+  #pageContainer .admin-stats{grid-template-columns:1fr}
+  #pageContainer .permission-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:480px){
+  #pageContainer .admin-form-grid{grid-template-columns:1fr}
+  #pageContainer .permission-grid{grid-template-columns:1fr}
+  #pageContainer .admin-panel{padding:13px}
+}
+</style>
+</head>
+
+<body>
+<div class="admin-wrap">
+
+  <div class="admin-heading">
+    <div>
+      <h2>Manage Admins</h2>
+      <p>Create users and control their roles and permissions.</p>
+    </div>
+    <button class="admin-btn" id="showCreateForm">＋ Add New User</button>
+  </div>
+
+  <div id="adminMessage" class="admin-message"></div>
+
+  <div class="admin-stats">
+    <div class="admin-stat">
+      <span>TOTAL ACCOUNTS</span>
+      <strong id="totalAccounts">0</strong>
+    </div>
+    <div class="admin-stat">
+      <span>ACTIVE ACCOUNTS</span>
+      <strong id="activeAccounts">0</strong>
+    </div>
+    <div class="admin-stat">
+      <span>INACTIVE / DELETED</span>
+      <strong id="inactiveAccounts">0</strong>
+    </div>
+  </div>
+
+  <div class="admin-panel" id="adminFormPanel" style="display:none">
+    <h3 id="formTitle">Create New User</h3>
+
+    <form id="adminForm">
+      <input type="hidden" id="editAdminId">
+
+      <div class="admin-form-grid">
+        <div class="admin-field">
+          <label>Full Name *</label>
+          <input type="text" id="adminName" required placeholder="Enter full name">
+        </div>
+
+        <div class="admin-field">
+          <label>Email Address *</label>
+          <input type="email" id="adminEmail" required placeholder="example@gmail.com">
+        </div>
+
+        <div class="admin-field" id="passwordField">
+          <label>Password *</label>
+          <input type="password" id="adminPassword" minlength="8" placeholder="Minimum 8 characters">
+        </div>
+
+        <div class="admin-field">
+          <label>User Role *</label>
+          <select id="adminRole" required>
+            <option value="Admin">Admin</option>
+            <option value="Staff">Staff</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+
+        <div class="admin-field full" id="customRoleField" style="display:none">
+          <label>Custom Role Name *</label>
+          <input type="text" id="customRoleName" placeholder="Example: Accountant">
+        </div>
+      </div>
+
+      <div class="permission-box">
+        <div class="permission-head">
+          <strong>User Permissions</strong>
+          <div class="permission-tools">
+            <button type="button" id="selectAllPermissions">Select All</button>
+            <button type="button" id="clearPermissions">Clear All</button>
+          </div>
+        </div>
+
+        <div class="permission-grid" id="permissionGrid"></div>
+
+        <p class="admin-note">
+          Super Admin permission is not assignable from this page.
+          Admin accounts cannot access Manage Admins.
+        </p>
+      </div>
+
+      <div class="admin-form-actions">
+        <button class="admin-btn" type="submit" id="saveAdminButton">Create User</button>
+        <button class="admin-btn secondary" type="button" id="cancelAdminForm">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="admin-panel">
+    <h3>All Admin & Staff Accounts</h3>
+
+    <div class="admin-toolbar">
+      <input class="admin-search" id="adminSearch" type="search" placeholder="Search name or email...">
+      <button class="admin-btn secondary" id="refreshAdmins" type="button">↻ Refresh</button>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody">
+          <tr><td colspan="5" class="admin-empty">Loading users...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+"use strict";
+
+const API_URL = "https://script.google.com/macros/s/AKfycbw5QMutQWocx1jg3qT6dmKKxh5GXYw6HeClidJ8_swh-z_iklKMVZ-UMGYuxLrGsFi6/exec";
+
+const PERMISSIONS = [
+  ["dashboard","Dashboard"],
+  ["dashboardCards","Dashboard Cards"],
+  ["cardHideShow","Card Hide / Show"],
+  ["addUser","Add User"],
+  ["userList","User List"],
+  ["deletedUsers","Deleted Users"],
+  ["addWage","Add Wage"],
+  ["wageHistory","Wage History"],
+  ["wageDeleteHistory","Wage Delete History"],
+  ["userPayment","User Payment"],
+  ["paymentHistory","Payment History"],
+  ["deletePaymentHistory","Delete Payment History"],
+  ["addCurrency","Add Currency"],
+  ["addPaymentMethod","Add Payment Method"],
+  ["myAccount","My Account"]
+];
+
+const SUPER_ONLY = "manageAdmins";
+
+const root = document.getElementById("pageContainer");
+const $ = id => root.querySelector("#"+id);
+
+let admins = [];
+let permissionCatalog = {};
+let editingAdmin = null;
+let busy = false;
+
+function token(){
+  return typeof window.wageAuthToken === "function"
+    ? window.wageAuthToken()
+    : "";
+}
+
+async function api(action,data={}){
+  const response = await fetch(API_URL,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({action,token:token(),...data}),
+    cache:"no-store"
+  });
+
+  const raw = await response.text();
+  let result;
+
+  try{ result=JSON.parse(raw); }
+  catch(e){ throw new Error("Invalid server response. Check Apps Script deployment."); }
+
+  if(!response.ok || result.success===false){
+    throw new Error(result.message || result.error || "Request failed.");
+  }
+
+  return result;
+}
+
+function message(text,type="success"){
+  const el=$("adminMessage");
+  el.textContent=text;
+  el.className="admin-message "+type;
+  el.style.display="block";
+  el.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function clearMessage(){
+  const el=$("adminMessage");
+  el.textContent="";
+  el.className="admin-message";
+  el.style.display="none";
+}
+
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function getRoleDefaults(role){
+  const all={};
+  PERMISSIONS.forEach(([key])=>all[key]=false);
+  all[SUPER_ONLY]=false;
+
+  if(role==="Admin"){
+    PERMISSIONS.forEach(([key])=>all[key]=true);
+    all.manageAdmins=false;
+  }
+
+  if(role==="Staff"){
+    [
+      "dashboard","dashboardCards","userList","addWage",
+      "wageHistory","userPayment","paymentHistory","myAccount"
+    ].forEach(key=>all[key]=true);
+  }
+
+  return all;
+}
+
+function renderPermissionGrid(values={}){
+  const grid=$("permissionGrid");
+
+  grid.innerHTML=PERMISSIONS.map(([key,label])=>`
+    <label class="permission-item">
+      <input type="checkbox" data-permission="${key}" ${values[key]===true?"checked":""}>
+      <span>${escapeHTML(label)}</span>
+    </label>
+  `).join("");
+}
+
+function readPermissions(){
+  const values={};
+  root.querySelectorAll("[data-permission]").forEach(input=>{
+    values[input.dataset.permission]=input.checked;
+  });
+  values.manageAdmins=false;
+  return values;
+}
+
+function setPermissions(values){
+  root.querySelectorAll("[data-permission]").forEach(input=>{
+    input.checked=values[input.dataset.permission]===true;
+  });
+}
+
+function applyRoleDefaults(){
+  const role=$("adminRole").value;
+  setPermissions(getRoleDefaults(role));
+
+  $("customRoleField").style.display=role==="Custom"?"block":"none";
+}
+
+function openCreateForm(){
+  editingAdmin=null;
+  $("adminForm").reset();
+  $("editAdminId").value="";
+  $("formTitle").textContent="Create New User";
+  $("saveAdminButton").textContent="Create User";
+  $("passwordField").style.display="block";
+  $("adminPassword").required=true;
+  $("adminEmail").disabled=false;
+  $("adminRole").disabled=false;
+
+  $("adminRole").value="Admin";
+  $("customRoleField").style.display="none";
+  setPermissions(getRoleDefaults("Admin"));
+
+  $("adminFormPanel").style.display="block";
+  $("adminFormPanel").scrollIntoView({behavior:"smooth"});
+  clearMessage();
+}
+
+function closeForm(){
+  $("adminFormPanel").style.display="none";
+  $("adminForm").reset();
+  editingAdmin=null;
+}
+
+function editAdmin(id){
+  const admin=admins.find(a=>String(a.adminId)===String(id));
+  if(!admin) return;
+
+  if(String(admin.role).toLowerCase()==="super admin"){
+    message("Super Admin account cannot be edited here.","error");
+    return;
+  }
+
+  editingAdmin=admin;
+
+  $("editAdminId").value=admin.adminId;
+  $("adminName").value=admin.name||"";
+  $("adminEmail").value=admin.email||"";
+  $("adminEmail").disabled=true;
+  $("adminPassword").value="";
+  $("adminPassword").required=false;
+  $("passwordField").style.display="none";
+
+  const role=["Admin","Staff","Custom"].includes(admin.role)?admin.role:"Custom";
+  $("adminRole").value=role;
+  $("adminRole").disabled=false;
+
+  $("customRoleField").style.display=role==="Custom"?"block":"none";
+  $("customRoleName").value=admin.customRoleName||"";
+
+  const permissions=admin.permissions||getRoleDefaults(role);
+  renderPermissionGrid(permissions);
+  setPermissions(permissions);
+
+  $("formTitle").textContent="Edit User Permissions";
+  $("saveAdminButton").textContent="Save Changes";
+  $("adminFormPanel").style.display="block";
+  $("adminFormPanel").scrollIntoView({behavior:"smooth"});
+  clearMessage();
+}
+
+async function loadAdmins(){
+  $("adminTableBody").innerHTML=
+    '<tr><td colspan="5" class="admin-empty">Loading users...</td></tr>';
+
+  try{
+    const result=await api("getAdminList");
+    const data=result.data||result;
+
+    admins=Array.isArray(data.admins)?data.admins:[];
+    permissionCatalog=data.permissionCatalog||{};
+
+    renderAdmins();
+    $("totalAccounts").textContent=admins.length;
+
+    const active=admins.filter(a=>String(a.status).toLowerCase()==="active").length;
+    $("activeAccounts").textContent=active;
+    $("inactiveAccounts").textContent=admins.length-active;
+
+  }catch(error){
+    $("adminTableBody").innerHTML=
+      `<tr><td colspan="5" class="admin-empty">${escapeHTML(error.message)}</td></tr>`;
+  }
+}
+
+function renderAdmins(){
+  const search=$("adminSearch").value.trim().toLowerCase();
+
+  const filtered=admins.filter(admin=>{
+    const haystack=[
+      admin.name,admin.email,admin.role,admin.customRoleName,admin.status
+    ].join(" ").toLowerCase();
+
+    return haystack.includes(search);
+  });
+
+  if(!filtered.length){
+    $("adminTableBody").innerHTML=
+      '<tr><td colspan="5" class="admin-empty">No accounts found.</td></tr>';
+    return;
+  }
+
+  $("adminTableBody").innerHTML=filtered.map(admin=>{
+    const isSuper=String(admin.role).toLowerCase()==="super admin";
+    const status=String(admin.status||"").toLowerCase();
+    const badge=status==="active"?"":status==="deleted"?"deleted":"inactive";
+    const role=admin.role==="Custom"
+      ? (admin.customRoleName||"Custom")
+      : (admin.role||"—");
+
+    const created=admin.createdDate
+      ? escapeHTML(admin.createdDate)
+      : "—";
+
+    return `
+      <tr>
+        <td>
+          <div class="admin-name">${escapeHTML(admin.name||"Unnamed")}</div>
+          <div class="admin-email">${escapeHTML(admin.email||"")}</div>
+        </td>
+        <td>${escapeHTML(role)}</td>
+        <td><span class="admin-badge ${badge}">${escapeHTML(admin.status||"Unknown")}</span></td>
+        <td>${created}</td>
+        <td>
+          <div class="admin-actions">
+            ${isSuper?"<span>Protected</span>":`
+              <button type="button" data-edit="${escapeHTML(admin.adminId)}">Edit</button>
+              <button type="button" data-status="${escapeHTML(admin.adminId)}" data-next="${status==="active"?"Inactive":"Active"}">${status==="active"?"Deactivate":"Activate"}</button>
+              <button type="button" data-delete="${escapeHTML(admin.adminId)}">Delete</button>
+            `}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+async function saveAdmin(event){
+  event.preventDefault();
+  if(busy) return;
+
+  const name=$("adminName").value.trim();
+  const email=$("adminEmail").value.trim();
+  const role=$("adminRole").value;
+  const customRoleName=$("customRoleName").value.trim();
+  const password=$("adminPassword").value;
+  const adminId=$("editAdminId").value;
+
+  if(!name||!email){
+    message("Name and email are required.","error");
+    return;
+  }
+
+  if(!adminId && password.length<8){
+    message("Password must be at least 8 characters.","error");
+    return;
+  }
+
+  if(role==="Custom"&&!customRoleName){
+    message("Please enter a Custom Role Name.","error");
+    return;
+  }
+
+  const permissions=readPermissions();
+
+  busy=true;
+  $("saveAdminButton").disabled=true;
+  $("saveAdminButton").textContent="Saving...";
+
+  try{
+    if(adminId){
+      await api("updateAdminPermissions",{
+        adminId,
+        role,
+        customRoleName:role==="Custom"?customRoleName:"",
+        permissions
+      });
+
+      message("User permissions updated. The user must login again for changes to take effect.");
+    }else{
+      await api("createAdmin",{
+        name,email,password,role,
+        customRoleName:role==="Custom"?customRoleName:"",
+        permissions
+      });
+
+      message("New user created successfully.");
+    }
+
+    closeForm();
+    await loadAdmins();
+
+  }catch(error){
+    message(error.message,"error");
+  }finally{
+    busy=false;
+    $("saveAdminButton").disabled=false;
+    $("saveAdminButton").textContent=adminId?"Save Changes":"Create User";
+  }
+}
+
+async function changeStatus(id,nextStatus){
+  const admin=admins.find(a=>String(a.adminId)===String(id));
+  if(!admin) return;
+
+  if(!confirm(
+    nextStatus==="Active"
+      ? "Activate this account?"
+      : "Deactivate this account?"
+  )) return;
+
+  try{
+    await api("setAdminStatus",{adminId:id,status:nextStatus});
+    message("Account status updated successfully.");
+    await loadAdmins();
+  }catch(error){
+    message(error.message,"error");
+  }
+}
+
+async function deleteAdmin(id){
+  const admin=admins.find(a=>String(a.adminId)===String(id));
+  if(!admin) return;
+
+  if(!confirm(
+    "Delete "+(admin.name||"this user")+"? The account will be marked as Deleted."
+  )) return;
+
+  try{
+    await api("deleteAdmin",{adminId:id});
+    message("Account deleted successfully.");
+    await loadAdmins();
+  }catch(error){
+    message(error.message,"error");
+  }
+}
+
+/* EVENTS */
+
+$("showCreateForm").addEventListener("click",openCreateForm);
+$("cancelAdminForm").addEventListener("click",closeForm);
+$("adminForm").addEventListener("submit",saveAdmin);
+$("refreshAdmins").addEventListener("click",loadAdmins);
+$("adminSearch").addEventListener("input",renderAdmins);
+
+$("adminRole").addEventListener("change",function(){
+  applyRoleDefaults();
+});
+
+$("selectAllPermissions").addEventListener("click",function(){
+  const values={};
+  PERMISSIONS.forEach(([key])=>values[key]=true);
+  setPermissions(values);
+});
+
+$("clearPermissions").addEventListener("click",function(){
+  setPermissions({});
+});
+
+$("adminTableBody").addEventListener("click",function(event){
+  const edit=event.target.closest("[data-edit]");
+  const status=event.target.closest("[data-status]");
+  const del=event.target.closest("[data-delete]");
+
+  if(edit) editAdmin(edit.dataset.edit);
+  if(status) changeStatus(status.dataset.status,status.dataset.next);
+  if(del) deleteAdmin(del.dataset.delete);
+});
+
+/* START */
+
+renderPermissionGrid(getRoleDefaults("Admin"));
+
+if(typeof window.wageHasPermission==="function" && !window.wageHasPermission("manageAdmins")){
+  $("adminFormPanel").style.display="none";
+  $("showCreateForm").style.display="none";
+  message("You do not have permission to manage admin accounts.","error");
+}else{
+  loadAdmins();
+}
+
+})();
+</script>
+</body>
+</html>
