@@ -1,0 +1,914 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deleted Users</title>
+
+<style>
+.du-page{
+  color:var(--text,#172554);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  padding:4px 2px 24px;
+}
+.du-page *{box-sizing:border-box}
+
+/* HERO */
+.du-hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:22px;
+  padding:25px 28px;
+  margin-bottom:20px;
+  color:#fff;
+  background:linear-gradient(120deg,#4338ca 0%,#6366f1 48%,#8b5cf6 100%);
+  box-shadow:0 14px 32px #4f46e533;
+}
+.du-hero:before,.du-hero:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  background:#ffffff12;
+}
+.du-hero:before{
+  width:210px;height:210px;
+  right:8%;top:-125px;
+}
+.du-hero:after{
+  width:150px;height:150px;
+  right:24%;bottom:-115px;
+}
+.du-head{
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.du-title-wrap{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.du-title-icon{
+  width:52px;height:52px;
+  border-radius:16px;
+  background:#ffffff24;
+  display:grid;
+  place-items:center;
+  font-size:25px;
+  box-shadow:inset 0 1px #ffffff40;
+}
+.du-head h2{
+  font-size:23px;
+  letter-spacing:-.5px;
+  margin:0 0 5px;
+  font-weight:800;
+}
+.du-subtitle{color:#e0e7ff;font-size:12px}
+
+/* BUTTONS */
+.du-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:12px 16px;
+  border:0;
+  border-radius:11px;
+  cursor:pointer;
+  font-weight:750;
+  font-size:12px;
+  transition:.2s;
+}
+.du-btn:hover{transform:translateY(-2px)}
+.du-btn:disabled{opacity:.55;cursor:wait;transform:none}
+.du-btn-white{background:#fff;color:#4338ca}
+.du-btn-primary{
+  background:linear-gradient(110deg,#4f46e5,#7c3aed);
+  color:#fff;
+  box-shadow:0 6px 14px #4f46e533;
+}
+.du-btn-secondary{
+  background:var(--hover,#f1f5f9);
+  color:var(--text,#334155);
+  border:1px solid var(--border,#e2e8f0);
+}
+.du-btn-danger{
+  background:linear-gradient(110deg,#e11d48,#be123c);
+  color:#fff;
+}
+
+/* STATISTICS */
+.du-stats{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  margin-bottom:19px;
+}
+.du-stat{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:19px;
+  background:var(--card,#fff);
+  border:1px solid var(--border,#e5e7eb);
+  border-radius:18px;
+  box-shadow:0 8px 25px #0f172a09;
+}
+.du-stat-icon{
+  width:47px;height:47px;
+  flex:none;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  font-size:21px;
+  background:#fff1f2;
+  color:#e11d48;
+}
+.du-stat small{
+  display:block;
+  font-size:11px;
+  color:var(--muted,#64748b);
+  font-weight:700;
+}
+.du-stat strong{
+  display:block;
+  font-size:25px;
+  margin-top:3px;
+  color:var(--text,#172554);
+}
+
+/* MAIN CARD */
+.du-card{
+  background:var(--card,#fff);
+  border:1px solid var(--border,#e5e7eb);
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 8px 26px #0f172a0a;
+}
+.du-section-head{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding-bottom:17px;
+  margin-bottom:18px;
+  border-bottom:1px solid var(--border,#e5e7eb);
+}
+.du-section-icon{
+  width:38px;height:38px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:#eef2ff;
+  color:#4f46e5;
+  font-size:18px;
+}
+.du-section-head strong{
+  display:block;
+  font-size:15px;
+}
+.du-section-head small{
+  color:var(--muted,#64748b);
+  font-size:11px;
+}
+
+/* TOOLBAR */
+.du-toolbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:17px;
+}
+.du-search{
+  flex:1;
+  min-width:220px;
+}
+.du-search input{
+  width:100%;
+  padding:13px 14px;
+  border:1px solid var(--border,#dbe2ef);
+  border-radius:11px;
+  background:var(--bg,#f8fafc);
+  color:var(--text,#172554);
+  font:inherit;
+  font-size:12px;
+  outline:none;
+}
+.du-search input:focus{
+  border-color:#6366f1;
+  box-shadow:0 0 0 3px #6366f11c;
+}
+
+/* TABLE */
+.du-table-wrap{
+  width:100%;
+  overflow-x:auto;
+  border:1px solid var(--border,#e5e7eb);
+  border-radius:14px;
+}
+.du-table{
+  width:100%;
+  min-width:950px;
+  border-collapse:collapse;
+}
+.du-table th{
+  background:var(--bg,#f8fafc);
+  color:var(--muted,#64748b);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  text-align:left;
+  padding:14px 13px;
+  white-space:nowrap;
+}
+.du-table td{
+  padding:13px;
+  border-top:1px solid var(--border,#e5e7eb);
+  font-size:12px;
+  color:var(--text,#172554);
+  vertical-align:middle;
+}
+.du-table tbody tr:hover{
+  background:var(--hover,#f8fafc);
+}
+
+/* USER PROFILE */
+.du-user{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-width:175px;
+}
+.du-avatar{
+  width:43px;height:43px;
+  flex:none;
+  border-radius:14px;
+  object-fit:cover;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#c7d2fe,#e9d5ff);
+  color:#4338ca;
+  font-size:16px;
+  font-weight:850;
+  border:2px solid var(--card,#fff);
+  box-shadow:0 3px 9px #4338ca18;
+}
+.du-user-name{
+  font-weight:800;
+  font-size:12px;
+  display:block;
+}
+.du-user-id{
+  display:block;
+  color:var(--muted,#64748b);
+  font-size:10px;
+  margin-top:4px;
+}
+
+/* STATUS */
+.du-status{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:6px 10px;
+  border-radius:30px;
+  font-size:10px;
+  font-weight:800;
+  background:#ffe4e6;
+  color:#be123c;
+}
+.du-status:before{
+  content:"";
+  width:6px;height:6px;
+  border-radius:50%;
+  background:currentColor;
+}
+
+/* ACTIONS */
+.du-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+.du-action{
+  border:1px solid var(--border,#e2e8f0);
+  border-radius:9px;
+  padding:8px 10px;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s;
+}
+.du-action:hover{transform:translateY(-1px)}
+.du-restore{
+  background:#ecfdf5;
+  color:#047857;
+  border-color:#a7f3d0;
+}
+.du-permanent{
+  background:#fff1f2;
+  color:#be123c;
+  border-color:#fecdd3;
+}
+
+/* EMPTY / MESSAGE */
+.du-empty{
+  text-align:center;
+  padding:42px 15px;
+  color:var(--muted,#64748b);
+  font-size:12px;
+}
+.du-empty-icon{font-size:35px;margin-bottom:10px}
+.du-message{
+  display:none;
+  padding:12px 14px;
+  border-radius:11px;
+  margin-bottom:15px;
+  font-size:12px;
+  font-weight:650;
+}
+.du-message.ok{
+  display:block;
+  background:#ecfdf5;
+  color:#047857;
+  border:1px solid #a7f3d0;
+}
+.du-message.err{
+  display:block;
+  background:#fff1f2;
+  color:#be123c;
+  border:1px solid #fecdd3;
+}
+
+/* CONFIRM POPUP */
+.du-modal{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:#0f172a99;
+  backdrop-filter:blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.du-modal.show{
+  display:flex;
+  animation:duFade .2s ease;
+}
+.du-modal-card{
+  width:min(100%,410px);
+  background:var(--card,#fff);
+  color:var(--text,#172554);
+  border:1px solid var(--border,#e5e7eb);
+  border-radius:23px;
+  padding:28px 24px;
+  text-align:center;
+  box-shadow:0 25px 80px #0f172a45;
+  animation:duPop .25s ease;
+}
+.du-modal-icon{
+  width:70px;height:70px;
+  margin:0 auto 15px;
+  border-radius:21px;
+  display:grid;
+  place-items:center;
+  background:#eef2ff;
+  color:#4f46e5;
+  font-size:30px;
+}
+.du-modal-icon.danger{
+  background:#fff1f2;
+  color:#e11d48;
+}
+.du-modal-card h3{
+  font-size:20px;
+  margin:8px 0;
+  font-weight:850;
+}
+.du-modal-card p{
+  font-size:12px;
+  color:var(--muted,#64748b);
+  line-height:1.6;
+  margin:0 0 20px;
+}
+.du-modal-actions{
+  display:flex;
+  gap:9px;
+}
+.du-modal-actions button{flex:1}
+
+/* SUCCESS POPUP */
+.du-success-icon{
+  background:linear-gradient(135deg,#d1fae5,#a7f3d0);
+  color:#059669;
+  box-shadow:0 0 0 8px #ecfdf5;
+}
+@keyframes duFade{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes duPop{
+  from{opacity:0;transform:translateY(12px) scale(.96)}
+  to{opacity:1;transform:none}
+}
+
+@media(max-width:700px){
+  .du-page{padding:0 0 18px}
+  .du-hero{padding:20px 17px;border-radius:17px}
+  .du-head h2{font-size:20px}
+  .du-title-icon{width:45px;height:45px}
+  .du-stats{grid-template-columns:1fr;gap:9px}
+  .du-stat{padding:12px;gap:9px}
+  .du-stat-icon{width:37px;height:37px;font-size:17px}
+  .du-stat strong{font-size:20px}
+  .du-card{padding:15px;border-radius:16px}
+  .du-toolbar{align-items:stretch}
+  .du-search{min-width:100%}
+  .du-modal-actions{flex-direction:column}
+}
+</style>
+</head>
+
+<body>
+<div class="du-page">
+
+  <!-- HEADER -->
+  <div class="du-hero">
+    <div class="du-head">
+      <div class="du-title-wrap">
+        <div class="du-title-icon">⌫</div>
+        <div>
+          <h2>Deleted Users</h2>
+          <div class="du-subtitle">Manage, restore and permanently remove deleted accounts</div>
+        </div>
+      </div>
+
+      <button class="du-btn du-btn-white" type="button"
+        onclick="window.loadPage('user-list')">
+        ☷ &nbsp; Active Users
+      </button>
+    </div>
+  </div>
+
+  <!-- STATISTICS: ONLY TOTAL DELETED -->
+  <div class="du-stats">
+    <div class="du-stat">
+      <div class="du-stat-icon">⌫</div>
+      <div>
+        <small>Total Deleted</small>
+        <strong id="duTotal">0</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETED USERS TABLE -->
+  <div class="du-card">
+
+    <div class="du-section-head">
+      <div class="du-section-icon">▤</div>
+      <div>
+        <strong>Deleted User Accounts</strong>
+        <small>Restore an account or permanently delete it</small>
+      </div>
+    </div>
+
+    <div id="duMessage" class="du-message"></div>
+
+    <div class="du-toolbar">
+      <div class="du-search">
+        <input id="duSearch" type="search"
+          placeholder="⌕  Search name, ID, phone, Gmail or area...">
+      </div>
+
+      <button class="du-btn du-btn-secondary" id="duRefresh" type="button">
+        ↻ Refresh
+      </button>
+    </div>
+
+    <div class="du-table-wrap">
+      <table class="du-table">
+        <thead>
+          <tr>
+            <th>User Profile</th>
+            <th>Phone</th>
+            <th>Gmail</th>
+            <th>Area</th>
+            <th>Deleted At</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="duBody">
+          <tr>
+            <td colspan="7" class="du-empty">Loading deleted users...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="duEmpty" class="du-empty" style="display:none">
+      <div class="du-empty-icon">✓</div>
+      <strong>No deleted users found</strong>
+      <div style="margin-top:5px">All accounts are currently active or the search returned no results.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONFIRMATION POPUP -->
+<div class="du-modal" id="duConfirm" role="dialog"
+  aria-modal="true" aria-labelledby="duModalTitle">
+
+  <div class="du-modal-card">
+
+    <div class="du-modal-icon" id="duModalIcon">↶</div>
+
+    <h3 id="duModalTitle">Confirm Action</h3>
+
+    <p id="duModalText">Are you sure?</p>
+
+    <div class="du-modal-actions">
+      <button class="du-btn du-btn-secondary" id="duCancel" type="button">
+        Cancel
+      </button>
+
+      <button class="du-btn du-btn-primary" id="duActionConfirm"
+        type="button">
+        Confirm
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUCCESS POPUP -->
+<div class="du-modal" id="duSuccess" role="dialog" aria-modal="true">
+  <div class="du-modal-card">
+
+    <div class="du-modal-icon du-success-icon">✓</div>
+
+    <h3 id="duSuccessTitle">Action Successful!</h3>
+
+    <p id="duSuccessText">User account updated successfully.</p>
+
+    <button class="du-btn du-btn-primary" id="duSuccessDone"
+      type="button" style="width:100%">
+      Done
+    </button>
+
+  </div>
+</div>
+
+<script>
+(function(){
+
+const API_URL="https://script.google.com/macros/s/AKfycbzlabjyglodpoiPmupmA2buZqMyFiSPScIrTPm0T8Il7Z7bKtAkZglsfDk9WZAFOHgk/exec";
+
+const $=id=>document.getElementById(id);
+
+let deletedUsers=[];
+let selectedRow=null;
+let selectedAction="";
+let selectedUserId="";
+
+/* FIELD HELPER */
+function field(obj,...keys){
+  for(const key of keys){
+    if(obj && obj[key]!==undefined && obj[key]!==null){
+      return obj[key];
+    }
+  }
+  return "";
+}
+
+/* HTML SAFE */
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,function(c){
+    return {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[c];
+  });
+}
+
+/* MESSAGE */
+function showMessage(text,type){
+  $("duMessage").textContent=text;
+  $("duMessage").className="du-message "+type;
+}
+
+/* SUCCESS POPUP */
+function showSuccess(title,text){
+  $("duSuccessTitle").textContent=title;
+  $("duSuccessText").textContent=text;
+  $("duSuccess").classList.add("show");
+}
+
+function closeSuccess(){
+  $("duSuccess").classList.remove("show");
+}
+
+$("duSuccessDone").addEventListener("click",closeSuccess);
+
+$("duSuccess").addEventListener("click",function(e){
+  if(e.target===$("duSuccess"))closeSuccess();
+});
+
+/* LOAD DELETED USERS */
+async function loadDeletedUsers(){
+
+  $("duBody").innerHTML=
+    '<tr><td colspan="7" class="du-empty">Loading deleted users...</td></tr>';
+
+  try{
+
+    const response=await fetch(
+      API_URL+"?api=deleted&t="+Date.now(),
+      {cache:"no-store"}
+    );
+
+    const data=await response.json();
+
+    if(!data.success){
+      throw new Error(data.message||"Could not load deleted users.");
+    }
+
+    deletedUsers=Array.isArray(data.users)
+      ?data.users
+      :(Array.isArray(data.data)?data.data:[]);
+
+    renderDeletedUsers();
+
+  }catch(error){
+
+    $("duBody").innerHTML=
+      '<tr><td colspan="7" class="du-empty">Unable to load deleted users. '
+      +escapeHTML(error.message)+'</td></tr>';
+
+  }
+}
+
+/* RENDER TABLE */
+function renderDeletedUsers(){
+
+  $("duTotal").textContent=deletedUsers.length;
+
+  const search=$("duSearch").value.trim().toLowerCase();
+
+  const filtered=deletedUsers.filter(user=>{
+
+    const searchable=[
+      field(user,"userId","User ID"),
+      field(user,"userName","User Name"),
+      field(user,"phone","Phone"),
+      field(user,"gmail","Gmail"),
+      field(user,"area","Area")
+    ].join(" ").toLowerCase();
+
+    return searchable.includes(search);
+
+  });
+
+  $("duEmpty").style.display=filtered.length?"none":"block";
+
+  if(!filtered.length){
+    $("duBody").innerHTML="";
+    return;
+  }
+
+  $("duBody").innerHTML=filtered.map(user=>{
+
+    const id=field(user,"userId","User ID");
+    const name=field(user,"userName","User Name")||"Unnamed User";
+    const phone=field(user,"phone","Phone");
+    const gmail=field(user,"gmail","Gmail");
+    const area=field(user,"area","Area");
+    const deletedAt=field(user,"deletedAt","Deleted At");
+    const row=field(user,"_row","row");
+    const picture=field(user,"profilePicture","Profile Picture");
+
+    const initial=escapeHTML(String(name).charAt(0).toUpperCase());
+
+    const avatar=picture
+      ?'<img class="du-avatar" src="'+escapeHTML(picture)+'" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><div class="du-avatar" style="display:none">'+initial+'</div>'
+      :'<div class="du-avatar">'+initial+'</div>';
+
+    return `
+      <tr>
+        <td>
+          <div class="du-user">
+            ${avatar}
+            <div>
+              <span class="du-user-name">${escapeHTML(name)}</span>
+              <span class="du-user-id">ID: ${escapeHTML(id)}</span>
+            </div>
+          </div>
+        </td>
+
+        <td>${escapeHTML(phone||"—")}</td>
+        <td>${escapeHTML(gmail||"—")}</td>
+        <td>${escapeHTML(area||"—")}</td>
+        <td>${escapeHTML(deletedAt||"—")}</td>
+
+        <td>
+          <span class="du-status">Deleted</span>
+        </td>
+
+        <td>
+          <div class="du-actions">
+
+            <button class="du-action du-restore"
+              data-restore="${escapeHTML(row)}">
+              ↶ Restore
+            </button>
+
+            <button class="du-action du-permanent"
+              data-permanent="${escapeHTML(row)}">
+              ✕ Delete Forever
+            </button>
+
+          </div>
+        </td>
+      </tr>
+    `;
+
+  }).join("");
+
+}
+
+/* OPEN CONFIRMATION */
+function openConfirm(action,row,userId){
+
+  selectedAction=action;
+  selectedRow=Number(row);
+  selectedUserId=userId;
+
+  const restore=action==="restoreUser";
+
+  $("duModalIcon").textContent=restore?"↶":"!";
+  $("duModalIcon").className=
+    "du-modal-icon"+(restore?"":" danger");
+
+  $("duModalTitle").textContent=restore
+    ?"Restore User Account?"
+    :"Permanently Delete User?";
+
+  $("duModalText").textContent=restore
+    ?"User ID "+userId+
+      " will be moved back to active Users. Restore will fail if the same User ID or User Name is already active."
+    :"User ID "+userId+
+      " will be permanently deleted. This action cannot be undone.";
+
+  $("duActionConfirm").textContent=restore
+    ?"Yes, Restore"
+    :"Delete Forever";
+
+  $("duActionConfirm").className=
+    "du-btn "+(restore?"du-btn-primary":"du-btn-danger");
+
+  $("duConfirm").classList.add("show");
+}
+
+/* CLOSE CONFIRMATION */
+function closeConfirm(){
+
+  $("duConfirm").classList.remove("show");
+
+  selectedRow=null;
+  selectedAction="";
+  selectedUserId="";
+
+}
+
+/* TABLE ACTIONS */
+$("duBody").addEventListener("click",function(event){
+
+  const restoreButton=event.target.closest("[data-restore]");
+  const permanentButton=event.target.closest("[data-permanent]");
+
+  if(restoreButton){
+
+    const row=restoreButton.dataset.restore;
+
+    const user=deletedUsers.find(u=>
+      String(field(u,"_row","row"))===String(row)
+    );
+
+    openConfirm(
+      "restoreUser",
+      row,
+      field(user||{},"userId","User ID")
+    );
+
+  }
+
+  if(permanentButton){
+
+    const row=permanentButton.dataset.permanent;
+
+    const user=deletedUsers.find(u=>
+      String(field(u,"_row","row"))===String(row)
+    );
+
+    openConfirm(
+      "permanentDeleteUser",
+      row,
+      field(user||{},"userId","User ID")
+    );
+
+  }
+
+});
+
+/* CLOSE POPUP */
+$("duCancel").addEventListener("click",closeConfirm);
+
+$("duConfirm").addEventListener("click",function(event){
+  if(event.target===$("duConfirm"))closeConfirm();
+});
+
+/* RESTORE / PERMANENT DELETE */
+$("duActionConfirm").addEventListener("click",async function(){
+
+  if(!selectedAction||!Number.isFinite(selectedRow))return;
+
+  const button=$("duActionConfirm");
+
+  const action=selectedAction;
+  const row=selectedRow;
+
+  button.disabled=true;
+  button.textContent="Please wait...";
+
+  try{
+
+    const response=await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        action:action,
+        deletedRow:row
+      })
+    });
+
+    const data=await response.json();
+
+    if(!data.success){
+      throw new Error(data.message||"Action failed.");
+    }
+
+    closeConfirm();
+
+    if(action==="restoreUser"){
+
+      showSuccess(
+        "User Restored Successfully!",
+        data.message||"The user account has been moved back to active Users."
+      );
+
+    }else{
+
+      showSuccess(
+        "User Permanently Deleted!",
+        data.message||"The user account has been permanently deleted."
+      );
+
+    }
+
+    await loadDeletedUsers();
+
+  }catch(error){
+
+    closeConfirm();
+    showMessage(error.message,"err");
+
+  }finally{
+
+    button.disabled=false;
+    button.textContent="Confirm";
+
+  }
+
+});
+
+/* SEARCH + REFRESH */
+$("duSearch").addEventListener("input",renderDeletedUsers);
+$("duRefresh").addEventListener("click",loadDeletedUsers);
+
+/* INITIAL LOAD */
+loadDeletedUsers();
+
+})();
+</script>
+
+</body>
+</html>
