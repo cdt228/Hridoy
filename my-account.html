@@ -1,0 +1,511 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account</title>
+
+<style>
+#pageContainer .account-wrap{width:100%;color:var(--text)}
+#pageContainer .account-heading{margin-bottom:20px}
+#pageContainer .account-heading h2{font-size:20px;font-weight:800}
+#pageContainer .account-heading p{font-size:12px;color:var(--muted);margin-top:5px}
+#pageContainer .account-grid{display:grid;grid-template-columns: minmax(250px,.8fr) minmax(0,1.5fr);gap:18px;align-items:start}
+#pageContainer .account-panel{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:20px;box-shadow:var(--shadow);margin-bottom:18px}
+#pageContainer .account-panel h3{font-size:15px;margin-bottom:17px}
+#pageContainer .profile-area{text-align:center;padding:10px 0 20px}
+#pageContainer .profile-avatar{
+  width:100px;height:100px;border-radius:50%;
+  background:var(--primary-light);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;font-weight:900;margin:0 auto 13px;overflow:hidden;
+  border:3px solid var(--border);
+}
+#pageContainer .profile-avatar img{width:100%;height:100%;object-fit:cover}
+#pageContainer .profile-name{font-size:16px;font-weight:800}
+#pageContainer .profile-role{font-size:11px;color:var(--muted);margin-top:5px}
+#pageContainer .profile-upload{margin-top:14px}
+#pageContainer .profile-upload input{display:none}
+#pageContainer .account-btn{
+  border:0;border-radius:8px;padding:10px 15px;
+  background:var(--primary);color:white;
+  font-size:12px;font-weight:800;cursor:pointer;
+}
+#pageContainer .account-btn.secondary{
+  background:var(--hover);color:var(--text);border:1px solid var(--border);
+}
+#pageContainer .account-btn:disabled{opacity:.6;cursor:wait}
+#pageContainer .account-info{border-top:1px solid var(--border);padding-top:14px}
+#pageContainer .account-info-row{
+  display:flex;justify-content:space-between;gap:10px;
+  padding:9px 0;border-bottom:1px solid var(--border);
+  font-size:11px;
+}
+#pageContainer .account-info-row:last-child{border-bottom:0}
+#pageContainer .account-info-row span{color:var(--muted)}
+#pageContainer .account-info-row strong{text-align:right;overflow-wrap:anywhere}
+#pageContainer .account-field{margin-bottom:14px}
+#pageContainer .account-field label{
+  display:block;font-size:11px;font-weight:800;margin-bottom:7px;
+}
+#pageContainer .account-field input{
+  width:100%;height:42px;padding:0 12px;
+  border:1px solid var(--border);border-radius:8px;
+  background:var(--bg);color:var(--text);outline:none;
+}
+#pageContainer .account-field input:focus{border-color:var(--primary)}
+#pageContainer .account-form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:5px}
+#pageContainer .account-message{
+  display:none;padding:11px 13px;border-radius:8px;
+  font-size:12px;margin-bottom:14px;line-height:1.5;
+}
+#pageContainer .account-message.success{display:block;background:var(--primary-light);color:var(--primary)}
+#pageContainer .account-message.error{display:block;background:#fff0f0;color:#c62828}
+#pageContainer .account-note{font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px}
+#pageContainer .account-loading{text-align:center;padding:25px;color:var(--muted);font-size:12px}
+@media(max-width:750px){
+  #pageContainer .account-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  #pageContainer .account-panel{padding:15px}
+}
+</style>
+</head>
+
+<body>
+<div class="account-wrap">
+
+  <div class="account-heading">
+    <h2>My Account</h2>
+    <p>Manage your personal information and security settings.</p>
+  </div>
+
+  <div id="accountMessage" class="account-message"></div>
+
+  <div class="account-grid">
+
+    <!-- PROFILE CARD -->
+
+    <div class="account-panel">
+      <div class="profile-area">
+        <div class="profile-avatar" id="profileAvatar">W</div>
+        <div class="profile-name" id="profileName">Loading...</div>
+        <div class="profile-role" id="profileRole">Administrator</div>
+
+        <div class="profile-upload">
+          <label class="account-btn secondary" for="profileImageInput">
+            Change Profile Photo
+          </label>
+          <input type="file" id="profileImageInput" accept="image/png,image/jpeg,image/webp">
+        </div>
+      </div>
+
+      <div class="account-info">
+        <div class="account-info-row">
+          <span>Admin ID</span>
+          <strong id="infoAdminId">—</strong>
+        </div>
+        <div class="account-info-row">
+          <span>Account Status</span>
+          <strong id="infoStatus">—</strong>
+        </div>
+        <div class="account-info-row">
+          <span>Created Date</span>
+          <strong id="infoCreated">—</strong>
+        </div>
+        <div class="account-info-row">
+          <span>Last Login</span>
+          <strong id="infoLastLogin">—</strong>
+        </div>
+      </div>
+
+      <p class="account-note">
+        Profile photos are stored in Google Drive. The uploaded photo uses
+        a link-accessible Drive permission in the current backend.
+      </p>
+    </div>
+
+    <!-- FORMS -->
+
+    <div>
+
+      <div class="account-panel">
+        <h3>Personal Information</h3>
+
+        <form id="profileForm">
+          <div class="account-field">
+            <label>Full Name</label>
+            <input type="text" id="accountName" required placeholder="Your name">
+          </div>
+
+          <div class="account-field">
+            <label>Email Address</label>
+            <input type="email" id="accountEmail" required placeholder="Your email">
+          </div>
+
+          <div class="account-form-actions">
+            <button type="submit" class="account-btn" id="saveProfileButton">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="account-panel">
+        <h3>Change Password</h3>
+
+        <form id="passwordForm">
+          <div class="account-field">
+            <label>Current Password</label>
+            <input type="password" id="currentPassword" required autocomplete="current-password">
+          </div>
+
+          <div class="account-field">
+            <label>New Password</label>
+            <input type="password" id="newPassword" required minlength="8" autocomplete="new-password">
+          </div>
+
+          <div class="account-field">
+            <label>Confirm New Password</label>
+            <input type="password" id="confirmPassword" required minlength="8" autocomplete="new-password">
+          </div>
+
+          <div class="account-form-actions">
+            <button type="submit" class="account-btn" id="changePasswordButton">
+              Update Password
+            </button>
+          </div>
+
+          <p class="account-note">
+            After a successful password change, you will need to log in again
+            with your new password.
+          </p>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+"use strict";
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbw5QMutQWocx1jg3qT6dmKKxh5GXYw6HeClidJ8_swh-z_iklKMVZ-UMGYuxLrGsFi6/exec";
+
+const root=document.getElementById("pageContainer");
+const $=id=>root.querySelector("#"+id);
+
+let accountData=null;
+let profileBusy=false;
+let passwordBusy=false;
+let photoBusy=false;
+
+function token(){
+  return typeof window.wageAuthToken==="function"
+    ? window.wageAuthToken()
+    : "";
+}
+
+async function api(action,data={}){
+  const response=await fetch(API_URL,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({action,token:token(),...data}),
+    cache:"no-store"
+  });
+
+  const raw=await response.text();
+  let result;
+
+  try{result=JSON.parse(raw);}
+  catch(e){throw new Error("Invalid server response. Please check Apps Script deployment.");}
+
+  if(!response.ok||result.success===false){
+    throw new Error(result.message||result.error||"Request failed.");
+  }
+
+  return result;
+}
+
+function showMessage(text,type="success"){
+  const el=$("accountMessage");
+  el.textContent=text;
+  el.className="account-message "+type;
+  el.style.display="block";
+  el.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function hideMessage(){
+  const el=$("accountMessage");
+  el.textContent="";
+  el.className="account-message";
+  el.style.display="none";
+}
+
+function updateAvatar(photo,name){
+  const avatar=$("profileAvatar");
+  avatar.innerHTML="";
+
+  if(photo){
+    const img=document.createElement("img");
+    img.src=photo;
+    img.alt="Profile Photo";
+    avatar.appendChild(img);
+  }else{
+    avatar.textContent=(name||"W").charAt(0).toUpperCase();
+  }
+
+  const sidebarAvatar=document.getElementById("sidebarAvatar");
+  if(sidebarAvatar){
+    sidebarAvatar.innerHTML="";
+
+    if(photo){
+      const img=document.createElement("img");
+      img.src=photo;
+      img.alt="Profile";
+      sidebarAvatar.appendChild(img);
+    }else{
+      sidebarAvatar.textContent=(name||"W").charAt(0).toUpperCase();
+    }
+  }
+}
+
+function updateSidebar(admin){
+  const name=admin.name||"Administrator";
+  const role=admin.role||"Admin";
+
+  const sidebarName=document.getElementById("sidebarUserName");
+  const sidebarRole=document.getElementById("sidebarUserRole");
+
+  if(sidebarName) sidebarName.textContent=name;
+  if(sidebarRole) sidebarRole.textContent=role;
+
+  updateAvatar(admin.profilePicture||"",name);
+}
+
+function renderAccount(admin,extra={}){
+  accountData=admin;
+
+  $("accountName").value=admin.name||"";
+  $("accountEmail").value=admin.email||"";
+
+  $("profileName").textContent=admin.name||"Administrator";
+  $("profileRole").textContent=
+    admin.role==="Custom"
+      ? (admin.customRoleName||"Custom")
+      : (admin.role||"Admin");
+
+  $("infoAdminId").textContent=admin.adminId||"—";
+  $("infoStatus").textContent=admin.status||"—";
+  $("infoCreated").textContent=extra.createdDate||admin.createdDate||"—";
+  $("infoLastLogin").textContent=extra.lastLogin||admin.lastLogin||"—";
+
+  updateAvatar(admin.profilePicture||"",admin.name);
+  updateSidebar(admin);
+}
+
+async function loadAccount(){
+  try{
+    const result=await api("getMyAccount");
+    const data=result.data||result;
+    const admin=data.admin||data;
+
+    if(!admin||!admin.email){
+      throw new Error("Could not load account information.");
+    }
+
+    renderAccount(admin,data);
+
+  }catch(error){
+    const cached=typeof window.wageCurrentAdmin==="function"
+      ? window.wageCurrentAdmin()
+      : null;
+
+    if(cached&&cached.email){
+      renderAccount(cached,{});
+      showMessage(
+        "Some account details could not be refreshed: "+error.message,
+        "error"
+      );
+    }else{
+      showMessage(error.message,"error");
+    }
+  }
+}
+
+/* UPDATE NAME AND EMAIL */
+
+$("profileForm").addEventListener("submit",async function(event){
+  event.preventDefault();
+
+  if(profileBusy) return;
+
+  const name=$("accountName").value.trim();
+  const email=$("accountEmail").value.trim();
+
+  if(!name||!email){
+    showMessage("Name and email are required.","error");
+    return;
+  }
+
+  profileBusy=true;
+  $("saveProfileButton").disabled=true;
+  $("saveProfileButton").textContent="Saving...";
+
+  hideMessage();
+
+  try{
+    const result=await api("updateMyAccount",{name,email});
+    const data=result.data||result;
+    const updated=data.admin||data;
+
+    if(accountData){
+      accountData={...accountData,...updated,name,email};
+    }else{
+      accountData={...updated,name,email};
+    }
+
+    renderAccount(accountData,{});
+    showMessage("Your profile information has been updated.");
+
+  }catch(error){
+    showMessage(error.message,"error");
+  }finally{
+    profileBusy=false;
+    $("saveProfileButton").disabled=false;
+    $("saveProfileButton").textContent="Save Changes";
+  }
+});
+
+/* CHANGE PASSWORD */
+
+$("passwordForm").addEventListener("submit",async function(event){
+  event.preventDefault();
+
+  if(passwordBusy) return;
+
+  const currentPassword=$("currentPassword").value;
+  const newPassword=$("newPassword").value;
+  const confirmPassword=$("confirmPassword").value;
+
+  if(newPassword.length<8){
+    showMessage("New password must contain at least 8 characters.","error");
+    return;
+  }
+
+  if(newPassword!==confirmPassword){
+    showMessage("New password and confirmation do not match.","error");
+    return;
+  }
+
+  if(currentPassword===newPassword){
+    showMessage("New password must be different from current password.","error");
+    return;
+  }
+
+  passwordBusy=true;
+  $("changePasswordButton").disabled=true;
+  $("changePasswordButton").textContent="Updating...";
+
+  hideMessage();
+
+  try{
+    await api("changePassword",{
+      currentPassword,
+      newPassword
+    });
+
+    $("passwordForm").reset();
+
+    showMessage(
+      "Password changed successfully. Please login again using your new password."
+    );
+
+    // Backend revokes all sessions after password change.
+    // Clear local login and return to login screen.
+    setTimeout(()=>{
+      localStorage.removeItem("wage_admin_token");
+      localStorage.removeItem("wage_admin_user");
+      localStorage.removeItem("wage_admin_permissions");
+
+      location.reload();
+    },1600);
+
+  }catch(error){
+    showMessage(error.message,"error");
+  }finally{
+    passwordBusy=false;
+    $("changePasswordButton").disabled=false;
+    $("changePasswordButton").textContent="Update Password";
+  }
+});
+
+/* PROFILE PHOTO UPLOAD */
+
+$("profileImageInput").addEventListener("change",async function(event){
+  const file=event.target.files&&event.target.files[0];
+  if(!file) return;
+
+  if(photoBusy) return;
+
+  const allowed=["image/jpeg","image/png","image/webp"];
+
+  if(!allowed.includes(file.type)){
+    showMessage("Only JPG, PNG and WEBP images are supported.","error");
+    event.target.value="";
+    return;
+  }
+
+  if(file.size>2*1024*1024){
+    showMessage("Image size must be 2 MB or less.","error");
+    event.target.value="";
+    return;
+  }
+
+  photoBusy=true;
+  hideMessage();
+
+  try{
+    const imageData=await new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=()=>resolve(reader.result);
+      reader.onerror=()=>reject(new Error("Could not read image."));
+      reader.readAsDataURL(file);
+    });
+
+    const result=await api("updateProfilePicture",{imageData});
+    const data=result.data||result;
+
+    const photo=data.profilePicture;
+
+    if(!photo){
+      throw new Error("Server did not return the profile image URL.");
+    }
+
+    if(accountData){
+      accountData.profilePicture=photo;
+    }
+
+    updateAvatar(photo,accountData?.name||"W");
+    showMessage("Profile photo updated successfully.");
+
+  }catch(error){
+    showMessage(error.message,"error");
+  }finally{
+    photoBusy=false;
+    event.target.value="";
+  }
+});
+
+/* INITIAL LOAD */
+
+loadAccount();
+
+})();
+</script>
+</body>
+</html>
