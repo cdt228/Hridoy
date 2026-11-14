@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Currency & Payment Settings</title>
+
+<style>
+#settingsPage{
+  font-family:inherit;
+  color:var(--text,#172033);
+  max-width:1150px;
+  margin:auto;
+}
+#settingsPage *{box-sizing:border-box}
+#settingsPage .hero{
+  padding:24px;border-radius:18px;color:#fff;
+  background:linear-gradient(120deg,#4338ca,#6366f1,#8b5cf6);
+  margin-bottom:20px;
+}
+#settingsPage .hero h2{margin:0 0 7px;color:#fff;font-size:24px}
+#settingsPage .hero p{margin:0;color:#e0e7ff;font-size:13px}
+#settingsPage .tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+#settingsPage .tab{
+  border:1px solid var(--border,#ddd);
+  background:var(--card,#fff);color:var(--text,#172033);
+  padding:12px 20px;border-radius:10px;cursor:pointer;font-weight:800;
+}
+#settingsPage .tab.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
+#settingsPage .section{display:none}
+#settingsPage .section.active{display:block}
+#settingsPage .card{
+  background:var(--card,#fff);border:1px solid var(--border,#e5e7eb);
+  border-radius:16px;padding:21px;margin-bottom:20px;
+  box-shadow:0 7px 25px #00000008;
+}
+#settingsPage .card h3{font-size:17px;margin:0 0 18px}
+#settingsPage label{display:block;font-size:12px;font-weight:700;margin-bottom:8px}
+#settingsPage input{
+  width:100%;height:45px;padding:11px 12px;border-radius:10px;
+  border:1px solid var(--border,#ddd);background:var(--bg,#f8fafc);
+  color:var(--text,#172033);font:inherit;outline:none;
+}
+#settingsPage input:focus{border-color:#6366f1;box-shadow:0 0 0 3px #6366f11c}
+#settingsPage .formgrid{display:grid;grid-template-columns:1fr;gap:14px}
+#settingsPage .btn{
+  border:0;border-radius:9px;padding:11px 16px;
+  font-weight:800;cursor:pointer;font:inherit;
+}
+#settingsPage .primary{background:linear-gradient(120deg,#4338ca,#7c3aed);color:#fff}
+#settingsPage .secondary{
+  background:var(--bg,#f1f5f9);color:var(--text,#172033);
+  border:1px solid var(--border,#ddd);
+}
+#settingsPage .danger{background:#fee2e2;color:#b91c1c}
+#settingsPage button:disabled{opacity:.55;cursor:not-allowed}
+#settingsPage .toolbar{
+  display:flex;gap:10px;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;margin-bottom:15px;
+}
+#settingsPage .search{max-width:330px;flex:1}
+#settingsPage .tablewrap{overflow-x:auto}
+#settingsPage table{width:100%;border-collapse:collapse;min-width:550px}
+#settingsPage th,#settingsPage td{
+  text-align:left;padding:13px 12px;
+  border-bottom:1px solid var(--border,#ddd);font-size:13px;
+}
+#settingsPage th{
+  color:var(--muted,#777);font-size:11px;
+  text-transform:uppercase;letter-spacing:.4px;
+}
+#settingsPage .pill{
+  display:inline-block;padding:5px 10px;border-radius:20px;
+  background:#dcfce7;color:#166534;font-size:11px;font-weight:800;
+}
+#settingsPage .inactive{background:#fee2e2;color:#991b1b}
+#settingsPage .actions{display:flex;gap:7px}
+#settingsPage .actions button{padding:7px 10px;font-size:11px}
+#settingsPage .message{
+  display:none;padding:12px;border-radius:10px;
+  margin-bottom:15px;font-size:13px;
+}
+#settingsPage .message.success{display:block;background:#dcfce7;color:#166534}
+#settingsPage .message.error{display:block;background:#fee2e2;color:#991b1b}
+#settingsPage .empty{text-align:center;padding:30px;color:var(--muted,#888)}
+#settingsPage .count{font-size:12px;color:var(--muted,#888)}
+
+/* POPUPS */
+#settingsPage .modal{
+  display:none;position:fixed;inset:0;z-index:999999;
+  background:#0f172a99;padding:18px;
+  align-items:center;justify-content:center;
+}
+#settingsPage .modal.show{display:flex}
+#settingsPage .modalbox{
+  width:min(520px,100%);max-height:90vh;overflow-y:auto;
+  background:var(--card,#fff);color:var(--text,#172033);
+  border:1px solid var(--border,#ddd);border-radius:18px;
+  padding:22px;box-shadow:0 24px 70px #0005;
+  animation:settingsPop .2s ease;
+}
+@keyframes settingsPop{
+  from{opacity:0;transform:translateY(12px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+#settingsPage .modalhead{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:18px;
+}
+#settingsPage .modalhead h3{margin:0;font-size:18px}
+#settingsPage .close{
+  border:0;background:transparent;color:inherit;
+  font-size:25px;cursor:pointer;
+}
+#settingsPage .modalactions{
+  display:flex;gap:10px;justify-content:flex-end;
+  margin-top:20px;flex-wrap:wrap;
+}
+#settingsPage .confirmtext{line-height:1.6;font-size:14px}
+
+/* SUCCESS POPUP */
+#settingsPage .successbox{text-align:center;padding:15px 8px}
+#settingsPage .successicon{
+  width:70px;height:70px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 17px;background:#dcfce7;color:#16a34a;
+  font-size:36px;font-weight:900;
+}
+#settingsPage .successbox h3{font-size:22px;margin:0 0 8px}
+#settingsPage .successbox p{
+  color:var(--muted,#777);font-size:14px;line-height:1.6;margin:0 0 22px;
+}
+#settingsPage .successbox .btn{min-width:130px}
+
+@media(max-width:700px){
+  #settingsPage .toolbar{align-items:stretch}
+  #settingsPage .search{max-width:none;min-width:100%}
+}
+@media(max-width:480px){
+  #settingsPage .card{padding:15px}
+  #settingsPage .hero h2{font-size:21px}
+  #settingsPage .modalbox{padding:17px}
+}
+</style>
+</head>
+
+<body>
+<div id="settingsPage">
+
+  <div class="hero">
+    <h2>⚙️ Currency & Payment Settings</h2>
+    <p>Manage your currencies and payment methods from one place.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="currencySection">💱 Currency Settings</button>
+    <button class="tab" data-tab="methodSection">💳 Payment Methods</button>
+  </div>
+
+  <!-- CURRENCY -->
+  <div class="section active" id="currencySection">
+    <div class="card">
+      <div class="toolbar">
+        <div>
+          <h3 style="margin:0 0 5px">Currency List</h3>
+          <div class="count" id="curCount">Loading...</div>
+        </div>
+        <input class="search" id="curSearch" placeholder="Search currency...">
+        <button class="btn secondary" id="curRefresh" type="button">↻ Refresh</button>
+        <button class="btn primary" id="openAddCurrency" type="button">＋ Add Currency</button>
+      </div>
+      <div id="curTableMessage" class="message"></div>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Currency Code</th>
+              <th>Currency Name</th>
+              <th>Symbol</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="curRows">
+            <tr><td colspan="5" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT METHODS -->
+  <div class="section" id="methodSection">
+    <div class="card">
+      <div class="toolbar">
+        <div>
+          <h3 style="margin:0 0 5px">Payment Method List</h3>
+          <div class="count" id="metCount">Loading...</div>
+        </div>
+        <input class="search" id="metSearch" placeholder="Search payment method...">
+        <button class="btn secondary" id="metRefresh" type="button">↻ Refresh</button>
+        <button class="btn primary" id="openAddMethod" type="button">＋ Add Method</button>
+      </div>
+      <div id="metTableMessage" class="message"></div>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Payment Method</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="metRows">
+            <tr><td colspan="3" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD CURRENCY POPUP -->
+  <div class="modal" id="curAddModal">
+    <div class="modalbox">
+      <div class="modalhead">
+        <h3>＋ Add New Currency</h3>
+        <button class="close" type="button" data-close="curAddModal">×</button>
+      </div>
+      <div id="curAddMessage" class="message"></div>
+      <form id="curForm">
+        <div class="formgrid">
+          <div>
+            <label>Currency Code *</label>
+            <input id="curCode" required maxlength="15" placeholder="Example: BDT">
+          </div>
+          <div>
+            <label>Currency Name *</label>
+            <input id="curName" required maxlength="80" placeholder="Example: Bangladeshi Taka">
+          </div>
+          <div>
+            <label>Currency Symbol *</label>
+            <input id="curSymbol" required maxlength="15" placeholder="Example: ৳">
+          </div>
+        </div>
+        <div class="modalactions">
+          <button class="btn secondary" type="button" data-close="curAddModal">Cancel</button>
+          <button class="btn primary" id="curSave" type="submit">＋ Save Currency</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD METHOD POPUP -->
+  <div class="modal" id="metAddModal">
+    <div class="modalbox">
+      <div class="modalhead">
+        <h3>＋ Add Payment Method</h3>
+        <button class="close" type="button" data-close="metAddModal">×</button>
+      </div>
+      <div id="metAddMessage" class="message"></div>
+      <form id="metForm">
+        <label>Payment Method Name *</label>
+        <input id="metName" required maxlength="100" placeholder="Example: Cash, bKash, Bank, Nagad">
+        <div class="modalactions">
+          <button class="btn secondary" type="button" data-close="metAddModal">Cancel</button>
+          <button class="btn primary" id="metSave" type="submit">＋ Save Method</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDIT CURRENCY -->
+  <div class="modal" id="curEditModal">
+    <div class="modalbox">
+      <div class="modalhead">
+        <h3>✎ Edit Currency</h3>
+        <button class="close" type="button" data-close="curEditModal">×</button>
+      </div>
+      <div id="curEditMessage" class="message"></div>
+      <form id="curEditForm">
+        <div class="formgrid">
+          <div><label>Currency Code *</label><input id="editCurCode" required maxlength="15"></div>
+          <div><label>Currency Name *</label><input id="editCurName" required maxlength="80"></div>
+          <div><label>Currency Symbol *</label><input id="editCurSymbol" required maxlength="15"></div>
+        </div>
+        <div class="modalactions">
+          <button class="btn secondary" type="button" data-close="curEditModal">Cancel</button>
+          <button class="btn primary" id="curEditSave" type="submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE CURRENCY -->
+  <div class="modal" id="curDeleteModal">
+    <div class="modalbox">
+      <div class="modalhead">
+        <h3>Delete Currency?</h3>
+        <button class="close" type="button" data-close="curDeleteModal">×</button>
+      </div>
+      <p class="confirmtext" id="curDeleteText"></p>
+      <div id="curDeleteMessage" class="message"></div>
+      <div class="modalactions">
+        <button class="btn secondary" type="button" data-close="curDeleteModal">Cancel</button>
+        <button class="btn danger" id="curDeleteConfirm" type="button">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT METHOD -->
+  <div class="modal" id="metEditModal">
+    <div class="modalbox">
+      <div class="modalhead">
+        <h3>✎ Edit Payment Method</h3>
+        <button class="close" type="button" data-close="metEditModal">×</button>
+      </div>
+      <div id="metEditMessage" class="message"></div>
+      <form id="metEditForm">
+        <label>Payment Method Name *</label>
+        <input id="editMetName" required maxlength="100">
+        <div class="modalactions">
+          <button class="btn secondary" type="button" data-close="metEditModal">Cancel</button>
+          <button class="btn primary" id="metEditSave" type="submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE METHOD -->
+  <div class="modal" id="metDeleteModal">
+    <div class="modalbox">
+      <div class="modalhead">
+        <h3>Delete Payment Method?</h3>
+        <button class="close" type="button" data-close="metDeleteModal">×</button>
+      </div>
+      <p class="confirmtext" id="metDeleteText"></p>
+      <div id="metDeleteMessage" class="message"></div>
+      <div class="modalactions">
+        <button class="btn secondary" type="button" data-close="metDeleteModal">Cancel</button>
+        <button class="btn danger" id="metDeleteConfirm" type="button">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS POPUP -->
+  <div class="modal" id="successModal">
+    <div class="modalbox successbox">
+      <div class="successicon">✓</div>
+      <h3 id="successTitle">Successfully Added!</h3>
+      <p id="successText">Your data has been saved successfully.</p>
+      <button class="btn primary" type="button" id="successOkay">OK, Great</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  const root=document.getElementById("settingsPage");
+  if(!root || root.dataset.ready==="1")return;
+  root.dataset.ready="1";
+
+  const API="https://script.google.com/macros/s/AKfycbygdxmo_sur5KYs3XhYHnyaMGQQ_G5_Prc9NUozP9dxRVhrwVmezX2ozhkhqQ4KeWKxPQ/exec";
+  const $=id=>root.querySelector("#"+id);
+
+  let currencies=[];
+  let methods=[];
+  let editingCurrency=null;
+  let deletingCurrency=null;
+  let editingMethod=null;
+  let deletingMethod=null;
+  let busy=false;
+
+  function esc(value){
+    return String(value??"").replace(/[&<>"']/g,c=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  function message(id,text,type){
+    $(id).textContent=text;
+    $(id).className="message "+type;
+  }
+
+  function hideMessage(id){
+    $(id).textContent="";
+    $(id).className="message";
+  }
+
+  function openModal(id){$(id).classList.add("show")}
+  function closeModal(id){$(id).classList.remove("show")}
+
+  function showSuccess(title,text){
+    $("successTitle").textContent=title;
+    $("successText").textContent=text;
+    openModal("successModal");
+  }
+
+  async function GET(api){
+    const response=await fetch(
+      API+"?api="+encodeURIComponent(api)+"&_="+Date.now(),
+      {cache:"no-store"}
+    );
+    if(!response.ok)throw Error("HTTP "+response.status);
+    return response.json();
+  }
+
+  async function POST(data){
+    const response=await fetch(API,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(data)
+    });
+    if(!response.ok)throw Error("HTTP "+response.status);
+    return response.json();
+  }
+
+  function normalizeCurrency(x){
+    return {
+      ...x,
+      currencyId:x.currencyId??"",
+      code:x.currencyCode??x.code??"",
+      name:x.currencyName??x.name??"",
+      symbol:x.currencySymbol??x.symbol??"",
+      status:x.status??"Active"
+    };
+  }
+
+  function normalizeMethod(x){
+    return {
+      ...x,
+      methodId:x.methodId??"",
+      name:x.methodName??x.name??"",
+      status:x.status??"Active"
+    };
+  }
+
+  // TABS
+  root.querySelectorAll("[data-tab]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      root.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+      root.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+      button.classList.add("active");
+      $(button.dataset.tab).classList.add("active");
+    });
+  });
+
+  // OPEN ADD POPUPS
+  $("openAddCurrency").addEventListener("click",()=>{
+    $("curForm").reset();
+    hideMessage("curAddMessage");
+    openModal("curAddModal");
+    setTimeout(()=>$("curCode").focus(),100);
+  });
+
+  $("openAddMethod").addEventListener("click",()=>{
+    $("metForm").reset();
+    hideMessage("metAddMessage");
+    openModal("metAddModal");
+    setTimeout(()=>$("metName").focus(),100);
+  });
+
+  // CURRENCY LOAD
+  async function loadCurrencies(){
+    $("curRows").innerHTML='<tr><td colspan="5" class="empty">Loading currencies...</td></tr>';
+    try{
+      const result=await GET("currencies");
+      if(!result.success)throw Error(result.message||"Could not load currencies");
+      currencies=(result.currencies||[]).map(normalizeCurrency);
+      renderCurrencies();
+    }catch(error){
+      $("curRows").innerHTML='<tr><td colspan="5" class="empty">'+esc(error.message)+'</td></tr>';
+      $("curCount").textContent="Unable to load currencies";
+    }
+  }
+
+  function renderCurrencies(){
+    const query=$("curSearch").value.trim().toLowerCase();
+    const list=currencies.filter(x=>
+      [x.code,x.name,x.symbol,x.status].join(" ").toLowerCase().includes(query)
+    );
+    $("curCount").textContent=list.length+" currencies";
+
+    if(!list.length){
+      $("curRows").innerHTML='<tr><td colspan="5" class="empty">No currency found.</td></tr>';
+      return;
+    }
+
+    $("curRows").innerHTML=list.map(x=>`
+      <tr>
+        <td><strong>${esc(x.code)}</strong></td>
+        <td>${esc(x.name||"—")}</td>
+        <td style="font-size:18px;font-weight:800">${esc(x.symbol)}</td>
+        <td><span class="pill ${String(x.status).toLowerCase()==="active"?"":"inactive"}">${esc(x.status)}</span></td>
+        <td><div class="actions">
+          <button class="btn secondary" data-cur-edit="${esc(x.currencyId)}">Edit</button>
+          ${String(x.status).toLowerCase()==="active"?
+            `<button class="btn danger" data-cur-delete="${esc(x.currencyId)}">Delete</button>`:""}
+        </div></td>
+      </tr>
+    `).join("");
+  }
+
+  // ADD CURRENCY
+  $("curForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    if(busy)return;
+
+    const code=$("curCode").value.trim().toUpperCase();
+    const name=$("curName").value.trim();
+    const symbol=$("curSymbol").value.trim();
+
+    if(!code||!name||!symbol){
+      message("curAddMessage","সবগুলো Currency Field পূরণ করুন।","error");
+      return;
+    }
+
+    busy=true;
+    $("curSave").disabled=true;
+    $("curSave").textContent="Saving...";
+
+    try{
+      const result=await POST({
+        action:"addCurrency",
+        currencyCode:code,
+        currencyName:name,
+        currencySymbol:symbol
+      });
+
+      if(!result.success)throw Error(result.message||"Add failed");
+
+      closeModal("curAddModal");
+      $("curForm").reset();
+      await loadCurrencies();
+
+      showSuccess("Currency Added Successfully!",""+code+" — "+name+" আপনার Currency List-এ যোগ করা হয়েছে।");
+
+    }catch(error){
+      message("curAddMessage",error.message,"error");
+    }finally{
+      busy=false;
+      $("curSave").disabled=false;
+      $("curSave").textContent="＋ Save Currency";
+    }
+  });
+
+  // CURRENCY EDIT / DELETE OPEN
+  $("curRows").addEventListener("click",e=>{
+    const edit=e.target.closest("[data-cur-edit]");
+    const del=e.target.closest("[data-cur-delete]");
+
+    if(edit){
+      editingCurrency=currencies.find(x=>String(x.currencyId)===edit.dataset.curEdit);
+      if(!editingCurrency)return;
+      $("editCurCode").value=editingCurrency.code;
+      $("editCurName").value=editingCurrency.name;
+      $("editCurSymbol").value=editingCurrency.symbol;
+      hideMessage("curEditMessage");
+      openModal("curEditModal");
+    }
+
+    if(del){
+      deletingCurrency=currencies.find(x=>String(x.currencyId)===del.dataset.curDelete);
+      if(!deletingCurrency)return;
+      $("curDeleteText").textContent=
+        'You are about to deactivate "'+deletingCurrency.code+" — "+deletingCurrency.name+
+        '". Existing Wage History will keep its saved currency details.';
+      hideMessage("curDeleteMessage");
+      openModal("curDeleteModal");
+    }
+  });
+
+  // SAVE CURRENCY EDIT
+  $("curEditForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    if(busy||!editingCurrency)return;
+
+    const code=$("editCurCode").value.trim().toUpperCase();
+    const name=$("editCurName").value.trim();
+    const symbol=$("editCurSymbol").value.trim();
+
+    if(!code||!name||!symbol){
+      message("curEditMessage","সবগুলো Currency Field পূরণ করুন।","error");
+      return;
+    }
+
+    busy=true;
+    $("curEditSave").disabled=true;
+    $("curEditSave").textContent="Saving...";
+
+    try{
+      const result=await POST({
+        action:"editCurrency",
+        currencyId:editingCurrency.currencyId,
+        currencyCode:code,
+        currencyName:name,
+        currencySymbol:symbol
+      });
+      if(!result.success)throw Error(result.message||"Update failed");
+
+      closeModal("curEditModal");
+      editingCurrency=null;
+      await loadCurrencies();
+      showSuccess("Currency Updated Successfully!",code+" — "+name+" আপডেট করা হয়েছে।");
+
+    }catch(error){
+      message("curEditMessage",error.message,"error");
+    }finally{
+      busy=false;
+      $("curEditSave").disabled=false;
+      $("curEditSave").textContent="Save Changes";
+    }
+  });
+
+  // DELETE CURRENCY
+  $("curDeleteConfirm").addEventListener("click",async()=>{
+    if(busy||!deletingCurrency)return;
+
+    busy=true;
+    $("curDeleteConfirm").disabled=true;
+    $("curDeleteConfirm").textContent="Deleting...";
+
+    try{
+      const result=await POST({
+        action:"deleteCurrency",
+        currencyId:deletingCurrency.currencyId
+      });
+      if(!result.success)throw Error(result.message||"Delete failed");
+
+      closeModal("curDeleteModal");
+      deletingCurrency=null;
+      await loadCurrencies();
+      showSuccess("Currency Deleted Successfully!","Currency-টি আপনার Active List থেকে সরানো হয়েছে।");
+
+    }catch(error){
+      message("curDeleteMessage",error.message,"error");
+    }finally{
+      busy=false;
+      $("curDeleteConfirm").disabled=false;
+      $("curDeleteConfirm").textContent="Yes, Delete";
+    }
+  });
+
+  // PAYMENT METHOD LOAD
+  async function loadMethods(){
+    $("metRows").innerHTML='<tr><td colspan="3" class="empty">Loading methods...</td></tr>';
+    try{
+      const result=await GET("methods");
+      if(!result.success)throw Error(result.message||"Could not load methods");
+      methods=(result.methods||[]).map(normalizeMethod);
+      renderMethods();
+    }catch(error){
+      $("metRows").innerHTML='<tr><td colspan="3" class="empty">'+esc(error.message)+'</td></tr>';
+      $("metCount").textContent="Unable to load methods";
+    }
+  }
+
+  function renderMethods(){
+    const query=$("metSearch").value.trim().toLowerCase();
+    const list=methods.filter(x=>
+      [x.name,x.status].join(" ").toLowerCase().includes(query)
+    );
+    $("metCount").textContent=list.length+" payment methods";
+
+    if(!list.length){
+      $("metRows").innerHTML='<tr><td colspan="3" class="empty">No payment method found.</td></tr>';
+      return;
+    }
+
+    $("metRows").innerHTML=list.map(x=>`
+      <tr>
+        <td><strong>${esc(x.name||"—")}</strong></td>
+        <td><span class="pill ${String(x.status).toLowerCase()==="active"?"":"inactive"}">${esc(x.status)}</span></td>
+        <td><div class="actions">
+          <button class="btn secondary" data-met-edit="${esc(x.methodId)}">Edit</button>
+          ${String(x.status).toLowerCase()==="active"?
+            `<button class="btn danger" data-met-delete="${esc(x.methodId)}">Delete</button>`:""}
+        </div></td>
+      </tr>
+    `).join("");
+  }
+
+  // ADD PAYMENT METHOD
+  $("metForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    if(busy)return;
+
+    const name=$("metName").value.trim();
+    if(!name){
+      message("metAddMessage","Payment Method Name দিতে হবে।","error");
+      return;
+    }
+
+    busy=true;
+    $("metSave").disabled=true;
+    $("metSave").textContent="Saving...";
+
+    try{
+      const result=await POST({
+        action:"addMethod",
+        methodName:name
+      });
+      if(!result.success)throw Error(result.message||"Add failed");
+
+      closeModal("metAddModal");
+      $("metForm").reset();
+      await loadMethods();
+
+      showSuccess("Payment Method Added Successfully!",name+" আপনার Payment Method List-এ যোগ করা হয়েছে।");
+
+    }catch(error){
+      message("metAddMessage",error.message,"error");
+    }finally{
+      busy=false;
+      $("metSave").disabled=false;
+      $("metSave").textContent="＋ Save Method";
+    }
+  });
+
+  // METHOD EDIT / DELETE OPEN
+  $("metRows").addEventListener("click",e=>{
+    const edit=e.target.closest("[data-met-edit]");
+    const del=e.target.closest("[data-met-delete]");
+
+    if(edit){
+      editingMethod=methods.find(x=>String(x.methodId)===edit.dataset.metEdit);
+      if(!editingMethod)return;
+      $("editMetName").value=editingMethod.name;
+      hideMessage("metEditMessage");
+      openModal("metEditModal");
+    }
+
+    if(del){
+      deletingMethod=methods.find(x=>String(x.methodId)===del.dataset.metDelete);
+      if(!deletingMethod)return;
+      $("metDeleteText").textContent='You are about to deactivate the payment method "'+deletingMethod.name+'".';
+      hideMessage("metDeleteMessage");
+      openModal("metDeleteModal");
+    }
+  });
+
+  // SAVE METHOD EDIT
+  $("metEditForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    if(busy||!editingMethod)return;
+
+    const name=$("editMetName").value.trim();
+    if(!name){
+      message("metEditMessage","Payment Method Name দিতে হবে।","error");
+      return;
+    }
+
+    busy=true;
+    $("metEditSave").disabled=true;
+    $("metEditSave").textContent="Saving...";
+
+    try{
+      const result=await POST({
+        action:"editMethod",
+        methodId:editingMethod.methodId,
+        methodName:name
+      });
+      if(!result.success)throw Error(result.message||"Update failed");
+
+      closeModal("metEditModal");
+      editingMethod=null;
+      await loadMethods();
+      showSuccess("Payment Method Updated Successfully!",name+" আপডেট করা হয়েছে।");
+
+    }catch(error){
+      message("metEditMessage",error.message,"error");
+    }finally{
+      busy=false;
+      $("metEditSave").disabled=false;
+      $("metEditSave").textContent="Save Changes";
+    }
+  });
+
+  // DELETE METHOD
+  $("metDeleteConfirm").addEventListener("click",async()=>{
+    if(busy||!deletingMethod)return;
+
+    busy=true;
+    $("metDeleteConfirm").disabled=true;
+    $("metDeleteConfirm").textContent="Deleting...";
+
+    try{
+      const result=await POST({
+        action:"deleteMethod",
+        methodId:deletingMethod.methodId
+      });
+      if(!result.success)throw Error(result.message||"Delete failed");
+
+      closeModal("metDeleteModal");
+      deletingMethod=null;
+      await loadMethods();
+      showSuccess("Payment Method Deleted Successfully!","Payment Method-টি Active List থেকে সরানো হয়েছে।");
+
+    }catch(error){
+      message("metDeleteMessage",error.message,"error");
+    }finally{
+      busy=false;
+      $("metDeleteConfirm").disabled=false;
+      $("metDeleteConfirm").textContent="Yes, Delete";
+    }
+  });
+
+  // CLOSE BUTTONS
+  root.querySelectorAll("[data-close]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      const id=button.dataset.close;
+      closeModal(id);
+
+      if(id==="curEditModal")editingCurrency=null;
+      if(id==="curDeleteModal")deletingCurrency=null;
+      if(id==="metEditModal")editingMethod=null;
+      if(id==="metDeleteModal")deletingMethod=null;
+    });
+  });
+
+  // CLOSE BY OUTSIDE CLICK
+  [
+    "curAddModal","metAddModal","curEditModal",
+    "curDeleteModal","metEditModal","metDeleteModal"
+  ].forEach(id=>{
+    $(id).addEventListener("click",e=>{
+      if(e.target===$(id)){
+        closeModal(id);
+        if(id==="curEditModal")editingCurrency=null;
+        if(id==="curDeleteModal")deletingCurrency=null;
+        if(id==="metEditModal")editingMethod=null;
+        if(id==="metDeleteModal")deletingMethod=null;
+      }
+    });
+  });
+
+  $("successOkay").addEventListener("click",()=>closeModal("successModal"));
+
+  // ESCAPE
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){
+      root.querySelectorAll(".modal.show").forEach(modal=>{
+        if(modal.id!=="successModal")closeModal(modal.id);
+      });
+      editingCurrency=null;
+      deletingCurrency=null;
+      editingMethod=null;
+      deletingMethod=null;
+    }
+  });
+
+  // SEARCH / REFRESH
+  $("curSearch").addEventListener("input",renderCurrencies);
+  $("metSearch").addEventListener("input",renderMethods);
+  $("curRefresh").addEventListener("click",loadCurrencies);
+  $("metRefresh").addEventListener("click",loadMethods);
+
+  // INITIAL LOAD
+  loadCurrencies();
+  loadMethods();
+
+})();
+</script>
+</body>
+</html>
