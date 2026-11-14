@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Add User</title>
+<style>
+.au-page{--au-ink:#172554;--au-muted:#64748b;--au-line:#e2e8f0;--au-bg:#f4f7ff;--au-primary:#4f46e5;--au-purple:#7c3aed;--au-cyan:#0891b2;color:var(--text,#172554);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;padding:4px 2px 24px}
+.au-page *{box-sizing:border-box}.au-hero{position:relative;overflow:hidden;border-radius:22px;padding:25px 28px;margin-bottom:20px;color:#fff;background:linear-gradient(120deg,#4338ca 0%,#6366f1 48%,#8b5cf6 100%);box-shadow:0 14px 32px #4f46e533}.au-hero:before,.au-hero:after{content:"";position:absolute;border-radius:50%;background:#ffffff12}.au-hero:before{width:210px;height:210px;right:8%;top:-125px}.au-hero:after{width:150px;height:150px;right:24%;bottom:-115px}.au-head{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.au-title-wrap{display:flex;align-items:center;gap:14px}.au-title-icon{width:52px;height:52px;border-radius:16px;background:#ffffff24;display:grid;place-items:center;font-size:25px;box-shadow:inset 0 1px #ffffff40}.au-head h2{font-size:23px;letter-spacing:-.5px;margin:0 0 5px;font-weight:800}.au-muted{color:#e0e7ff;font-size:12px}.au-top-btn{background:#fff;color:#4338ca!important;border:0!important}.au-card{background:var(--card,#fff);border:1px solid var(--border,#e5e7eb);border-radius:20px;padding:25px;box-shadow:0 8px 26px #0f172a0a}.au-section-head{display:flex;align-items:center;gap:10px;padding-bottom:17px;margin-bottom:20px;border-bottom:1px solid var(--border,#e5e7eb)}.au-section-icon{width:37px;height:37px;border-radius:12px;display:grid;place-items:center;background:#eef2ff;color:#4f46e5;font-size:18px}.au-section-head strong{font-size:15px;display:block}.au-section-head small{color:var(--muted,#64748b);font-size:11px}.au-grid{display:grid;grid-template-columns:1fr 1fr;gap:19px 20px}.au-field{display:flex;flex-direction:column;gap:8px;min-width:0}.au-field label{font-size:12px;font-weight:750;color:var(--text,#1e293b)}.au-required{color:#ef4444}.au-field input,.au-field select,.au-field textarea{width:100%;padding:13px 14px;border:1px solid var(--border,#dbe2ef);border-radius:11px;background:var(--bg,#f8fafc);color:var(--text,#172554);font:inherit;font-size:13px;outline:none;transition:.2s}.au-field input:focus,.au-field select:focus,.au-field textarea:focus{border-color:#6366f1;box-shadow:0 0 0 3px #6366f11c;background:var(--card,#fff)}.au-field input::placeholder,.au-field textarea::placeholder{color:#94a3b8}.au-field input[readonly]{background:#f1f5f9;color:#64748b}.au-field textarea{min-height:94px;resize:vertical}.au-hint{color:var(--muted,#64748b);font-size:11px;line-height:1.5}.au-full{grid-column:1/-1}.au-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 17px;border:0;border-radius:11px;cursor:pointer;font-weight:750;font-size:12px;transition:transform .18s,box-shadow .18s,opacity .18s}.au-btn:hover{transform:translateY(-1px)}.au-btn:disabled{opacity:.6;cursor:wait;transform:none}.au-primary{background:linear-gradient(110deg,#4f46e5,#7c3aed);color:#fff;box-shadow:0 6px 14px #4f46e533}.au-secondary{background:var(--hover,#f1f5f9);color:var(--text,#334155);border:1px solid var(--border,#e2e8f0)}.au-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px;padding-top:19px;border-top:1px solid var(--border,#e5e7eb)}.au-message{display:none;padding:12px 14px;border-radius:11px;margin-bottom:17px;font-size:12px;font-weight:650}.au-message.ok{display:block;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}.au-message.err{display:block;background:#fff1f2;color:#be123c;border:1px solid #fecdd3}.au-photo-box{padding:17px;border:1px dashed #a5b4fc;background:linear-gradient(135deg,#f5f3ff,#eff6ff);border-radius:15px}.au-photo-area{display:flex;align-items:center;gap:17px;flex-wrap:wrap}.au-preview{width:94px;height:94px;border-radius:22px;object-fit:cover;border:3px solid #fff;box-shadow:0 5px 16px #4338ca22;background:#e0e7ff;display:none}.au-upload-label{display:inline-flex;align-items:center;gap:9px;background:#4f46e5;color:white;padding:12px 16px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:800;box-shadow:0 5px 12px #4f46e52b}.au-upload-label:hover{background:#4338ca}.au-upload-label input{display:none}.au-remove{margin-top:9px;font-size:11px;color:#dc2626;background:transparent;border:0;cursor:pointer;font-weight:700}.au-progress{height:7px;background:#e0e7ff;border-radius:20px;overflow:hidden;margin-top:13px;display:none}.au-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#4f46e5,#06b6d4);transition:width .25s}.au-status-active{color:#059669}.au-modal{position:fixed;inset:0;z-index:99999;background:#0f172a99;backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:18px}.au-modal.show{display:flex;animation:auFade .2s ease}.au-modal-card{width:min(100%,390px);background:#fff;border-radius:24px;padding:30px 25px;text-align:center;box-shadow:0 25px 80px #0f172a45;animation:auPop .25s ease;color:#172554}.au-success-icon{width:78px;height:78px;margin:0 auto 17px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#059669;font-size:39px;box-shadow:0 0 0 9px #ecfdf5}.au-modal-card h3{font-size:22px;margin:10px 0 7px;font-weight:850}.au-modal-card p{font-size:13px;color:#64748b;line-height:1.6;margin:0 0 17px}.au-user-chip{display:inline-flex;flex-direction:column;gap:4px;padding:11px 20px;margin:2px 0 20px;background:#f1f5f9;border-radius:12px;min-width:190px}.au-user-chip small{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:1px}.au-user-chip strong{font-size:14px;color:#334155}.au-done{width:100%;background:linear-gradient(110deg,#059669,#10b981);color:white;padding:13px;border-radius:12px;font-size:13px}.au-modal-note{font-size:10px;color:#94a3b8;margin-top:12px}@keyframes auFade{from{opacity:0}to{opacity:1}}@keyframes auPop{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+@media(max-width:650px){.au-page{padding:0 0 18px}.au-hero{padding:20px 17px;border-radius:17px}.au-head h2{font-size:20px}.au-title-icon{width:45px;height:45px}.au-card{padding:17px;border-radius:16px}.au-grid{grid-template-columns:1fr;gap:16px}.au-full{grid-column:auto}.au-actions .au-btn{flex:1}.au-photo-box{padding:13px}}
+</style>
+</head>
+<body>
+<div class="au-page">
+  <div class="au-hero">
+    <div class="au-head">
+      <div class="au-title-wrap"><div class="au-title-icon">✦</div><div>
+        <h2 id="auTitle">Add New User</h2>
+        <div class="au-muted">Create and manage user profile information</div>
+      </div></div>
+      <button class="au-btn au-secondary au-top-btn" type="button" onclick="window.loadPage('user-list')">☷ &nbsp; View Users</button>
+    </div>
+  </div>
+
+  <div class="au-card">
+    <div class="au-section-head"><div class="au-section-icon">♙</div><div><strong>User Information</strong><small>Fill in the details below to create an account</small></div></div>
+    <div id="auMessage" class="au-message"></div>
+
+    <form id="auForm">
+      <div class="au-grid">
+
+        <div class="au-field">
+          <label>User ID <span class="au-required">*</span></label>
+          <input id="auUserId" required placeholder="Permanent User ID">
+          <span class="au-hint">User ID cannot be changed later.</span>
+        </div>
+
+        <div class="au-field">
+          <label>User Name <span class="au-required">*</span></label>
+          <input id="auUserName" required placeholder="Enter user name">
+        </div>
+
+        <div class="au-field">
+          <label>Password <span id="auPassLabel">*</span></label>
+          <input id="auPassword" type="password" placeholder="Minimum 8 characters">
+          <span class="au-hint" id="auPassHint">Required for a new user.</span>
+        </div>
+
+        <div class="au-field">
+          <label>Phone</label>
+          <input id="auPhone" type="tel" placeholder="Phone number">
+        </div>
+
+        <div class="au-field">
+          <label>Gmail</label>
+          <input id="auGmail" type="email" placeholder="example@gmail.com">
+        </div>
+
+        <div class="au-field">
+          <label>Area</label>
+          <input id="auArea" placeholder="User area">
+        </div>
+
+        <div class="au-field">
+          <label>Active Date</label>
+          <input id="auActiveDate" type="date">
+        </div>
+
+        <div class="au-field">
+          <label>Status</label>
+          <select id="auStatus">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div class="au-field au-full">
+          <label>Profile Picture</label>
+          <div class="au-photo-box"><div class="au-photo-area">
+            <img id="auPreview" class="au-preview" alt="Profile preview">
+            <div>
+              <label class="au-upload-label">
+                <span>📷 Choose Picture</span>
+                <input id="auPhoto" type="file" accept="image/*">
+              </label>
+              <div class="au-hint" style="margin-top:8px">Phone Gallery বা Camera থেকে ছবি নির্বাচন করো। JPG, PNG, WEBP সমর্থিত।</div>
+              <button type="button" class="au-remove" id="auRemovePhoto">Remove selected picture</button>
+            </div>
+          </div></div>
+          <div class="au-progress" id="auProgress"><span id="auProgressBar"></span></div>
+          <div class="au-hint" id="auPhotoStatus"></div>
+        </div>
+
+        <div class="au-field au-full">
+          <label>Comment / Note</label>
+          <textarea id="auComment" placeholder="Additional information..."></textarea>
+        </div>
+
+      </div>
+
+      <div class="au-actions">
+        <button class="au-btn au-primary" id="auSubmit" type="submit">Save User</button>
+        <button class="au-btn au-secondary" type="button" id="auReset">Reset</button>
+        <button class="au-btn au-secondary" type="button" onclick="window.loadPage('user-list')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="au-modal" id="auSuccessModal" role="dialog" aria-modal="true" aria-labelledby="auSuccessTitle">
+  <div class="au-modal-card">
+    <div class="au-success-icon">✓</div>
+    <h3 id="auSuccessTitle">User Added Successfully!</h3>
+    <p id="auSuccessText">The new user account has been created successfully.</p>
+    <div class="au-user-chip"><small>User account</small><strong id="auSuccessName">New User</strong><strong id="auSuccessId">ID: —</strong></div>
+    <button class="au-btn au-done" type="button" id="auSuccessDone">Done</button>
+    <div class="au-modal-note">Your user information has been saved.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const API_URL="https://script.google.com/macros/s/AKfycbzlabjyglodpoiPmupmA2buZqMyFiSPScIrTPm0T8Il7Z7bKtAkZglsfDk9WZAFOHgk/exec";
+  const $=id=>document.getElementById(id);
+
+  let editing=false;
+  let originalUserId="";
+  let existingPicture="";
+  let selectedFile=null;
+  let removePicture=false;
+
+  function message(text,type){
+    $("auMessage").textContent=text;
+    $("auMessage").className="au-message "+type;
+  }
+
+  function showSuccessPopup(userName,userId){
+    $("auSuccessTitle").textContent=editing?"User Updated Successfully!":"User Added Successfully!";
+    $("auSuccessText").textContent=editing?"The user profile has been updated successfully.":"A new user account has been created successfully.";
+    $("auSuccessName").textContent=userName||"New User";
+    $("auSuccessId").textContent="ID: "+(userId||"—");
+    $("auSuccessModal").classList.add("show");
+    $("auSuccessDone").focus();
+  }
+  function closeSuccessPopup(){ $("auSuccessModal").classList.remove("show"); }
+  $("auSuccessDone").addEventListener("click",closeSuccessPopup);
+  $("auSuccessModal").addEventListener("click",e=>{if(e.target===$("auSuccessModal"))closeSuccessPopup();});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSuccessPopup();});
+
+  function field(obj,keys){
+    for(const k of keys) if(obj && obj[k]!==undefined && obj[k]!==null) return obj[k];
+    return "";
+  }
+
+  function showPicture(url){
+    const img=$("auPreview");
+    if(url){img.src=url;img.style.display="block";}
+    else{img.removeAttribute("src");img.style.display="none";}
+  }
+
+  async function request(payload){
+    const response=await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify(payload)
+    });
+    const data=await response.json();
+    if(!data.success) throw new Error(data.message||"Request failed.");
+    return data;
+  }
+
+  function compressImage(file){
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onerror=()=>reject(new Error("Could not read image."));
+      reader.onload=()=>{
+        const img=new Image();
+        img.onerror=()=>reject(new Error("Invalid image file."));
+        img.onload=()=>{
+          const max=1000;
+          const scale=Math.min(1,max/Math.max(img.width,img.height));
+          const canvas=document.createElement("canvas");
+          canvas.width=Math.round(img.width*scale);
+          canvas.height=Math.round(img.height*scale);
+          const ctx=canvas.getContext("2d");
+          ctx.drawImage(img,0,0,canvas.width,canvas.height);
+          resolve(canvas.toDataURL("image/jpeg",0.82));
+        };
+        img.src=reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  $("auPhoto").addEventListener("change",function(){
+    const file=this.files[0];
+    if(!file)return;
+    if(!file.type.startsWith("image/")){
+      message("Please select an image file.","err");
+      this.value="";
+      return;
+    }
+    selectedFile=file;
+    removePicture=false;
+    showPicture(URL.createObjectURL(file));
+    $("auPhotoStatus").textContent=file.name+" selected. It will upload when you save.";
+  });
+
+  $("auRemovePhoto").addEventListener("click",function(){
+    selectedFile=null;
+    removePicture=true;
+    $("auPhoto").value="";
+    showPicture("");
+    $("auPhotoStatus").textContent="Picture removed. Save to update profile.";
+  });
+
+  async function loadEditUser(){
+    const id=new URLSearchParams(location.search).get("userId")||window.__wageEditUserId||"";
+    if(!id)return;
+
+    editing=true;
+    originalUserId=id;
+    $("auTitle").textContent="Loading User...";
+    $("auSubmit").disabled=true;
+
+    try{
+      const response=await fetch(API_URL+"?api=profile&userId="+encodeURIComponent(id),{cache:"no-store"});
+      const data=await response.json();
+      if(!data.success)throw new Error(data.message||"User not found.");
+
+      const u=data.user||data.profile||data.data;
+      if(!u)throw new Error("User information missing.");
+
+      $("auUserId").value=field(u,["userId","User ID"]);
+      $("auUserName").value=field(u,["userName","User Name"]);
+      $("auPhone").value=field(u,["phone","Phone"]);
+      $("auGmail").value=field(u,["gmail","Gmail"]);
+      $("auArea").value=field(u,["area","Area"]);
+      $("auActiveDate").value=String(field(u,["activeDate","Active Date"])||"").slice(0,10);
+      $("auStatus").value=field(u,["status","Status"])||"Active";
+      $("auComment").value=field(u,["comment","Comment"]);
+
+      existingPicture=field(u,["profilePicture","Profile Picture"]);
+      showPicture(existingPicture);
+
+      $("auUserId").readOnly=true;
+      $("auPassword").required=false;
+      $("auPassLabel").textContent="(Optional)";
+      $("auPassHint").textContent="Leave blank to keep the current password.";
+      $("auTitle").textContent="Edit User";
+      $("auSubmit").textContent="Update User";
+      window.__wageEditUserId="";
+
+    }catch(err){
+      message(err.message,"err");
+    }finally{
+      $("auSubmit").disabled=false;
+    }
+  }
+
+  $("auReset").addEventListener("click",()=>{
+    if(editing){loadEditUser();return;}
+    $("auForm").reset();
+    selectedFile=null;
+    removePicture=false;
+    existingPicture="";
+    showPicture("");
+    $("auPhotoStatus").textContent="";
+    $("auMessage").className="au-message";
+  });
+
+  $("auForm").addEventListener("submit",async event=>{
+    event.preventDefault();
+
+    const id=$("auUserId").value.trim();
+    const name=$("auUserName").value.trim();
+    const password=$("auPassword").value;
+
+    if(!id||!name){message("User ID and User Name are required.","err");return;}
+    if(!editing&&password.length<8){message("Password must be at least 8 characters.","err");return;}
+    if(editing&&id!==originalUserId){message("User ID cannot be changed.","err");return;}
+
+    const button=$("auSubmit");
+    button.disabled=true;
+
+    try{
+      let picture=removePicture?"":existingPicture;
+
+      if(selectedFile){
+        button.textContent="Preparing Picture...";
+        $("auProgress").style.display="block";
+        $("auProgressBar").style.width="25%";
+
+        const imageData=await compressImage(selectedFile);
+
+        $("auProgressBar").style.width="55%";
+        button.textContent="Uploading Picture...";
+
+        // FIXED: Code.gs expects "image", not "imageData".
+        const uploaded=await request({
+          action:"uploadProfilePicture",
+          userId:id,
+          image:imageData
+        });
+
+        // FIXED: Code.gs returns the uploaded image URL as "url".
+        picture=uploaded.url;
+
+        $("auProgressBar").style.width="100%";
+        $("auPhotoStatus").textContent="Picture uploaded successfully.";
+      }
+
+      button.textContent=editing?"Updating User...":"Saving User...";
+
+      const payload={
+        action:editing?"editUser":"addUser",
+        userId:id,
+        userName:name,
+        password:password,
+        phone:$("auPhone").value.trim(),
+        gmail:$("auGmail").value.trim(),
+        area:$("auArea").value.trim(),
+        activeDate:$("auActiveDate").value,
+        profilePicture:picture,
+        status:$("auStatus").value,
+        comment:$("auComment").value.trim()
+      };
+
+      const result=await request(payload);
+      if(!editing){
+        showSuccessPopup(name,id);
+      }else{
+        message(result.message||"User updated successfully.","ok");
+      }
+
+      if(!editing){
+        $("auForm").reset();
+        selectedFile=null;
+        existingPicture="";
+        removePicture=false;
+        showPicture("");
+        $("auPhotoStatus").textContent="";
+        $("auProgress").style.display="none";
+      }else{
+        existingPicture=picture;
+        selectedFile=null;
+        removePicture=false;
+        $("auPassword").value="";
+      }
+
+    }catch(err){
+      message(err.message,"err");
+    }finally{
+      button.disabled=false;
+      button.textContent=editing?"Update User":"Save User";
+      setTimeout(()=>{$("auProgress").style.display="none";},1000);
+    }
+  });
+
+  loadEditUser();
+})();
+</script>
+</body>
+</html>
