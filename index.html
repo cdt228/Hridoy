@@ -673,6 +673,7 @@ body:not(.card-hide-mode) .is-card-hidden{
 
 <body>
 
+
 <div id="authScreen">
   <div class="login-card">
     <div class="login-brand">
@@ -717,6 +718,7 @@ body:not(.card-hide-mode) .is-card-hidden{
     </form>
   </div>
 </div>
+
 
 <div class="app" id="mainApp" style="display:none">
 
@@ -1410,7 +1412,6 @@ function applyPermissions(){
 
 }
 
-
 function updateAdminProfile(){
 
   if(!currentAdmin) return;
@@ -1858,6 +1859,7 @@ async function executePageScripts(container){
   }
 
 }
+
 
 const CARD_HIDE_STORAGE_KEY =
   "wage_hidden_dashboard_cards";
@@ -2326,6 +2328,7 @@ async function loadPage(page,addHistory=true){
   }
 
 }
+
 window.loadPage = loadPage;
 
 window.__wageEditUserId = "";
