@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Payment</title>
+
+<style>
+#userPaymentPage{
+  --up-primary:var(--primary,#087f5b);
+  --up-bg:var(--bg,#f5f7fb);
+  --up-card:var(--card,#fff);
+  --up-text:var(--text,#172033);
+  --up-muted:var(--muted,#8490a3);
+  --up-border:var(--border,#e8edf3);
+  color:var(--up-text);
+  font-family:inherit;
+  width:100%;
+}
+#userPaymentPage *{box-sizing:border-box}
+#userPaymentPage .up-wrap{width:100%;padding:4px}
+#userPaymentPage .up-heading{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;flex-wrap:wrap;margin-bottom:20px
+}
+#userPaymentPage .up-heading h2{font-size:23px;margin:0 0 5px;font-weight:800}
+#userPaymentPage .up-sub{font-size:13px;color:var(--up-muted)}
+#userPaymentPage button,#userPaymentPage input,
+#userPaymentPage select,#userPaymentPage textarea{font:inherit}
+#userPaymentPage button{cursor:pointer}
+#userPaymentPage .up-btn{
+  border:1px solid var(--up-border);background:var(--up-card);
+  color:var(--up-text);padding:10px 15px;border-radius:10px;
+  font-size:13px;font-weight:700
+}
+#userPaymentPage .up-btn.primary{
+  background:var(--up-primary);color:white;border-color:var(--up-primary)
+}
+#userPaymentPage .up-btn.danger{color:#dc3545}
+#userPaymentPage .up-btn:disabled{
+  opacity:.6;cursor:not-allowed
+}
+#userPaymentPage .up-stats{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:13px;margin-bottom:20px
+}
+#userPaymentPage .up-stat{
+  background:var(--up-card);border:1px solid var(--up-border);
+  border-radius:14px;padding:17px
+}
+#userPaymentPage .up-stat small{
+  display:block;color:var(--up-muted);font-size:12px;margin-bottom:9px
+}
+#userPaymentPage .up-stat strong{
+  font-size:22px;display:block;overflow-wrap:anywhere
+}
+#userPaymentPage .up-panel{
+  background:var(--up-card);border:1px solid var(--up-border);
+  border-radius:15px;padding:18px;margin-bottom:18px
+}
+#userPaymentPage .up-panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;flex-wrap:wrap;margin-bottom:15px
+}
+#userPaymentPage .up-panel-head h3{margin:0;font-size:16px}
+#userPaymentPage .up-form-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px
+}
+#userPaymentPage .up-field{min-width:0}
+#userPaymentPage .up-field.full{grid-column:1/-1}
+#userPaymentPage .up-field label{
+  display:block;font-size:12px;font-weight:700;margin-bottom:7px
+}
+#userPaymentPage .up-field input,
+#userPaymentPage .up-field select,
+#userPaymentPage .up-field textarea,
+#userPaymentPage .up-search{
+  width:100%;border:1px solid var(--up-border);border-radius:10px;
+  padding:11px 12px;background:var(--up-bg);color:var(--up-text);
+  outline:none;min-height:42px
+}
+#userPaymentPage .up-field textarea{min-height:75px;resize:vertical}
+#userPaymentPage .up-field input:focus,
+#userPaymentPage .up-field select:focus,
+#userPaymentPage .up-field textarea:focus,
+#userPaymentPage .up-search:focus{border-color:var(--up-primary)}
+#userPaymentPage .up-actions{
+  display:flex;gap:9px;flex-wrap:wrap;margin-top:16px
+}
+#userPaymentPage .up-user-picker{position:relative}
+#userPaymentPage .up-user-selected{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:9px 12px;border:1px solid var(--up-border);
+  border-radius:10px;background:var(--up-bg);cursor:pointer;
+  min-height:56px;text-align:left;color:var(--up-text)
+}
+#userPaymentPage .up-avatar{
+  width:38px;height:38px;border-radius:50%;flex:0 0 38px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--up-primary);color:#fff;font-weight:800;
+  overflow:hidden;font-size:14px
+}
+#userPaymentPage .up-avatar img{width:100%;height:100%;object-fit:cover}
+#userPaymentPage .up-user-meta{min-width:0;flex:1}
+#userPaymentPage .up-user-meta strong{
+  display:block;font-size:13px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap
+}
+#userPaymentPage .up-user-meta small{font-size:11px;color:var(--up-muted)}
+#userPaymentPage .up-picker-arrow{color:var(--up-muted)}
+#userPaymentPage .up-user-menu{
+  display:none;position:absolute;z-index:20;top:calc(100% + 5px);
+  left:0;right:0;background:var(--up-card);border:1px solid var(--up-border);
+  border-radius:12px;padding:9px;box-shadow:0 12px 35px #0002;
+  max-height:300px;overflow:auto
+}
+#userPaymentPage .up-user-menu.open{display:block}
+#userPaymentPage .up-user-menu .up-search{margin-bottom:8px}
+#userPaymentPage .up-user-option{
+  display:flex;align-items:center;gap:10px;padding:9px;border-radius:9px;
+  cursor:pointer
+}
+#userPaymentPage .up-user-option:hover{background:var(--up-bg)}
+#userPaymentPage .up-user-option .up-user-meta strong{font-size:13px}
+#userPaymentPage .up-user-option .up-user-meta small{font-size:11px}
+#userPaymentPage .up-toolbar{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px
+}
+#userPaymentPage .up-toolbar .up-search{flex:1;min-width:180px}
+#userPaymentPage .up-toolbar select{
+  border:1px solid var(--up-border);border-radius:10px;
+  padding:10px;background:var(--up-bg);color:var(--up-text)
+}
+#userPaymentPage .up-table-wrap{overflow-x:auto}
+#userPaymentPage table{width:100%;border-collapse:collapse;min-width:760px}
+#userPaymentPage th{
+  font-size:11px;color:var(--up-muted);font-weight:800;
+  text-align:left;padding:12px;border-bottom:1px solid var(--up-border);
+  white-space:nowrap
+}
+#userPaymentPage td{
+  padding:12px;border-bottom:1px solid var(--up-border);
+  font-size:12px;vertical-align:middle
+}
+#userPaymentPage tbody tr:last-child td{border-bottom:0}
+#userPaymentPage .up-user-cell{
+  display:flex;align-items:center;gap:9px;min-width:145px
+}
+#userPaymentPage .up-user-cell .up-avatar{
+  width:32px;height:32px;flex-basis:32px
+}
+#userPaymentPage .up-user-cell strong{font-size:12px}
+#userPaymentPage .up-user-cell small{
+  display:block;color:var(--up-muted);font-size:10px;margin-top:3px
+}
+#userPaymentPage .up-pill{
+  display:inline-block;padding:5px 9px;border-radius:20px;
+  background:var(--up-bg);font-size:10px;font-weight:800
+}
+#userPaymentPage .up-row-actions{display:flex;gap:5px;flex-wrap:wrap}
+#userPaymentPage .up-icon-btn{
+  border:1px solid var(--up-border);background:var(--up-card);
+  color:var(--up-text);border-radius:8px;padding:7px 9px;font-size:11px
+}
+#userPaymentPage .up-icon-btn.delete{color:#dc3545}
+#userPaymentPage .up-empty{
+  text-align:center;padding:30px;color:var(--up-muted);font-size:13px
+}
+#userPaymentPage .up-pagination{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:var(--up-muted)
+}
+#userPaymentPage .up-modal{
+  display:none;position:fixed;inset:0;background:#0008;z-index:9999;
+  align-items:center;justify-content:center;padding:15px
+}
+#userPaymentPage .up-modal.show{display:flex}
+#userPaymentPage .up-modal-box{
+  width:min(520px,100%);max-height:90vh;overflow:auto;
+  background:var(--up-card);color:var(--up-text);
+  border-radius:16px;padding:20px;border:1px solid var(--up-border);
+  box-shadow:0 20px 60px #0003
+}
+#userPaymentPage .up-modal-head{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;margin-bottom:15px
+}
+#userPaymentPage .up-modal-head h3{margin:0;font-size:17px}
+#userPaymentPage .up-close{
+  border:0;background:transparent;color:var(--up-muted);
+  font-size:24px;line-height:1;padding:3px 7px
+}
+#userPaymentPage .up-toast{
+  position:fixed;right:20px;bottom:20px;z-index:10001;
+  background:#172033;color:#fff;padding:12px 17px;border-radius:10px;
+  font-size:13px;box-shadow:0 5px 20px #0003;display:none;max-width:90vw
+}
+#userPaymentPage .up-toast.show{display:block}
+#userPaymentPage .up-loading{
+  display:none;text-align:center;padding:15px;color:var(--up-muted);font-size:13px
+}
+#userPaymentPage .up-loading.show{display:block}
+#userPaymentPage .up-mobile-list{display:none}
+#userPaymentPage .up-mobile-card{
+  border:1px solid var(--up-border);border-radius:12px;
+  padding:13px;margin-bottom:10px
+}
+#userPaymentPage .up-mobile-top{
+  display:flex;justify-content:space-between;gap:8px;align-items:center
+}
+#userPaymentPage .up-mobile-details{
+  display:grid;grid-template-columns:1fr 1fr;gap:9px;
+  margin:12px 0;font-size:11px
+}
+#userPaymentPage .up-mobile-details span{
+  color:var(--up-muted);display:block;margin-bottom:3px
+}
+#userPaymentPage .up-mobile-details strong{
+  font-size:12px;overflow-wrap:anywhere
+}
+
+/* Processing spinner */
+#userPaymentPage .up-spinner{
+  display:inline-block;width:14px;height:14px;
+  border:2px solid #ffffff70;border-top-color:#fff;
+  border-radius:50%;vertical-align:middle;
+  animation:upSpin .7s linear infinite;margin-right:7px
+}
+@keyframes upSpin{to{transform:rotate(360deg)}}
+
+/* Success popup */
+#userPaymentPage .up-success-icon{
+  width:62px;height:62px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:#e6f8ef;color:#11965b;font-size:34px;
+  font-weight:800;margin:5px auto 15px
+}
+#userPaymentPage .up-success-title{
+  text-align:center;font-size:20px;font-weight:800;margin-bottom:8px
+}
+#userPaymentPage .up-success-message{
+  text-align:center;color:var(--up-muted);font-size:13px;
+  line-height:1.6;overflow-wrap:anywhere
+}
+#userPaymentPage .up-success-footer{
+  display:flex;justify-content:center;margin-top:20px
+}
+#userPaymentPage .up-success-footer button{min-width:120px}
+
+/* NEW: processing and error popup spinner/icon */
+#userPaymentPage .up-process-spinner{
+  width:48px;height:48px;
+  border:4px solid var(--up-border);
+  border-top-color:var(--up-primary);
+  border-radius:50%;
+  margin:0 auto 16px;
+  animation:upPopupSpin .8s linear infinite;
+}
+@keyframes upPopupSpin{to{transform:rotate(360deg)}}
+#userPaymentPage .up-popup-title{
+  text-align:center;font-size:19px;font-weight:800;margin-bottom:8px
+}
+#userPaymentPage .up-popup-message{
+  text-align:center;color:var(--up-muted);font-size:13px;
+  line-height:1.6;overflow-wrap:anywhere
+}
+#userPaymentPage .up-popup-icon{
+  width:58px;height:58px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 15px;font-size:30px;font-weight:800;
+  background:#e6f8ef;color:#11965b
+}
+#userPaymentPage .up-popup-icon.error{
+  background:#fdeaea;color:#dc3545
+}
+
+@media(max-width:850px){
+  #userPaymentPage .up-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  #userPaymentPage .up-wrap{padding:0}
+  #userPaymentPage .up-heading h2{font-size:20px}
+  #userPaymentPage .up-panel{padding:13px}
+  #userPaymentPage .up-form-grid{grid-template-columns:1fr}
+  #userPaymentPage .up-field.full{grid-column:auto}
+  #userPaymentPage .up-stats{gap:8px}
+  #userPaymentPage .up-stat{padding:12px}
+  #userPaymentPage .up-stat strong{font-size:18px}
+  #userPaymentPage .up-stat small{font-size:10px}
+  #userPaymentPage .up-table-wrap{display:none}
+  #userPaymentPage .up-mobile-list{display:block}
+  #userPaymentPage .up-toolbar{display:grid;grid-template-columns:1fr 1fr}
+  #userPaymentPage .up-toolbar .up-search{grid-column:1/-1;min-width:0}
+  #userPaymentPage .up-toolbar select{width:100%;min-width:0}
+  #userPaymentPage .up-modal{padding:10px;align-items:center}
+  #userPaymentPage .up-modal-box{
+    width:100%;max-height:90dvh;padding:16px;border-radius:16px
+  }
+  #userPaymentPage .up-actions .up-btn{flex:1;min-height:42px}
+  #userPaymentPage .up-mobile-top{align-items:flex-start}
+}
+@media(max-width:360px){
+  #userPaymentPage .up-stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+
+<body>
+<div id="userPaymentPage">
+<div class="up-wrap">
+
+  <div class="up-heading">
+    <div>
+      <h2>User Payment</h2>
+      <div class="up-sub">Manage user payments and payment records</div>
+    </div>
+    <button class="up-btn" id="upRefreshBtn" type="button">↻ Refresh</button>
+  </div>
+
+  <div class="up-stats">
+    <div class="up-stat"><small>Total Payments</small><strong id="upTotalCount">0</strong></div>
+    <div class="up-stat"><small>Total Amount</small><strong id="upTotalAmount">0</strong></div>
+    <div class="up-stat"><small>Today's Payments</small><strong id="upTodayAmount">0</strong></div>
+    <div class="up-stat"><small>Active Users</small><strong id="upUserCount">0</strong></div>
+  </div>
+
+  <!-- ADD PAYMENT -->
+  <div class="up-panel">
+    <div class="up-panel-head">
+      <h3>Add New Payment</h3>
+      <span class="up-pill">NEW PAYMENT</span>
+    </div>
+
+    <form id="upPaymentForm">
+      <div class="up-form-grid">
+
+        <div class="up-field full">
+          <label>Select User *</label>
+          <div class="up-user-picker">
+            <button type="button" class="up-user-selected" id="upUserSelected">
+              <span class="up-avatar" id="upSelectedAvatar">?</span>
+              <span class="up-user-meta">
+                <strong id="upSelectedName">Select a user</strong>
+                <small id="upSelectedId">Choose user account</small>
+              </span>
+              <span class="up-picker-arrow">⌄</span>
+            </button>
+            <div class="up-user-menu" id="upUserMenu">
+              <input class="up-search" id="upUserSearch" type="search" placeholder="Search user name or ID...">
+              <div id="upUserOptions"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="up-field">
+          <label>Amount *</label>
+          <input type="number" id="upAmount" min="0.01" step="0.01" placeholder="Enter amount" required>
+        </div>
+
+        <div class="up-field">
+          <label>Currency *</label>
+          <select id="upCurrency" required>
+            <option value="">Loading currencies...</option>
+          </select>
+        </div>
+
+        <div class="up-field">
+          <label>Payment Method *</label>
+          <select id="upMethod" required>
+            <option value="">Loading methods...</option>
+          </select>
+        </div>
+
+        <div class="up-field">
+          <label>Transaction ID</label>
+          <input type="text" id="upTransaction" placeholder="Transaction ID (optional)">
+        </div>
+
+        <div class="up-field">
+          <label>Payment Date *</label>
+          <input type="date" id="upDate" required>
+        </div>
+
+        <div class="up-field full">
+          <label>Comment</label>
+          <textarea id="upComment" placeholder="Write a comment (optional)"></textarea>
+        </div>
+      </div>
+
+      <div class="up-actions">
+        <button class="up-btn primary" type="submit" id="upSubmitBtn">+ Add Payment</button>
+        <button class="up-btn" type="reset" id="upResetBtn">Reset</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- PAYMENT RECORDS -->
+  <div class="up-panel">
+    <div class="up-panel-head">
+      <h3>Payment Records</h3>
+      <span class="up-pill" id="upRecordCount">0 RECORDS</span>
+    </div>
+
+    <div class="up-toolbar">
+      <input class="up-search" type="search" id="upRecordSearch" placeholder="Search user, ID, transaction...">
+      <select id="upCurrencyFilter"><option value="">All Currencies</option></select>
+      <select id="upPageSize">
+        <option value="10">10 per page</option>
+        <option value="20">20 per page</option>
+        <option value="50">50 per page</option>
+        <option value="100">100 per page</option>
+      </select>
+    </div>
+
+    <div class="up-loading" id="upLoading">Loading payment records...</div>
+
+    <div class="up-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>USER</th>
+            <th>AMOUNT</th>
+            <th>METHOD</th>
+            <th>TRANSACTION ID</th>
+            <th>DATE</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody id="upTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="up-mobile-list" id="upMobileList"></div>
+
+    <div class="up-pagination">
+      <span id="upPageInfo">Showing 0 records</span>
+      <div style="display:flex;gap:7px">
+        <button class="up-btn" type="button" id="upPrevPage">Previous</button>
+        <button class="up-btn" type="button" id="upNextPage">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT POPUP -->
+<div class="up-modal" id="upEditModal">
+  <div class="up-modal-box">
+    <div class="up-modal-head">
+      <h3>Edit Payment</h3>
+      <button class="up-close" type="button" data-close="upEditModal">×</button>
+    </div>
+
+    <form id="upEditForm">
+      <div class="up-form-grid">
+
+        <div class="up-field full">
+          <label>Select User *</label>
+          <select id="upEditUser" required>
+            <option value="">Select user</option>
+          </select>
+        </div>
+
+        <div class="up-field">
+          <label>Amount *</label>
+          <input type="number" id="upEditAmount" min="0.01" step="0.01" required>
+        </div>
+
+        <div class="up-field">
+          <label>Currency *</label>
+          <select id="upEditCurrency" required></select>
+        </div>
+
+        <div class="up-field">
+          <label>Payment Method *</label>
+          <select id="upEditMethod" required></select>
+        </div>
+
+        <div class="up-field">
+          <label>Transaction ID</label>
+          <input type="text" id="upEditTransaction">
+        </div>
+
+        <div class="up-field full">
+          <label>Payment Date *</label>
+          <input type="date" id="upEditDate" required>
+        </div>
+
+        <div class="up-field full">
+          <label>Comment</label>
+          <textarea id="upEditComment"></textarea>
+        </div>
+      </div>
+
+      <div class="up-actions">
+        <button class="up-btn primary" type="submit" id="upEditSaveBtn">
+          Save Changes
+        </button>
+        <button class="up-btn" type="button" id="upEditCancelBtn">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- VIEW POPUP -->
+<div class="up-modal" id="upViewModal">
+  <div class="up-modal-box">
+    <div class="up-modal-head">
+      <h3>Payment Details</h3>
+      <button class="up-close" type="button" data-close="upViewModal">×</button>
+    </div>
+    <div id="upViewContent"></div>
+    <div class="up-actions">
+      <button class="up-btn" type="button" data-close="upViewModal">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRMATION -->
+<div class="up-modal" id="upDeleteModal">
+  <div class="up-modal-box">
+    <div class="up-modal-head">
+      <h3>Delete Payment?</h3>
+      <button class="up-close" type="button" data-close="upDeleteModal">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--up-muted);line-height:1.7">
+      Are you sure you want to delete this payment? It will be moved to Deleted Payment.
+    </p>
+    <div class="up-actions">
+      <button class="up-btn danger" type="button" id="upConfirmDelete">Delete Payment</button>
+      <button class="up-btn" type="button" data-close="upDeleteModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING POPUP -->
+<div class="up-modal" id="upProcessingModal">
+  <div class="up-modal-box" style="max-width:380px;text-align:center">
+    <div class="up-process-spinner"></div>
+    <div class="up-popup-title">Processing...</div>
+    <div class="up-popup-message" id="upProcessingMessage">
+      Please wait. Your request is being processed.
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS POPUP -->
+<div class="up-modal" id="upSuccessModal">
+  <div class="up-modal-box" style="max-width:380px;text-align:center">
+    <div class="up-success-icon">✓</div>
+    <div class="up-success-title" id="upSuccessTitle">Save Entry</div>
+    <div class="up-success-message" id="upSuccessMessage">
+      Your operation has been completed successfully.
+    </div>
+    <div class="up-success-footer">
+      <button class="up-btn primary" type="button" id="upSuccessOK">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- ERROR POPUP -->
+<div class="up-modal" id="upErrorModal">
+  <div class="up-modal-box" style="max-width:380px;text-align:center">
+    <div class="up-popup-icon error">!</div>
+    <div class="up-popup-title">Error!</div>
+    <div class="up-popup-message" id="upErrorMessage">
+      Your request could not be completed.
+    </div>
+    <div class="up-success-footer">
+      <button class="up-btn primary" type="button" id="upErrorOK">OK</button>
+    </div>
+  </div>
+</div>
+
+<div class="up-toast" id="upToast"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const ROOT=document.getElementById("userPaymentPage");
+if(!ROOT || ROOT.dataset.initialized==="yes") return;
+ROOT.dataset.initialized="yes";
+
+/* ================= API CONFIG ================= */
+
+const PAYMENT_API=
+"https://script.google.com/macros/s/AKfycbwTP0v21FArPYP3SN2Ch2gTBXTplbkRDDu49iAp4C5mSEN0BAxxmtlAPJxGXRSIaF-p/exec";
+
+const USER_API=
+"https://script.google.com/macros/s/AKfycbzlabjyglodpoiPmupmA2buZqMyFiSPScIrTPm0T8Il7Z7bKtAkZglsfDk9WZAFOHgk/exec";
+
+/* ================= STATE ================= */
+
+let users=[];
+let currencies=[];
+let methods=[];
+let payments=[];
+let selectedUser=null;
+let editingPaymentId="";
+let deletingPaymentId="";
+let currentPage=1;
+let pageSize=10;
+let editSaving=false;
+let addSaving=false;
+let deleteSaving=false;
+
+const $=id=>document.getElementById(id);
+
+const money=value=>{
+  const n=Number(value||0);
+  return n.toLocaleString(undefined,{maximumFractionDigits:2});
+};
+
+const today=()=>{
+  const d=new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,"0"),
+    String(d.getDate()).padStart(2,"0")
+  ].join("-");
+};
+
+function escapeHTML(value){
+  return String(value==null?"":value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function toast(message){
+  const el=$("upToast");
+  el.textContent=message;
+  el.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer=setTimeout(()=>el.classList.remove("show"),3200);
+}
+
+function showSuccess(message,title="Save Entry"){
+  $("upSuccessTitle").textContent=title;
+  $("upSuccessMessage").textContent=message;
+  $("upSuccessModal").classList.add("show");
+}
+
+function showError(message){
+  $("upErrorMessage").textContent=message||"Your request could not be completed.";
+  $("upErrorModal").classList.add("show");
+}
+
+function closeModal(id){
+  $(id).classList.remove("show");
+}
+
+function showLoading(show){
+  $("upLoading").classList.toggle("show",!!show);
+}
+
+function formatDate(value){
+  if(!value) return "—";
+  const d=new Date(value);
+  if(isNaN(d.getTime())) return String(value);
+  return d.toLocaleDateString();
+}
+
+/* ================= PROCESSING POPUP ================= */
+
+function showProcessing(message){
+  $("upProcessingMessage").textContent=
+    message||"Please wait. Your request is being processed.";
+  $("upProcessingModal").classList.add("show");
+}
+
+function hideProcessing(){
+  $("upProcessingModal").classList.remove("show");
+}
+
+/* ================= PROCESSING BUTTON ================= */
+
+function setProcessing(button,processing,normalText){
+  if(processing){
+    button.disabled=true;
+    button.innerHTML='<span class="up-spinner"></span>Processing...';
+  }else{
+    button.disabled=false;
+    button.textContent=normalText;
+  }
+}
+
+/* ================= IMAGE HANDLING ================= */
+
+function getImageURL(value){
+  let url=String(value||"").trim();
+  if(!url) return "";
+
+  if(/^[a-zA-Z0-9_-]{20,}$/.test(url)){
+    return "https://drive.google.com/thumbnail?id="+
+      encodeURIComponent(url)+"&sz=w300";
+  }
+
+  let match=url.match(/\/file\/d\/([^/]+)/);
+  if(!match) match=url.match(/[?&]id=([^&]+)/);
+
+  if(match && match[1]){
+    return "https://drive.google.com/thumbnail?id="+
+      encodeURIComponent(match[1])+"&sz=w300";
+  }
+
+  return url;
+}
+
+function initials(name){
+  const parts=String(name||"?").trim().split(/\s+/).filter(Boolean);
+  return parts.slice(0,2).map(x=>x.charAt(0).toUpperCase()).join("")||"?";
+}
+
+function avatarHTML(user,sizeClass=""){
+  if(!user) return '<span class="up-avatar">?</span>';
+
+  const name=escapeHTML(user.userName||"User");
+  const image=getImageURL(user.profilePicture);
+
+  if(image){
+    return `<span class="up-avatar ${sizeClass}">
+      <img src="${escapeHTML(image)}" alt="${name}" referrerpolicy="no-referrer"
+        onerror="this.parentElement.textContent='${escapeHTML(initials(user.userName))}'">
+    </span>`;
+  }
+
+  return `<span class="up-avatar ${sizeClass}">${escapeHTML(initials(user.userName))}</span>`;
+}
+
+/* ================= API REQUESTS ================= */
+
+async function getJSON(url){
+  const response=await fetch(url,{method:"GET",cache:"no-store"});
+  if(!response.ok) throw new Error("Server request failed: "+response.status);
+
+  const data=await response.json();
+  if(data && data.success===false) throw new Error(data.message||"API error");
+
+  return data;
+}
+
+async function postJSON(payload){
+  const response=await fetch(PAYMENT_API,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(payload)
+  });
+
+  if(!response.ok) throw new Error("Server request failed: "+response.status);
+
+  const data=await response.json();
+  if(!data || data.success===false){
+    throw new Error(data?.message||"Operation failed");
+  }
+
+  return data;
+}
+
+/* ================= LOAD USERS ================= */
+
+async function loadUsers(){
+  const data=await getJSON(USER_API+"?api=active");
+
+  if(!Array.isArray(data.users)){
+    throw new Error("User API response does not contain users array.");
+  }
+
+  users=data.users.map(u=>({
+    userId:String(u.userId||""),
+    userName:String(u.userName||""),
+    phone:u.phone||"",
+    gmail:u.gmail||"",
+    area:u.area||"",
+    status:u.status||"",
+    profilePicture:u.profilePicture||""
+  })).filter(u=>u.userId);
+
+  users.sort((a,b)=>a.userName.localeCompare(b.userName));
+}
+
+/* ================= LOAD PAYMENT DATA ================= */
+
+async function loadCurrencies(){
+  const data=await getJSON(PAYMENT_API+"?api=currencies");
+  currencies=Array.isArray(data.currencies)?data.currencies:[];
+}
+
+async function loadMethods(){
+  const data=await getJSON(PAYMENT_API+"?api=methods");
+  methods=Array.isArray(data.methods)?data.methods:[];
+}
+
+async function loadPayments(){
+  const data=await getJSON(PAYMENT_API+"?api=payments");
+  payments=Array.isArray(data.payments)?data.payments:[];
+}
+
+/* ================= USER PICKER ================= */
+
+function renderUserOptions(search=""){
+  const q=search.trim().toLowerCase();
+
+  const filtered=users.filter(u=>
+    u.userName.toLowerCase().includes(q)||
+    u.userId.toLowerCase().includes(q)||
+    String(u.phone).toLowerCase().includes(q)
+  );
+
+  $("upUserOptions").innerHTML=filtered.length?filtered.map(u=>`
+    <div class="up-user-option" data-user-id="${escapeHTML(u.userId)}">
+      ${avatarHTML(u)}
+      <span class="up-user-meta">
+        <strong>${escapeHTML(u.userName)}</strong>
+        <small>${escapeHTML(u.userId)}${u.phone?" · "+escapeHTML(u.phone):""}</small>
+      </span>
+    </div>
+  `).join(""):'<div class="up-empty">No users found</div>';
+}
+
+function selectUser(userId){
+  selectedUser=users.find(u=>u.userId===String(userId))||null;
+
+  if(!selectedUser){
+    $("upSelectedAvatar").textContent="?";
+    $("upSelectedName").textContent="Select a user";
+    $("upSelectedId").textContent="Choose user account";
+  }else{
+    const img=getImageURL(selectedUser.profilePicture);
+
+    $("upSelectedAvatar").innerHTML=img
+      ?`<img src="${escapeHTML(img)}" alt="" referrerpolicy="no-referrer">`
+      :escapeHTML(initials(selectedUser.userName));
+
+    const avatarImg=$("upSelectedAvatar").querySelector("img");
+    if(avatarImg){
+      avatarImg.onerror=function(){
+        $("upSelectedAvatar").textContent=initials(selectedUser?.userName);
+      };
+    }
+
+    $("upSelectedName").textContent=selectedUser.userName;
+    $("upSelectedId").textContent=selectedUser.userId;
+  }
+
+  $("upUserMenu").classList.remove("open");
+}
+
+$("upUserSelected").addEventListener("click",()=>{
+  $("upUserMenu").classList.toggle("open");
+  $("upUserSearch").value="";
+  renderUserOptions("");
+
+  if($("upUserMenu").classList.contains("open")){
+    $("upUserSearch").focus();
+  }
+});
+
+$("upUserSearch").addEventListener("input",e=>{
+  renderUserOptions(e.target.value);
+});
+
+$("upUserOptions").addEventListener("click",e=>{
+  const option=e.target.closest("[data-user-id]");
+  if(option) selectUser(option.dataset.userId);
+});
+
+document.addEventListener("click",e=>{
+  if(!ROOT.contains(e.target)) return;
+  if(!e.target.closest(".up-user-picker")){
+    $("upUserMenu").classList.remove("open");
+  }
+});
+
+/* ================= DROPDOWNS ================= */
+
+function renderCurrencies(){
+  const options=currencies.filter(c=>
+    String(c.status||"Active").toLowerCase()!=="inactive"
+  );
+
+  const currencyHTML='<option value="">Select currency</option>'+
+    options.map(c=>`
+      <option value="${escapeHTML(c.id)}">
+        ${escapeHTML(c.code||c.name||c.id)}${c.symbol?" ("+escapeHTML(c.symbol)+")":""}
+      </option>
+    `).join("");
+
+  $("upCurrency").innerHTML=currencyHTML;
+  $("upEditCurrency").innerHTML=currencyHTML;
+
+  $("upCurrencyFilter").innerHTML='<option value="">All Currencies</option>'+
+    currencies.map(c=>`
+      <option value="${escapeHTML(c.code||c.id)}">
+        ${escapeHTML(c.code||c.name||c.id)}
+      </option>
+    `).join("");
+}
+
+function renderMethods(){
+  const options=methods.filter(m=>
+    String(m.status||"Active").toLowerCase()!=="inactive"
+  );
+
+  const html='<option value="">Select payment method</option>'+
+    options.map(m=>`
+      <option value="${escapeHTML(m.id)}">
+        ${escapeHTML(m.name||m.id)}
+      </option>
+    `).join("");
+
+  $("upMethod").innerHTML=html;
+  $("upEditMethod").innerHTML=html;
+}
+
+function renderEditUsers(){
+  $("upEditUser").innerHTML='<option value="">Select user</option>'+
+    users.map(u=>`
+      <option value="${escapeHTML(u.userId)}">
+        ${escapeHTML(u.userName)} (${escapeHTML(u.userId)})
+      </option>
+    `).join("");
+}
+
+/* ================= STATS ================= */
+
+function updateStats(){
+  const total=payments.reduce((sum,p)=>sum+Number(p.amount||0),0);
+
+  const todayTotal=payments
+    .filter(p=>String(p.paymentDate||"").slice(0,10)===today())
+    .reduce((sum,p)=>sum+Number(p.amount||0),0);
+
+  $("upTotalCount").textContent=payments.length;
+  $("upTotalAmount").textContent=money(total);
+  $("upTodayAmount").textContent=money(todayTotal);
+  $("upUserCount").textContent=users.length;
+  $("upRecordCount").textContent=payments.length+" RECORDS";
+}
+
+/* ================= PAYMENT TABLE ================= */
+
+function filteredPayments(){
+  const q=$("upRecordSearch").value.trim().toLowerCase();
+  const currency=$("upCurrencyFilter").value;
+
+  return payments.filter(p=>{
+    const text=[
+      p.paymentId,p.userId,p.userName,p.transactionId,
+      p.paymentMethod,p.currencyCode,p.currencyName,p.comment
+    ].join(" ").toLowerCase();
+
+    const currencyMatch=!currency||
+      String(p.currencyCode||p.currencyId||"")===currency;
+
+    return (!q||text.includes(q))&&currencyMatch;
+  }).sort((a,b)=>
+    String(b.paymentDate||"").localeCompare(String(a.paymentDate||""))
+  );
+}
+
+function paymentUser(payment){
+  return users.find(u=>u.userId===String(payment.userId))||{
+    userId:payment.userId||"",
+    userName:payment.userName||"Unknown User",
+    profilePicture:""
+  };
+}
+
+function renderPayments(){
+  updateStats();
+
+  const list=filteredPayments();
+  pageSize=Number($("upPageSize").value||10);
+
+  const pages=Math.max(1,Math.ceil(list.length/pageSize));
+  currentPage=Math.min(currentPage,pages);
+
+  const start=(currentPage-1)*pageSize;
+  const visible=list.slice(start,start+pageSize);
+
+  $("upPageInfo").textContent=list.length
+    ?`Showing ${start+1}-${Math.min(start+pageSize,list.length)} of ${list.length}`
+    :"Showing 0 records";
+
+  $("upPrevPage").disabled=currentPage<=1;
+  $("upNextPage").disabled=currentPage>=pages;
+
+  if(!visible.length){
+    $("upTableBody").innerHTML=
+      '<tr><td colspan="6" class="up-empty">No payment records found.</td></tr>';
+
+    $("upMobileList").innerHTML=
+      '<div class="up-empty">No payment records found.</div>';
+    return;
+  }
+
+  $("upTableBody").innerHTML=visible.map(p=>{
+    const user=paymentUser(p);
+
+    return `<tr>
+      <td>
+        <div class="up-user-cell">
+          ${avatarHTML(user)}
+          <div>
+            <strong>${escapeHTML(user.userName)}</strong>
+            <small>${escapeHTML(user.userId)}</small>
+          </div>
+        </div>
+      </td>
+      <td><strong>${escapeHTML(p.currencyCode||p.currencyName||"")} ${money(p.amount)}</strong></td>
+      <td>${escapeHTML(p.paymentMethod||p.methodId||"—")}</td>
+      <td>${escapeHTML(p.transactionId||"—")}</td>
+      <td>${escapeHTML(formatDate(p.paymentDate))}</td>
+      <td>
+        <div class="up-row-actions">
+          <button class="up-icon-btn" data-action="view" data-id="${escapeHTML(p.paymentId)}">View</button>
+          <button class="up-icon-btn" data-action="edit" data-id="${escapeHTML(p.paymentId)}">Edit</button>
+          <button class="up-icon-btn delete" data-action="delete" data-id="${escapeHTML(p.paymentId)}">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+
+  $("upMobileList").innerHTML=visible.map(p=>{
+    const user=paymentUser(p);
+
+    return `<div class="up-mobile-card">
+      <div class="up-mobile-top">
+        <div class="up-user-cell">
+          ${avatarHTML(user)}
+          <div>
+            <strong>${escapeHTML(user.userName)}</strong>
+            <small>${escapeHTML(user.userId)}</small>
+          </div>
+        </div>
+        <strong>${escapeHTML(p.currencyCode||"")} ${money(p.amount)}</strong>
+      </div>
+
+      <div class="up-mobile-details">
+        <div><span>Method</span><strong>${escapeHTML(p.paymentMethod||"—")}</strong></div>
+        <div><span>Date</span><strong>${escapeHTML(formatDate(p.paymentDate))}</strong></div>
+        <div><span>Transaction ID</span><strong>${escapeHTML(p.transactionId||"—")}</strong></div>
+        <div><span>Payment ID</span><strong>${escapeHTML(p.paymentId||"—")}</strong></div>
+      </div>
+
+      <div class="up-row-actions">
+        <button class="up-icon-btn" data-action="view" data-id="${escapeHTML(p.paymentId)}">View</button>
+        <button class="up-icon-btn" data-action="edit" data-id="${escapeHTML(p.paymentId)}">Edit</button>
+        <button class="up-icon-btn delete" data-action="delete" data-id="${escapeHTML(p.paymentId)}">Delete</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ================= ADD PAYMENT ================= */
+
+function resetAddForm(){
+  $("upPaymentForm").reset();
+  $("upDate").value=today();
+  selectUser("");
+}
+
+function getAddPayload(){
+  if(!selectedUser) throw new Error("Please select a user.");
+
+  const amount=Number($("upAmount").value);
+  if(!Number.isFinite(amount)||amount<=0){
+    throw new Error("Enter a valid payment amount.");
+  }
+
+  const currencyId=$("upCurrency").value;
+  const methodId=$("upMethod").value;
+
+  if(!currencyId) throw new Error("Please select currency.");
+  if(!methodId) throw new Error("Please select payment method.");
+  if(!$("upDate").value) throw new Error("Please select payment date.");
+
+  return {
+    userId:selectedUser.userId,
+    amount:amount,
+    currencyId:currencyId,
+    methodId:methodId,
+    transactionId:$("upTransaction").value.trim(),
+    paymentDate:$("upDate").value,
+    comment:$("upComment").value.trim()
+  };
+}
+
+$("upPaymentForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+
+  if(addSaving) return;
+
+  const btn=$("upSubmitBtn");
+  const normalText="+ Add Payment";
+
+  let payload;
+
+  try{
+    payload=getAddPayload();
+  }catch(err){
+    showError(err.message);
+    return;
+  }
+
+  addSaving=true;
+  setProcessing(btn,true,normalText);
+  showProcessing("Please wait. Your payment is being added.");
+
+  try{
+    payload.action="addPayment";
+
+    const result=await postJSON(payload);
+
+    resetAddForm();
+
+    await loadPayments();
+    renderPayments();
+
+    hideProcessing();
+
+    showSuccess(
+      result.message||"Payment has been added successfully.",
+      "Save Entry"
+    );
+
+  }catch(err){
+    hideProcessing();
+    showError(err.message||"Payment could not be saved.");
+
+  }finally{
+    addSaving=false;
+    setProcessing(btn,false,normalText);
+  }
+});
+
+$("upResetBtn").addEventListener("click",()=>{
+  setTimeout(resetAddForm,0);
+});
+
+/* ================= EDIT PAYMENT POPUP ================= */
+
+function editPayment(paymentId){
+  if(editSaving) return;
+
+  const p=payments.find(x=>String(x.paymentId)===String(paymentId));
+  if(!p){
+    showError("Payment record not found.");
+    return;
+  }
+
+  editingPaymentId=String(p.paymentId);
+
+  renderEditUsers();
+
+  $("upEditUser").value=String(p.userId||"");
+  $("upEditAmount").value=p.amount??"";
+  $("upEditCurrency").value=String(p.currencyId||"");
+  $("upEditMethod").value=String(p.methodId||"");
+  $("upEditTransaction").value=p.transactionId||"";
+  $("upEditDate").value=String(p.paymentDate||"").slice(0,10);
+  $("upEditComment").value=p.comment||"";
+
+  $("upEditSaveBtn").textContent="Save Changes";
+  $("upEditSaveBtn").disabled=false;
+
+  $("upEditModal").classList.add("show");
+}
+
+$("upEditForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+
+  if(editSaving || !editingPaymentId) return;
+
+  const btn=$("upEditSaveBtn");
+  const normalText="Save Changes";
+
+  let payload;
+
+  /* Validate first */
+  try{
+    const amount=Number($("upEditAmount").value);
+
+    if(!Number.isFinite(amount)||amount<=0){
+      throw new Error("Enter a valid payment amount.");
+    }
+
+    payload={
+      action:"editPayment",
+      paymentId:editingPaymentId,
+      userId:$("upEditUser").value,
+      amount:amount,
+      currencyId:$("upEditCurrency").value,
+      methodId:$("upEditMethod").value,
+      transactionId:$("upEditTransaction").value.trim(),
+      paymentDate:$("upEditDate").value,
+      comment:$("upEditComment").value.trim()
+    };
+
+    if(!payload.userId) throw new Error("Please select a user.");
+    if(!payload.currencyId) throw new Error("Please select currency.");
+    if(!payload.methodId) throw new Error("Please select payment method.");
+    if(!payload.paymentDate) throw new Error("Please select payment date.");
+
+  }catch(err){
+    showError(err.message);
+    return;
+  }
+
+  editSaving=true;
+
+  btn.disabled=true;
+  btn.innerHTML='<span class="up-spinner"></span>Processing...';
+
+  /* Close edit form immediately and show processing popup */
+  closeModal("upEditModal");
+  showProcessing("Please wait. Your payment is being updated.");
+
+  try{
+    const result=await postJSON(payload);
+
+    /* Refresh the latest records */
+    await loadPayments();
+    renderPayments();
+
+    editingPaymentId="";
+
+    $("upEditForm").reset();
+
+    hideProcessing();
+
+    showSuccess(
+      result.message||"Payment updated successfully.",
+      "Save Entry"
+    );
+
+  }catch(err){
+    hideProcessing();
+
+    showError(
+      err.message||"Payment update failed. Please try again."
+    );
+
+  }finally{
+    editSaving=false;
+    btn.disabled=false;
+    btn.textContent=normalText;
+  }
+});
+
+/* ================= VIEW PAYMENT ================= */
+
+function viewPayment(paymentId){
+  const p=payments.find(x=>String(x.paymentId)===String(paymentId));
+  if(!p) return;
+
+  const user=paymentUser(p);
+
+  $("upViewContent").innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      ${avatarHTML(user)}
+      <div>
+        <strong>${escapeHTML(user.userName)}</strong>
+        <div style="font-size:11px;color:var(--up-muted)">
+          ${escapeHTML(user.userId)}
+        </div>
+      </div>
+    </div>
+
+    <div class="up-mobile-details">
+      <div><span>Payment ID</span><strong>${escapeHTML(p.paymentId)}</strong></div>
+      <div><span>Amount</span><strong>${escapeHTML(p.currencyCode||"")} ${money(p.amount)}</strong></div>
+      <div><span>Currency</span><strong>${escapeHTML(p.currencyName||p.currencyCode||"—")}</strong></div>
+      <div><span>Payment Method</span><strong>${escapeHTML(p.paymentMethod||"—")}</strong></div>
+      <div><span>Transaction ID</span><strong>${escapeHTML(p.transactionId||"—")}</strong></div>
+      <div><span>Payment Date</span><strong>${escapeHTML(formatDate(p.paymentDate))}</strong></div>
+    </div>
+
+    <div style="border-top:1px solid var(--up-border);padding-top:12px;font-size:12px">
+      <strong>Comment</strong>
+      <p style="color:var(--up-muted);white-space:pre-wrap">
+        ${escapeHTML(p.comment||"No comment")}
+      </p>
+    </div>
+  `;
+
+  $("upViewModal").classList.add("show");
+}
+
+/* ================= DELETE PAYMENT ================= */
+
+function openDelete(paymentId){
+  deletingPaymentId=String(paymentId);
+  $("upDeleteModal").classList.add("show");
+}
+
+$("upConfirmDelete").addEventListener("click",async()=>{
+  if(!deletingPaymentId || deleteSaving) return;
+
+  const btn=$("upConfirmDelete");
+  const normalText="Delete Payment";
+
+  deleteSaving=true;
+  setProcessing(btn,true,normalText);
+  showProcessing("Please wait. Your payment is being deleted.");
+
+  try{
+    const result=await postJSON({
+      action:"deletePayment",
+      paymentId:deletingPaymentId
+    });
+
+    closeModal("upDeleteModal");
+    deletingPaymentId="";
+
+    await loadPayments();
+    renderPayments();
+
+    hideProcessing();
+
+    showSuccess(
+      result.message||"Payment has been deleted successfully.",
+      "Payment Deleted!"
+    );
+
+  }catch(err){
+    hideProcessing();
+    showError(err.message||"Could not delete payment.");
+
+  }finally{
+    deleteSaving=false;
+    setProcessing(btn,false,normalText);
+  }
+});
+
+/* ================= EVENT HANDLERS ================= */
+
+function handlePaymentAction(e){
+  const btn=e.target.closest("[data-action]");
+  if(!btn) return;
+
+  const id=btn.dataset.id;
+  const action=btn.dataset.action;
+
+  if(action==="view") viewPayment(id);
+  if(action==="edit") editPayment(id);
+  if(action==="delete") openDelete(id);
+}
+
+$("upTableBody").addEventListener("click",handlePaymentAction);
+$("upMobileList").addEventListener("click",handlePaymentAction);
+
+$("upRecordSearch").addEventListener("input",()=>{
+  currentPage=1;
+  renderPayments();
+});
+
+$("upCurrencyFilter").addEventListener("change",()=>{
+  currentPage=1;
+  renderPayments();
+});
+
+$("upPageSize").addEventListener("change",()=>{
+  currentPage=1;
+  renderPayments();
+});
+
+$("upPrevPage").addEventListener("click",()=>{
+  if(currentPage>1){
+    currentPage--;
+    renderPayments();
+  }
+});
+
+$("upNextPage").addEventListener("click",()=>{
+  currentPage++;
+  renderPayments();
+});
+
+/* ================= MODAL CONTROLS ================= */
+
+$("upEditCancelBtn").addEventListener("click",()=>{
+  if(editSaving) return;
+
+  closeModal("upEditModal");
+  editingPaymentId="";
+});
+
+ROOT.querySelectorAll("[data-close]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const modalId=btn.dataset.close;
+
+    if(modalId==="upEditModal" && editSaving) return;
+    if(modalId==="upDeleteModal" && deleteSaving) return;
+
+    closeModal(modalId);
+
+    if(modalId==="upEditModal") editingPaymentId="";
+    if(modalId==="upDeleteModal") deletingPaymentId="";
+  });
+});
+
+ROOT.querySelectorAll(".up-modal").forEach(modal=>{
+  modal.addEventListener("click",e=>{
+    if(e.target!==modal) return;
+
+    if(modal.id==="upProcessingModal") return;
+    if(modal.id==="upEditModal" && editSaving) return;
+    if(modal.id==="upDeleteModal" && deleteSaving) return;
+
+    modal.classList.remove("show");
+
+    if(modal.id==="upEditModal") editingPaymentId="";
+    if(modal.id==="upDeleteModal") deletingPaymentId="";
+  });
+});
+
+$("upSuccessOK").addEventListener("click",()=>{
+  closeModal("upSuccessModal");
+});
+
+$("upErrorOK").addEventListener("click",()=>{
+  closeModal("upErrorModal");
+});
+
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape") return;
+
+  ROOT.querySelectorAll(".up-modal.show").forEach(modal=>{
+    if(modal.id==="upProcessingModal") return;
+    if(modal.id==="upEditModal" && editSaving) return;
+    if(modal.id==="upDeleteModal" && deleteSaving) return;
+
+    if(modal.id==="upSuccessModal" || modal.id==="upErrorModal"){
+      modal.classList.remove("show");
+      return;
+    }
+
+    modal.classList.remove("show");
+
+    if(modal.id==="upEditModal") editingPaymentId="";
+    if(modal.id==="upDeleteModal") deletingPaymentId="";
+  });
+});
+
+/* ================= INITIAL LOAD ================= */
+
+async function refreshAll(){
+  showLoading(true);
+  $("upRefreshBtn").disabled=true;
+
+  try{
+    await loadUsers();
+
+    await Promise.all([
+      loadCurrencies(),
+      loadMethods(),
+      loadPayments()
+    ]);
+
+    renderUserOptions();
+    renderCurrencies();
+    renderMethods();
+    renderEditUsers();
+    renderPayments();
+
+    if(selectedUser){
+      const stillExists=users.find(u=>u.userId===selectedUser.userId);
+      selectUser(stillExists?stillExists.userId:"");
+    }
+
+  }catch(err){
+    console.error("User Payment load error:",err);
+    toast(err.message||"Could not load data. Check API connection.");
+  }finally{
+    showLoading(false);
+    $("upRefreshBtn").disabled=false;
+  }
+}
+
+$("upRefreshBtn").addEventListener("click",refreshAll);
+
+$("upDate").value=today();
+refreshAll();
+
+})();
+</script>
+</body>
+</html>
