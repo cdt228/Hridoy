@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Add Wage</title>
+<style>
+#addWagePage{font-family:inherit;color:var(--text,#172033);max-width:950px;margin:auto}
+#addWagePage *{box-sizing:border-box}
+#addWagePage .hero{padding:25px;border-radius:18px;color:white;background:linear-gradient(120deg,#4338ca,#6366f1,#8b5cf6);margin-bottom:22px}
+#addWagePage .hero h2{margin:0 0 7px;font-size:25px;color:white}
+#addWagePage .hero p{margin:0;color:#e0e7ff;font-size:13px}
+#addWagePage .card{background:var(--card,#fff);border:1px solid var(--border,#e5e7eb);border-radius:17px;padding:24px;box-shadow:0 7px 25px #00000008}
+#addWagePage .heading{font-size:18px;font-weight:800;margin:0 0 22px;padding-bottom:16px;border-bottom:1px solid var(--border,#e5e7eb)}
+#addWagePage .grid{display:grid;grid-template-columns:1fr 1fr;gap:19px}
+#addWagePage .field.full{grid-column:1/-1}
+#addWagePage label{display:block;font-size:13px;font-weight:700;margin-bottom:8px}
+#addWagePage .required{color:#ef4444;font-size:11px}
+#addWagePage .optional{color:var(--muted,#888);font-size:11px;font-weight:400}
+#addWagePage input,#addWagePage select,#addWagePage textarea{width:100%;min-height:46px;padding:12px 13px;border-radius:10px;border:1px solid var(--border,#ddd);background:var(--bg,#f8fafc);color:var(--text,#172033);font:inherit;font-size:14px;outline:none}
+#addWagePage input:focus,#addWagePage select:focus,#addWagePage textarea:focus{border-color:#6366f1;box-shadow:0 0 0 3px #6366f11c}
+#addWagePage input:disabled{opacity:.55;cursor:not-allowed}
+#addWagePage textarea{min-height:100px;resize:vertical}
+#addWagePage .amount-wrap{position:relative}
+#addWagePage .symbol{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-weight:800;color:#6366f1}
+#addWagePage .amount-wrap.has-symbol input{padding-left:42px}
+#addWagePage .help{font-size:11px;color:var(--muted,#888);margin-top:7px}
+#addWagePage .message{display:none;padding:12px 14px;border-radius:10px;margin-bottom:18px;font-size:13px}
+#addWagePage .message.success{display:block;background:#dcfce7;color:#166534}
+#addWagePage .message.error{display:block;background:#fee2e2;color:#991b1b}
+#addWagePage .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid var(--border,#ddd)}
+#addWagePage button{border:0;border-radius:10px;padding:13px 20px;font-weight:800;cursor:pointer;font:inherit}
+#addWagePage .primary{background:linear-gradient(120deg,#4338ca,#7c3aed);color:white}
+#addWagePage .secondary{background:var(--bg,#f1f5f9);border:1px solid var(--border,#ddd);color:var(--text,#172033)}
+#addWagePage button:disabled{opacity:.55;cursor:not-allowed}
+#addWagePage .loading{display:none;color:var(--muted,#888);font-size:12px;margin-top:12px}
+#addWagePage .loading.show{display:block}
+@media(max-width:650px){#addWagePage .grid{grid-template-columns:1fr}#addWagePage .field.full{grid-column:auto}#addWagePage .card{padding:17px}#addWagePage .actions{flex-direction:column-reverse}#addWagePage button{width:100%}}
+</style>
+</head>
+<body>
+<div id="addWagePage">
+  <div class="hero">
+    <h2>💰 Add New Wage</h2>
+    <p>Add and manage your wage records.</p>
+  </div>
+
+  <div class="card">
+    <h3 class="heading">Wage Information</h3>
+    <div id="awMessage" class="message"></div>
+
+    <form id="awForm">
+      <div class="grid">
+
+        <div class="field full">
+          <label>1. Company Name <span class="optional">(Optional)</span></label>
+          <input id="awCompany" type="text" maxlength="150" placeholder="Enter company name">
+        </div>
+
+        <div class="field">
+          <label>3. Wage Currency <span class="required">* Required</span></label>
+          <select id="awCurrency" required>
+            <option value="">Loading currencies...</option>
+          </select>
+          <div class="help" id="awCurrencyHelp">Select currency first.</div>
+        </div>
+
+        <div class="field">
+          <label>2. Wage Amount <span class="required">* Required</span></label>
+          <div class="amount-wrap" id="awAmountWrap">
+            <span class="symbol" id="awSymbol"></span>
+            <input id="awAmount" type="number" min="0.01" step="any" placeholder="Select currency first" disabled required>
+          </div>
+          <div class="help">Currency নির্বাচন করার পর Amount লিখুন।</div>
+        </div>
+
+        <div class="field full">
+          <label>4. Transaction ID <span class="optional">(Optional)</span></label>
+          <input id="awTransaction" type="text" maxlength="150" placeholder="Enter transaction ID">
+        </div>
+
+        <div class="field full">
+          <label>5. Date <span class="required">* Required</span></label>
+          <input id="awDate" type="date" required>
+        </div>
+
+        <div class="field full">
+          <label>6. Comment <span class="optional">(Optional)</span></label>
+          <textarea id="awComment" maxlength="2000" placeholder="Write your comment..."></textarea>
+        </div>
+
+      </div>
+
+      <div id="awLoading" class="loading">Saving wage information...</div>
+
+      <div class="actions">
+        <button type="reset" class="secondary">Reset Form</button>
+        <button type="submit" class="primary" id="awSubmit" disabled>＋ Add Wage</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  const root=document.getElementById("addWagePage");
+  if(!root||root.dataset.ready==="1")return;
+  root.dataset.ready="1";
+
+  const API="https://script.google.com/macros/s/AKfycbygdxmo_sur5KYs3XhYHnyaMGQQ_G5_Prc9NUozP9dxRVhrwVmezX2ozhkhqQ4KeWKxPQ/exec";
+  const $=id=>root.querySelector("#"+id);
+
+  let currencies=[];
+  let selected=null;
+
+  function today(){
+    const p=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Dhaka",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
+    const o={};p.forEach(x=>o[x.type]=x.value);
+    return o.year+"-"+o.month+"-"+o.day;
+  }
+
+  function msg(text,type){
+    $("awMessage").textContent=text;
+    $("awMessage").className="message "+type;
+  }
+
+  function clearMsg(){
+    $("awMessage").textContent="";
+    $("awMessage").className="message";
+  }
+
+  async function get(api){
+    const r=await fetch(API+"?api="+encodeURIComponent(api)+"&_="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw Error("HTTP "+r.status);
+    return r.json();
+  }
+
+  async function post(data){
+    const r=await fetch(API,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(data)
+    });
+    if(!r.ok)throw Error("HTTP "+r.status);
+    return r.json();
+  }
+
+  // Backend-এর বিভিন্ন সম্ভাব্য field name থেকে value পড়বে
+  function readField(obj,keys,fallback=""){
+    for(const key of keys){
+      if(obj&&obj[key]!==undefined&&obj[key]!==null&&obj[key]!==""){
+        return obj[key];
+      }
+    }
+    return fallback;
+  }
+
+  function getCurrencyId(currency){
+    return String(readField(currency,[
+      "currencyId",
+      "currencyID",
+      "currency_id",
+      "Currency ID",
+      "id"
+    ],""));
+  }
+
+  function getCurrencyCode(currency){
+    return String(readField(currency,[
+      "code",
+      "currencyCode",
+      "currency_code",
+      "Currency Code",
+      "currency"
+    ],""));
+  }
+
+  function getCurrencyName(currency){
+    return String(readField(currency,[
+      "name",
+      "currencyName",
+      "currency_name",
+      "Currency Name"
+    ],getCurrencyCode(currency)));
+  }
+
+  function getCurrencySymbol(currency){
+    return String(readField(currency,[
+      "symbol",
+      "currencySymbol",
+      "currency_symbol",
+      "Currency Symbol"
+    ],""));
+  }
+
+  function isActiveCurrency(currency){
+    const status=String(readField(currency,[
+      "status",
+      "Status"
+    ],"Active")).trim().toLowerCase();
+
+    return ["active","enabled","true","1","yes"].includes(status);
+  }
+
+  function updateAmount(){
+    const selectedId=$("awCurrency").value;
+
+    selected=currencies.find(x=>
+      getCurrencyId(x)===String(selectedId)
+    )||null;
+
+    $("awAmount").disabled=!selected;
+    $("awAmount").placeholder=selected?"Enter wage amount":"Select currency first";
+    $("awSymbol").textContent=selected?getCurrencySymbol(selected):"";
+    $("awAmountWrap").classList.toggle("has-symbol",!!selected);
+    $("awSubmit").disabled=!selected;
+  }
+
+  async function loadCurrencies(){
+    const select=$("awCurrency");
+    select.innerHTML='<option value="">Loading currencies...</option>';
+    select.disabled=true;
+
+    try{
+      const data=await get("currencies");
+
+      if(data.success===false){
+        throw Error(data.message||"Currency load failed");
+      }
+
+      // Backend response-এর বিভিন্ন array structure support
+      let currencyList=[];
+
+      if(Array.isArray(data.currencies)){
+        currencyList=data.currencies;
+      }else if(Array.isArray(data.data)){
+        currencyList=data.data;
+      }else if(Array.isArray(data.results)){
+        currencyList=data.results;
+      }else if(Array.isArray(data)){
+        currencyList=data;
+      }
+
+      currencies=currencyList.filter(x=>
+        getCurrencyId(x)&&getCurrencyCode(x)&&isActiveCurrency(x)
+      );
+
+      select.innerHTML='<option value="">Select wage currency</option>';
+
+      currencies.forEach(x=>{
+        const op=document.createElement("option");
+        op.value=getCurrencyId(x);
+
+        const code=getCurrencyCode(x);
+        const name=getCurrencyName(x);
+        const symbol=getCurrencySymbol(x);
+
+        op.textContent=
+          (name&&name!==code?name+" - ":"")+
+          code+
+          (symbol?" ("+symbol+")":"");
+
+        select.appendChild(op);
+      });
+
+      $("awCurrencyHelp").textContent=currencies.length
+        ?currencies.length+" active currencies available."
+        :"Currency Settings থেকে আগে Active Currency যোগ করুন।";
+
+      if(!currencies.length){
+        select.innerHTML='<option value="">No active currency found</option>';
+      }
+
+    }catch(e){
+      currencies=[];
+      select.innerHTML='<option value="">Currency load failed</option>';
+      $("awCurrencyHelp").textContent="Currency load করতে সমস্যা হয়েছে।";
+      msg("Currency load failed: "+e.message,"error");
+      console.error("Currency API response/error:",e);
+    }finally{
+      select.disabled=false;
+      updateAmount();
+    }
+  }
+
+  $("awCurrency").addEventListener("change",()=>{
+    clearMsg();
+    updateAmount();
+  });
+
+  $("awDate").value=today();
+
+  $("awForm").addEventListener("reset",()=>{
+    setTimeout(()=>{
+      $("awDate").value=today();
+      $("awCurrency").value="";
+      updateAmount();
+      clearMsg();
+    },0);
+  });
+
+  $("awForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    clearMsg();
+
+    if(!selected||!$("awCurrency").value){
+      msg("প্রথমে Currency নির্বাচন করুন।","error");
+      $("awCurrency").focus();
+      return;
+    }
+
+    const amount=Number($("awAmount").value);
+    if(!Number.isFinite(amount)||amount<=0){
+      msg("সঠিক Wage Amount লিখুন।","error");
+      $("awAmount").focus();
+      return;
+    }
+
+    if(!$("awDate").value){
+      msg("Date নির্বাচন করা বাধ্যতামূলক।","error");
+      $("awDate").focus();
+      return;
+    }
+
+    const payload={
+      action:"addWage",
+      companyName:$("awCompany").value.trim(),
+      amount:amount,
+      currencyId:getCurrencyId(selected),
+      transactionId:$("awTransaction").value.trim(),
+      date:$("awDate").value,
+      comment:$("awComment").value.trim()
+    };
+
+    $("awSubmit").disabled=true;
+    $("awLoading").classList.add("show");
+
+    try{
+      const result=await post(payload);
+      if(!result.success)throw Error(result.message||"Wage save failed");
+
+      msg("✓ "+result.message+" Wage ID: "+(result.wageId||""),"success");
+      $("awCompany").value="";
+      $("awAmount").value="";
+      $("awTransaction").value="";
+      $("awComment").value="";
+      $("awDate").value=today();
+      $("awAmount").focus();
+
+    }catch(err){
+      msg("Save failed: "+err.message+". Wage History পরীক্ষা না করে একই তথ্য আবার Submit করবেন না.","error");
+    }finally{
+      $("awLoading").classList.remove("show");
+      updateAmount();
+    }
+  });
+
+  loadCurrencies();
+})();
+</script>
+</body>
+</html>
