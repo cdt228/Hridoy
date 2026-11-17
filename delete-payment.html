@@ -4,1134 +4,1967 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Deleted Payment | RS NETWORK</title>
+<title>Delete History</title>
 
 <style>
 :root{
-  --dp-primary:var(--primary,#087f5b);
-  --dp-accent:var(--accent,#12b886);
-  --dp-bg:var(--bg,#f5f7fb);
-  --dp-card:var(--card,#ffffff);
-  --dp-text:var(--text,#172033);
-  --dp-muted:var(--muted,#8490a3);
-  --dp-border:var(--border,#e8edf3);
-  --dp-danger:#e05252;
-  --dp-shadow:0 5px 18px rgba(20,40,60,.055);
+  --ph-primary:var(--primary,#087f5b);
+  --ph-accent:var(--accent,#12b886);
+  --ph-bg:var(--bg,#f5f7fb);
+  --ph-card:var(--card,#fff);
+  --ph-text:var(--text,#172033);
+  --ph-muted:var(--muted,#8490a3);
+  --ph-border:var(--border,#e8edf3);
+  --ph-danger:#e05252;
+  --ph-shadow:0 5px 18px rgba(20,40,60,.055);
+  --ph-input-bg:var(--input-bg,var(--ph-bg));
+  --ph-hover:rgba(8,127,91,.08);
+  --ph-selected:rgba(8,127,91,.12);
+  --ph-restore-bg:#e8f7ef;
+  --ph-restore-text:#087f5b;
+  --ph-delete-bg:#fff0f0;
+  --ph-delete-text:#c03939;
 }
 
-*{
-  box-sizing:border-box;
+:root[data-theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+html.dark,
+body.dark,
+html.dark-mode,
+body.dark-mode,
+.dark-mode{
+  --ph-bg:var(--bg,#111827);
+  --ph-card:var(--card,#1f2937);
+  --ph-text:var(--text,#f3f4f6);
+  --ph-muted:var(--muted,#9ca3af);
+  --ph-border:var(--border,#374151);
+  --ph-input-bg:var(--input-bg,#111827);
+  --ph-shadow:0 5px 18px rgba(0,0,0,.18);
+  --ph-hover:rgba(18,184,134,.13);
+  --ph-selected:rgba(18,184,134,.18);
+  --ph-restore-bg:#183b30;
+  --ph-restore-text:#75d6ae;
+  --ph-delete-bg:#492b32;
+  --ph-delete-text:#ffaaaa;
 }
+
+*{box-sizing:border-box}
+
+html,body{min-height:100%}
 
 body{
   margin:0;
-  padding:18px;
-  background:var(--dp-bg);
-  color:var(--dp-text);
   font-family:Arial,Helvetica,sans-serif;
+  background:var(--ph-bg);
+  color:var(--ph-text);
+  transition:background .2s,color .2s;
 }
 
-button,input{
-  font:inherit;
-}
+button,input,select,textarea{font:inherit}
 
-.dp-container{
+.ph-wrap{
   width:100%;
-  max-width:1250px;
+  padding:20px;
+  max-width:1500px;
   margin:auto;
 }
 
-.dp-header{
+.ph-header{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  gap:14px;
+  align-items:center;
+  gap:15px;
   flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
-.dp-title h2{
-  margin:0;
-  font-size:22px;
-  font-weight:750;
-}
-
-.dp-title p{
-  margin:6px 0 0;
-  color:var(--dp-muted);
-  font-size:12px;
-}
-
-.dp-btn{
-  border:0;
-  border-radius:9px;
-  padding:11px 15px;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:700;
-  transition:.2s;
-}
-
-.dp-btn:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.dp-refresh{
-  background:var(--dp-primary);
-  color:#fff;
-}
-
-.dp-refresh:hover{
-  filter:brightness(.92);
-}
-
-.dp-stats{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:13px;
   margin-bottom:18px;
 }
 
-.dp-stat{
-  min-width:0;
-  padding:16px;
-  background:var(--dp-card);
-  border:1px solid var(--dp-border);
-  border-radius:12px;
-  box-shadow:var(--dp-shadow);
+.ph-title{font-size:24px;font-weight:800;margin:0 0 5px}
+.ph-subtitle{color:var(--ph-muted);font-size:12px}
+
+.ph-refresh{
+  border:0;
+  background:var(--ph-primary);
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
 }
 
-.dp-stat-label{
-  color:var(--dp-muted);
-  font-size:11px;
-  font-weight:650;
-  margin-bottom:8px;
-}
+.ph-refresh:disabled{opacity:.6;cursor:wait}
 
-.dp-stat-value{
-  font-size:22px;
-  font-weight:750;
-  overflow-wrap:anywhere;
-}
-
-.dp-toolbar{
-  display:flex;
-  align-items:center;
+.ph-stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:12px;
-  flex-wrap:wrap;
-  padding:13px;
-  background:var(--dp-card);
-  border:1px solid var(--dp-border);
-  border-radius:12px;
-  margin-bottom:15px;
-  box-shadow:var(--dp-shadow);
+  margin-bottom:17px;
 }
 
-.dp-search{
-  flex:1;
-  min-width:200px;
+.ph-stat{
+  background:var(--ph-card);
+  border:1px solid var(--ph-border);
+  border-radius:11px;
+  padding:13px 15px;
+  min-height:88px;
+  box-shadow:var(--ph-shadow);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-width:0;
 }
 
-.dp-search input{
+.ph-stat-label{
+  font-size:11px;
+  color:var(--ph-muted);
+  margin-bottom:7px;
+  font-weight:600;
+  line-height:1.4;
+}
+
+.ph-stat-value{
+  font-size:21px;
+  font-weight:800;
+  line-height:1.2;
+  word-break:break-word;
+  color:var(--ph-text);
+}
+
+.ph-panel{
+  background:var(--ph-card);
+  border:1px solid var(--ph-border);
+  border-radius:13px;
+  padding:17px;
+  box-shadow:var(--ph-shadow);
+  margin-bottom:17px;
+}
+
+.ph-section-title{
+  font-size:15px;
+  font-weight:800;
+  margin:0 0 14px;
+}
+
+.ph-search-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
   width:100%;
-  height:43px;
-  padding:0 13px;
-  border:1px solid var(--dp-border);
-  border-radius:9px;
+  position:relative;
+}
+
+.ph-search-wrap{flex:1;min-width:0;position:static}
+
+.ph-search{
+  width:100%;
+  height:44px;
+  border:1px solid var(--ph-border);
+  border-radius:8px;
   outline:none;
-  background:var(--dp-bg);
-  color:var(--dp-text);
+  padding:0 13px;
+  background:var(--ph-input-bg);
+  color:var(--ph-text);
   font-size:13px;
 }
 
-.dp-search input:focus{
-  border-color:var(--dp-primary);
+.ph-search::placeholder{color:var(--ph-muted)}
+
+.ph-search:focus{
+  border-color:var(--ph-primary);
+  box-shadow:0 0 0 3px rgba(8,127,91,.09);
 }
 
-.dp-count{
-  font-size:12px;
-  color:var(--dp-muted);
-}
-
-.dp-list{
-  display:grid;
-  gap:13px;
-}
-
-.dp-item{
-  min-width:0;
-  padding:17px;
-  border:1px solid var(--dp-border);
-  border-radius:12px;
-  background:var(--dp-card);
-  box-shadow:var(--dp-shadow);
-}
-
-.dp-item-head{
+.ph-select-btn{
+  height:44px;
+  min-width:150px;
+  padding:0 14px;
+  border:0;
+  border-radius:8px;
+  background:var(--ph-primary);
+  color:white;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
   display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-bottom:14px;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  flex-shrink:0;
 }
 
-.dp-user-name{
-  font-size:15px;
-  font-weight:750;
-  overflow-wrap:anywhere;
+.ph-select-btn:hover,.ph-refresh:hover{opacity:.9}
+
+.ph-dropdown{
+  display:none;
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  right:0;
+  width:100%;
+  max-height:min(65vh,420px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  background:var(--ph-card);
+  border:1px solid var(--ph-border);
+  border-radius:11px;
+  box-shadow:0 12px 35px rgba(0,0,0,.18);
+  z-index:999;
+  padding:7px;
 }
 
-.dp-id{
-  margin-top:5px;
-  color:var(--dp-muted);
-  font-size:11px;
-  overflow-wrap:anywhere;
+.ph-dropdown.show{display:block}
+
+#phProfileOptions{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
 }
 
-.dp-tag{
-  padding:6px 10px;
-  border-radius:20px;
-  background:rgba(224,82,82,.10);
-  color:var(--dp-danger);
-  font-size:10px;
-  font-weight:750;
-  white-space:nowrap;
-}
-
-.dp-details{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:14px;
-  padding:14px 0;
-  border-top:1px solid var(--dp-border);
-  border-bottom:1px solid var(--dp-border);
-}
-
-.dp-detail{
+.ph-profile-option{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  width:100%;
   min-width:0;
+  padding:10px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:background .15s;
+  color:var(--ph-text);
 }
 
-.dp-label{
-  color:var(--dp-muted);
-  font-size:10px;
-  margin-bottom:6px;
-}
+.ph-profile-option:hover{background:var(--ph-hover)}
+.ph-profile-option.active{background:var(--ph-selected)}
 
-.dp-value{
-  font-size:12px;
-  font-weight:650;
-  overflow-wrap:anywhere;
-  line-height:1.5;
-}
-
-.dp-amount{
-  color:var(--dp-primary);
-  font-size:16px;
+.ph-avatar{
+  width:42px;
+  height:42px;
+  flex:0 0 42px;
+  border-radius:50%;
+  overflow:hidden;
+  background:var(--ph-selected);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--ph-primary);
+  font-size:15px;
   font-weight:800;
 }
 
-.dp-comment{
-  color:var(--dp-muted);
-  font-size:12px;
-  margin-top:11px;
-  line-height:1.5;
-  overflow-wrap:anywhere;
-}
+.ph-avatar img{width:100%;height:100%;object-fit:cover}
+.ph-profile-info{min-width:0;flex:1;overflow:hidden}
 
-.dp-actions{
-  display:flex;
-  justify-content:flex-end;
-  margin-top:14px;
-}
-
-.dp-delete{
-  background:var(--dp-danger);
-  color:white;
-}
-
-.dp-delete:hover{
-  filter:brightness(.92);
-}
-
-.dp-loading,
-.dp-empty,
-.dp-error{
-  padding:35px 15px;
-  text-align:center;
-  background:var(--dp-card);
-  border:1px solid var(--dp-border);
-  border-radius:11px;
-  color:var(--dp-muted);
+.ph-profile-name{
   font-size:13px;
-  line-height:1.6;
+  font-weight:800;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
-.dp-error{
-  color:var(--dp-danger);
+.ph-profile-id{
+  font-size:11px;
+  color:var(--ph-muted);
+  margin-top:4px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
-/* MODAL */
+.ph-profile-count{
+  font-size:11px;
+  color:var(--ph-danger);
+  font-weight:700;
+  white-space:nowrap;
+  flex-shrink:0;
+}
 
-.dp-overlay{
+.ph-dropdown-empty{
+  text-align:center;
+  padding:20px 10px;
+  color:var(--ph-muted);
+  font-size:13px;
+}
+
+.ph-selected{
+  display:none;
+  align-items:center;
+  gap:12px;
+  background:var(--ph-selected);
+  border:1px solid var(--ph-border);
+  border-radius:10px;
+  padding:11px;
+  margin-top:13px;
+}
+
+.ph-selected.show{display:flex}
+.ph-selected-info{flex:1;min-width:0}
+.ph-selected-name{font-weight:800;font-size:13px}
+.ph-selected-id{color:var(--ph-muted);font-size:11px;margin-top:4px}
+
+.ph-clear{
+  border:1px solid var(--ph-border);
+  background:var(--ph-card);
+  color:var(--ph-text);
+  border-radius:7px;
+  padding:7px 10px;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:700;
+  flex-shrink:0;
+}
+
+.ph-history-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.ph-history-count{color:var(--ph-muted);font-size:11px}
+
+.ph-history-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px;
+}
+
+.ph-history-card{
+  border:1px solid var(--ph-border);
+  border-radius:11px;
+  padding:14px;
+  background:var(--ph-card);
+  min-width:0;
+}
+
+.ph-card-user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--ph-border);
+}
+
+.ph-card-user-info{flex:1;min-width:0}
+
+.ph-card-user-name{
+  font-weight:800;
+  font-size:13px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.ph-card-user-id{color:var(--ph-muted);font-size:10px;margin-top:4px}
+
+.ph-amount{
+  color:var(--ph-danger);
+  font-weight:800;
+  font-size:18px;
+  white-space:nowrap;
+}
+
+.ph-details{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  padding:13px 0;
+}
+
+.ph-detail-label{font-size:10px;color:var(--ph-muted);margin-bottom:5px}
+.ph-detail-value{font-size:12px;font-weight:700;overflow-wrap:anywhere}
+
+.ph-card-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding-top:10px;
+  border-top:1px solid var(--ph-border);
+  flex-wrap:wrap;
+}
+
+.ph-date{color:var(--ph-muted);font-size:10px}
+
+.ph-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.ph-action-btn{
+  border:0;
+  border-radius:7px;
+  padding:8px 11px;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.ph-view-btn{background:var(--ph-primary);color:white}
+.ph-restore-btn{background:var(--ph-restore-bg);color:var(--ph-restore-text)}
+.ph-delete-btn{background:var(--ph-delete-bg);color:var(--ph-delete-text)}
+.ph-action-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.ph-empty{
+  text-align:center;
+  padding:40px 15px;
+  color:var(--ph-muted);
+  background:var(--ph-card);
+  border:1px dashed var(--ph-border);
+  border-radius:11px;
+  grid-column:1/-1;
+}
+
+.ph-empty-icon{font-size:30px;margin-bottom:10px}
+
+.ph-pagination{
+  grid-column:1/-1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:15px 0 3px;
+}
+
+.ph-page-btn{
+  border:1px solid var(--ph-border);
+  border-radius:7px;
+  padding:8px 13px;
+  background:var(--ph-card);
+  color:var(--ph-text);
+  cursor:pointer;
+  font-size:11px;
+  font-weight:700;
+}
+
+.ph-page-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.ph-modal{
+  display:none;
   position:fixed;
   inset:0;
-  z-index:99999;
-  background:rgba(0,0,0,.55);
-  display:none;
+  background:rgba(10,20,30,.65);
+  z-index:9999;
   align-items:center;
   justify-content:center;
   padding:15px;
 }
 
-.dp-overlay.show{
-  display:flex;
-}
+.ph-modal.show{display:flex}
 
-.dp-modal{
+.ph-modal-box{
   width:100%;
-  max-width:410px;
-  padding:23px;
-  border-radius:14px;
-  background:var(--dp-card);
-  color:var(--dp-text);
-  border:1px solid var(--dp-border);
-  box-shadow:0 18px 60px rgba(0,0,0,.2);
+  max-width:470px;
+  max-height:90vh;
+  overflow-y:auto;
+  background:var(--ph-card);
+  color:var(--ph-text);
+  border-radius:15px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  padding:21px;
+  animation:phPop .2s ease;
 }
 
-.dp-modal-icon{
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
-  border-radius:50%;
-  background:rgba(224,82,82,.12);
-  color:var(--dp-danger);
-  font-size:22px;
-  font-weight:800;
-  margin-bottom:13px;
+@keyframes phPop{
+  from{transform:translateY(10px);opacity:0}
+  to{transform:translateY(0);opacity:1}
 }
 
-.dp-modal h3{
-  margin:0 0 9px;
-  font-size:18px;
-}
-
-.dp-modal p{
-  margin:0;
-  font-size:13px;
-  line-height:1.6;
-  color:var(--dp-muted);
-}
-
-.dp-modal-actions{
+.ph-modal-head{
   display:flex;
-  justify-content:flex-end;
-  gap:9px;
-  margin-top:22px;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:17px;
 }
 
-.dp-cancel{
-  background:var(--dp-bg);
-  border:1px solid var(--dp-border);
-  color:var(--dp-text);
+.ph-modal-title{font-size:17px;font-weight:800}
+
+.ph-close{
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:8px;
+  background:var(--ph-bg);
+  color:var(--ph-text);
+  cursor:pointer;
+  font-size:19px;
 }
 
-.dp-confirm{
-  background:var(--dp-danger);
+.ph-modal-user{
+  text-align:center;
+  padding:12px 0 18px;
+  border-bottom:1px solid var(--ph-border);
+}
+
+.ph-modal-avatar{
+  width:75px;
+  height:75px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  overflow:hidden;
+  background:var(--ph-selected);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--ph-primary);
+  font-size:25px;
+  font-weight:800;
+}
+
+.ph-modal-avatar img{width:100%;height:100%;object-fit:cover}
+.ph-modal-user-name{font-weight:800;font-size:15px}
+.ph-modal-user-id{font-size:11px;color:var(--ph-muted);margin-top:5px}
+
+.ph-modal-amount{text-align:center;padding:18px 0}
+.ph-modal-amount-label{font-size:11px;color:var(--ph-muted);margin-bottom:6px}
+.ph-modal-amount-value{color:var(--ph-danger);font-size:28px;font-weight:900}
+
+.ph-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.ph-modal-item{padding:11px 5px;border-top:1px solid var(--ph-border)}
+.ph-modal-label{color:var(--ph-muted);font-size:10px;margin-bottom:6px}
+.ph-modal-value{font-size:12px;font-weight:700;overflow-wrap:anywhere}
+
+.ph-modal-done{
+  width:100%;
+  margin-top:17px;
+  border:0;
+  border-radius:8px;
+  padding:11px;
+  background:var(--ph-primary);
   color:white;
+  font-weight:800;
+  cursor:pointer;
 }
 
-/* TOAST */
+.ph-loading{text-align:center;padding:35px 10px;color:var(--ph-muted);font-size:13px}
 
-.dp-toast{
+.ph-toast{
   position:fixed;
-  z-index:100000;
-  bottom:20px;
-  right:20px;
-  max-width:calc(100vw - 40px);
-  padding:12px 17px;
+  right:18px;
+  bottom:18px;
+  z-index:10001;
+  padding:12px 16px;
   border-radius:9px;
-  color:white;
   background:#172033;
+  color:white;
   font-size:13px;
+  box-shadow:0 8px 30px rgba(0,0,0,.2);
   display:none;
+  max-width:min(420px,calc(100vw - 36px));
 }
 
-.dp-toast.show{
-  display:block;
+.ph-toast.show{display:block}
+
+@media(max-width:900px){
+  .ph-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .ph-history-list{grid-template-columns:1fr}
 }
 
-.dp-toast.success{
-  background:#087f5b;
-}
+@media(max-width:520px){
+  .ph-wrap{padding:12px}
+  .ph-title{font-size:21px}
+  .ph-header{margin-bottom:14px}
+  .ph-panel{padding:12px}
 
-.dp-toast.error{
-  background:#c83e3e;
-}
-
-/* TABLET */
-
-@media(max-width:850px){
-
-  .dp-details{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-
-}
-
-/* MOBILE */
-
-@media(max-width:600px){
-
-  body{
-    padding:12px;
-  }
-
-  .dp-header{
-    align-items:flex-start;
-  }
-
-  .dp-title h2{
-    font-size:19px;
-  }
-
-  .dp-title p{
-    font-size:11px;
-    line-height:1.5;
-  }
-
-  .dp-refresh{
-    padding:10px 12px;
-    font-size:11px;
-  }
-
-  .dp-stats{
+  .ph-stats{
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:9px;
+    margin-bottom:13px;
   }
 
-  .dp-stat{
-    padding:12px;
+  .ph-stat{min-height:76px;padding:11px 12px;border-radius:10px}
+  .ph-stat-label{font-size:10px;margin-bottom:6px}
+  .ph-stat-value{font-size:18px}
+
+  .ph-search-row{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:9px;
+    width:100%;
+  }
+
+  .ph-search-wrap{width:100%;flex:none}
+  .ph-search{width:100%;height:44px}
+  .ph-select-btn{width:100%;min-width:0;height:42px;padding:0 12px;font-size:12px}
+
+  .ph-dropdown{
+    top:calc(100% + 7px);
+    left:0;
+    right:0;
+    width:100%;
+    max-height:60vh;
+    padding:6px;
     border-radius:10px;
   }
 
-  .dp-stat:last-child{
-    grid-column:1/-1;
-  }
-
-  .dp-stat-label{
-    font-size:10px;
-  }
-
-  .dp-stat-value{
-    font-size:19px;
-  }
-
-  .dp-toolbar{
-    padding:11px;
-    gap:9px;
-  }
-
-  .dp-search{
-    min-width:100%;
-  }
-
-  .dp-search input{
-    height:42px;
-    font-size:12px;
-  }
-
-  .dp-count{
-    width:100%;
-    font-size:11px;
-  }
-
-  .dp-item{
-    padding:13px;
-    border-radius:11px;
-  }
-
-  .dp-user-name{
-    font-size:14px;
-  }
-
-  .dp-id{
-    font-size:10px;
-    line-height:1.6;
-  }
-
-  .dp-details{
-    gap:13px 10px;
-    padding:13px 0;
-  }
-
-  .dp-label{
-    font-size:9px;
-  }
-
-  .dp-value{
-    font-size:11px;
-  }
-
-  .dp-amount{
-    font-size:14px;
-  }
-
-  .dp-actions{
-    margin-top:13px;
-  }
-
-  .dp-actions button{
-    width:100%;
-    min-height:42px;
-  }
-
-  .dp-modal{
-    padding:19px;
-  }
-
-  .dp-modal-actions button{
-    flex:1;
-    padding:12px 8px;
-  }
-
-  .dp-toast{
-    left:12px;
-    right:12px;
-    bottom:12px;
-    text-align:center;
-  }
-
+  .ph-profile-option{width:100%;padding:9px 8px;gap:9px}
+  .ph-avatar{width:38px;height:38px;flex:0 0 38px}
+  .ph-profile-name{font-size:12px}
+  .ph-profile-id{font-size:10px}
+  .ph-profile-count{font-size:10px}
+  .ph-details{gap:10px}
+  .ph-modal-box{padding:16px}
+  .ph-selected{gap:9px;padding:10px}
+  .ph-clear{padding:7px 9px}
+  .ph-card-footer{align-items:flex-start}
+  .ph-actions{width:100%}
+  .ph-action-btn{flex:1}
 }
 
-/* SMALL MOBILE */
-
-@media(max-width:350px){
-
-  .dp-details{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .dp-title h2{
-    font-size:17px;
-  }
-
-  .dp-refresh{
-    padding:9px;
-  }
-
+@media(max-width:360px){
+  .ph-wrap{padding:9px}
+  .ph-panel{padding:10px}
+  .ph-stats{gap:7px}
+  .ph-stat{min-height:70px;padding:9px 10px}
+  .ph-stat-label{font-size:9px}
+  .ph-stat-value{font-size:16px}
+  .ph-profile-option{gap:7px;padding:9px 6px}
+  .ph-profile-count{font-size:9px}
+  .ph-avatar{width:36px;height:36px;flex-basis:36px}
+  .ph-modal-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<div class="dp-container">
+<div class="ph-wrap">
 
-  <header class="dp-header">
+  <div class="ph-header">
+    <div>
+      <h1 class="ph-title">Delete History</h1>
+      <div class="ph-subtitle">View, restore and permanently delete removed payments</div>
+    </div>
+    <button class="ph-refresh" id="phRefresh" type="button">↻ Refresh</button>
+  </div>
 
-    <div class="dp-title">
-      <h2>Deleted Payment History</h2>
-      <p>Manage deleted payments and permanently remove records.</p>
+  <div class="ph-stats">
+    <div class="ph-stat">
+      <div class="ph-stat-label">Total Deleted</div>
+      <div class="ph-stat-value" id="phTotalHistory">0</div>
     </div>
 
-    <button class="dp-btn dp-refresh" id="refreshBtn">
-      ↻ Refresh
-    </button>
-
-  </header>
-
-  <section class="dp-stats">
-
-    <div class="dp-stat">
-      <div class="dp-stat-label">Deleted Payments</div>
-      <div class="dp-stat-value" id="totalDeleted">0</div>
+    <div class="ph-stat">
+      <div class="ph-stat-label">Total Users</div>
+      <div class="ph-stat-value" id="phTotalUsers">0</div>
     </div>
 
-    <div class="dp-stat">
-      <div class="dp-stat-label">Total Deleted Amount</div>
-      <div class="dp-stat-value" id="totalAmount">0</div>
+    <div class="ph-stat">
+      <div class="ph-stat-label">Total Deleted Amount</div>
+      <div class="ph-stat-value" id="phTotalAmount">৳0</div>
     </div>
 
-    <div class="dp-stat">
-      <div class="dp-stat-label">Showing Records</div>
-      <div class="dp-stat-value" id="showingCount">0</div>
+    <div class="ph-stat">
+      <div class="ph-stat-label">Selected User Records</div>
+      <div class="ph-stat-value" id="phSelectedRecords">All</div>
     </div>
+  </div>
 
-  </section>
+  <div class="ph-panel">
+    <h3 class="ph-section-title">Search Profile</h3>
 
-  <section class="dp-toolbar">
+    <div class="ph-search-row">
+      <div class="ph-search-wrap">
+        <input
+          type="text"
+          class="ph-search"
+          id="phProfileSearch"
+          placeholder="Search profile by name or User ID..."
+          autocomplete="off"
+        >
 
-    <div class="dp-search">
-      <input
-        type="search"
-        id="searchInput"
-        placeholder="Search user, Payment ID, transaction ID..."
-      >
-    </div>
+        <div class="ph-dropdown" id="phProfileDropdown">
+          <div id="phProfileOptions"></div>
+        </div>
+      </div>
 
-    <div class="dp-count" id="resultLabel">
-      Loading...
-    </div>
-
-  </section>
-
-  <section class="dp-list" id="paymentList">
-    <div class="dp-loading">Loading deleted payments...</div>
-  </section>
-
-</div>
-
-<!-- CONFIRMATION MODAL -->
-
-<div class="dp-overlay" id="confirmOverlay">
-
-  <div class="dp-modal">
-
-    <div class="dp-modal-icon">!</div>
-
-    <h3>Permanent Delete?</h3>
-
-    <p>
-      Are you sure you want to permanently delete this payment?
-      It will be removed from the DELETED PAYMENT sheet.
-      This action cannot be undone.
-    </p>
-
-    <div class="dp-modal-actions">
-
-      <button class="dp-btn dp-cancel" id="cancelBtn">
-        Cancel
+      <button class="ph-select-btn" id="phSelectButton" type="button">
+        Select Profile <span>⌄</span>
       </button>
-
-      <button class="dp-btn dp-confirm" id="confirmBtn">
-        Permanently Delete
-      </button>
-
     </div>
 
+    <div class="ph-selected" id="phSelectedProfile">
+      <div class="ph-avatar" id="phSelectedAvatar"></div>
+
+      <div class="ph-selected-info">
+        <div class="ph-selected-name" id="phSelectedName"></div>
+        <div class="ph-selected-id" id="phSelectedId"></div>
+      </div>
+
+      <button class="ph-clear" id="phClearProfile" type="button">Clear</button>
+    </div>
+  </div>
+
+  <div class="ph-panel">
+    <div class="ph-history-head">
+      <h3 class="ph-section-title" style="margin:0">Deleted Payment Records</h3>
+      <div class="ph-history-count" id="phHistoryCount">Loading...</div>
+    </div>
+
+    <div class="ph-history-list" id="phHistoryList">
+      <div class="ph-loading">Loading delete history...</div>
+    </div>
   </div>
 
 </div>
 
-<div class="dp-toast" id="toast"></div>
+<!-- VIEW MODAL -->
+<div class="ph-modal" id="phViewModal">
+  <div class="ph-modal-box">
 
+    <div class="ph-modal-head">
+      <div class="ph-modal-title">Deleted Payment Details</div>
+      <button class="ph-close" id="phModalClose" type="button">×</button>
+    </div>
+
+    <div class="ph-modal-user">
+      <div class="ph-modal-avatar" id="phModalAvatar"></div>
+      <div class="ph-modal-user-name" id="phModalName"></div>
+      <div class="ph-modal-user-id" id="phModalUserId"></div>
+    </div>
+
+    <div class="ph-modal-amount">
+      <div class="ph-modal-amount-label">Payment Amount</div>
+      <div class="ph-modal-amount-value" id="phModalAmount">৳0</div>
+    </div>
+
+    <div class="ph-modal-grid" id="phModalDetails"></div>
+
+    <button class="ph-modal-done" id="phModalDone" type="button">Close</button>
+  </div>
+</div>
+
+<div class="ph-toast" id="phToast"></div>
 
 <script>
 "use strict";
 
-/*******************************************************
- * RS NETWORK — DELETED PAYMENT HISTORY
- * Existing Code.gs compatible
- * No backend changes required
- *******************************************************/
+/* =========================================
+   API CONFIGURATION
+========================================= */
 
-const PAYMENT_API =
-"https://script.google.com/macros/s/AKfycbyQ443c6Ss6TMQgtRGRJflsi7c7WHaChZ4ywnKIJeJ0QlosFh9xzPEjTzWl9iEB44DiMw/exec";
+const DELETE_API =
+"https://script.google.com/macros/s/AKfycbwVB-MBkDbiH6zpJ_1hut95L03t2BW-HTZCKmJHrhbhj5DeyDMNzRUyOwC3vKkyUzTr/exec";
+
+const USER_API =
+"https://script.google.com/macros/s/AKfycbwjWuBcXNv5AeeBKC_0-n3_mXoBltK8GFaU7g3otE5JVYrSvKW6hQekc1kla1cuzY9r/exec";
+
+/* STATE */
 
 let deletedPayments = [];
-let pendingPayment = null;
-let isDeleting = false;
+let allProfiles = [];
+let allUsers = [];
 
+let selectedUserId = "";
+let isDropdownOpen = false;
+let historyPage = 1;
+let isLoading = false;
+
+const PAGE_SIZE = 25;
 const $ = id => document.getElementById(id);
 
+/* HELPERS */
 
-// ======================================================
-// ESCAPE HTML
-// ======================================================
-
-function escapeHTML(value){
-
-  return String(value ?? "").replace(/[&<>"']/g,char=>({
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
     "&":"&amp;",
     "<":"&lt;",
     ">":"&gt;",
     '"':"&quot;",
-    "'":"&#039;"
-  })[char]);
-
+    "'":"&#39;"
+  }[c]));
 }
 
+function getValue(obj,keys,fallback=""){
+  for(const key of keys){
+    if(obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== ""){
+      return obj[key];
+    }
+  }
+  return fallback;
+}
 
-// ======================================================
-// TOAST
-// ======================================================
+function getUserId(x){
+  return String(getValue(x,["userId","User ID","userid"],""));
+}
+
+function getUserName(x){
+  return String(getValue(x,["userName","User Name","name","Name"],"Unknown User"));
+}
+
+function getProfilePicture(x){
+  return String(getValue(x,[
+    "profilePicture","Profile Picture","photoURL","photoUrl","image","avatar"
+  ],""));
+}
+
+function getPaymentId(x){
+  return String(getValue(x,["paymentId","Payment ID"],"")).trim();
+}
+
+function money(value){
+  return "৳" + Number(value || 0).toLocaleString("en-BD",{
+    maximumFractionDigits:2
+  });
+}
+
+function formatDate(value){
+  if(!value) return "—";
+  const d = new Date(value);
+  if(Number.isNaN(d.getTime())) return String(value);
+
+  return d.toLocaleDateString("en-GB",{
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  });
+}
+
+function getImageURL(value){
+  if(!value) return "";
+  let url = String(value).trim();
+
+  if(!url.startsWith("http") && !url.startsWith("data:")){
+    return "https://drive.google.com/thumbnail?id=" +
+      encodeURIComponent(url) + "&sz=w300";
+  }
+
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+
+  if(match){
+    return "https://drive.google.com/thumbnail?id=" +
+      match[1] + "&sz=w300";
+  }
+
+  const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+
+  if(idMatch && url.includes("drive.google.com")){
+    return "https://drive.google.com/thumbnail?id=" +
+      idMatch[1] + "&sz=w300";
+  }
+
+  return url;
+}
+
+function avatarHTML(name,picture,extraClass=""){
+  const initial = esc(
+    String(name || "U").trim().charAt(0).toUpperCase()
+  );
+
+  const image = getImageURL(picture);
+
+  if(!image){
+    return `<div class="${extraClass}">${initial}</div>`;
+  }
+
+  return `<div class="${extraClass}">
+    <img src="${esc(image)}"
+      alt="${esc(name)}"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      onerror="this.parentElement.innerHTML='${initial}'">
+  </div>`;
+}
+
+/* =========================================
+   JSONP API REQUEST
+========================================= */
+
+function apiGet(url,timeout=20000){
+
+  return new Promise((resolve,reject)=>{
+
+    const callbackName =
+      "__dh_cb_" + Date.now() + "_" +
+      Math.random().toString(36).slice(2);
+
+    const script = document.createElement("script");
+
+    let finished = false;
+    let timer;
+
+    function cleanup(){
+      if(script.parentNode){
+        script.parentNode.removeChild(script);
+      }
+
+      try{
+        delete window[callbackName];
+      }catch(e){
+        window[callbackName] = undefined;
+      }
+
+      clearTimeout(timer);
+    }
+
+    function finish(error,data){
+      if(finished) return;
+
+      finished = true;
+      cleanup();
+
+      if(error) reject(error);
+      else resolve(data);
+    }
+
+    window[callbackName] = data => finish(null,data);
+
+    script.onerror = () =>
+      finish(new Error("API connection failed. Check Apps Script deployment."));
+
+    const separator = url.includes("?") ? "&" : "?";
+
+    script.src = url + separator +
+      "callback=" + encodeURIComponent(callbackName) +
+      "&_=" + Date.now();
+
+    timer = setTimeout(
+      ()=>finish(new Error("API response timeout.")),
+      timeout
+    );
+
+    document.head.appendChild(script);
+  });
+}
+
+/* =========================================
+   API ACTION - DELETE HISTORY
+========================================= */
+
+async function apiAction(payload){
+
+  const query = new URLSearchParams();
+
+  Object.entries(payload).forEach(([key,value])=>{
+    if(value !== undefined && value !== null){
+      query.set(key,String(value));
+    }
+  });
+
+  const result = await apiGet(
+    DELETE_API + "?" + query.toString(),
+    25000
+  );
+
+  if(!result || result.success !== true){
+    throw new Error(result?.message || "Request failed.");
+  }
+
+  return result;
+}
+
+/* TOAST */
 
 let toastTimer;
 
-function showToast(message,type=""){
+function showToast(message){
+  const toast = $("phToast");
 
-  const el = $("toast");
-
-  el.textContent = message;
-  el.className = "dp-toast show " + type;
+  toast.textContent = message;
+  toast.classList.add("show");
 
   clearTimeout(toastTimer);
 
   toastTimer = setTimeout(()=>{
-    el.className = "dp-toast";
-  },3500);
-
+    toast.classList.remove("show");
+  },3200);
 }
 
+/* =========================================
+   LOAD DELETE HISTORY
+========================================= */
 
-// ======================================================
-// API GET
-// ======================================================
+async function loadDeleteHistory(){
 
-async function apiGet(api){
+  if(isLoading) return;
+  isLoading = true;
 
-  const url =
-    PAYMENT_API +
-    "?api=" + encodeURIComponent(api) +
-    "&t=" + Date.now();
+  $("phRefresh").disabled = true;
+  $("phRefresh").textContent = "Loading...";
 
-  const response = await fetch(url,{
-    method:"GET",
-    cache:"no-store"
-  });
+  $("phHistoryList").innerHTML =
+    `<div class="ph-loading">Loading delete history...</div>`;
 
-  if(!response.ok){
-    throw new Error("HTTP Error: " + response.status);
-  }
-
-  const result = await response.json();
-
-  if(result.success !== true){
-    throw new Error(result.message || "API request failed.");
-  }
-
-  return result;
-
-}
-
-
-// ======================================================
-// API POST
-// ======================================================
-
-async function apiPost(data){
-
-  const response = await fetch(PAYMENT_API,{
-    method:"POST",
-    headers:{
-      "Content-Type":"text/plain;charset=utf-8"
-    },
-    body:JSON.stringify(data)
-  });
-
-  if(!response.ok){
-    throw new Error("HTTP Error: " + response.status);
-  }
-
-  const result = await response.json();
-
-  if(result.success !== true){
-    throw new Error(result.message || "Server operation failed.");
-  }
-
-  return result;
-
-}
-
-
-// ======================================================
-// LOAD DELETED PAYMENTS
-// ======================================================
-
-async function loadDeletedPayments(){
-
-  const refresh = $("refreshBtn");
-
-  refresh.disabled = true;
-  refresh.textContent = "Loading...";
-
-  $("paymentList").innerHTML =
-    '<div class="dp-loading">Loading deleted payments...</div>';
+  $("phHistoryCount").textContent = "Loading...";
 
   try{
 
-    const result = await apiGet("deletedPayments");
+    const historyResponse = await apiGet(
+      DELETE_API + "?api=deletedPayments",
+      25000
+    );
 
-    deletedPayments = Array.isArray(result.deletedPayments)
-      ? result.deletedPayments
-      : [];
+    if(!historyResponse || historyResponse.success !== true){
+      throw new Error(
+        historyResponse?.message || "Delete history loading failed."
+      );
+    }
 
-    updateStats();
-    renderPayments();
+    deletedPayments =
+      historyResponse.deletedPayments ||
+      historyResponse.payments ||
+      [];
+
+    if(!Array.isArray(deletedPayments)){
+      deletedPayments = [];
+    }
+
+    /* Show history immediately without waiting for User API */
+
+    buildProfiles([]);
+    updateSummary();
+    renderProfileDropdown();
+    renderHistory();
+
+    /* Load profile information in background */
+
+    loadUserProfiles();
 
   }catch(error){
 
-    console.error("Payment API Error:",error);
+    console.error("Delete History:",error);
 
-    $("paymentList").innerHTML =
-      '<div class="dp-error">' +
-      escapeHTML(error.message) +
-      '<br><br>Check your Apps Script Web App access and deployment.' +
-      '</div>';
+    $("phHistoryList").innerHTML = `
+      <div class="ph-empty">
+        <div class="ph-empty-icon">⚠️</div>
+        <b>Unable to load delete history</b>
+        <p>${esc(error.message)}</p>
+      </div>
+    `;
 
-    $("resultLabel").textContent = "Loading failed";
-
-    showToast(error.message,"error");
+    $("phHistoryCount").textContent = "Loading failed";
 
   }finally{
 
-    refresh.disabled = false;
-    refresh.textContent = "↻ Refresh";
+    $("phRefresh").disabled = false;
+    $("phRefresh").textContent = "↻ Refresh";
+    isLoading = false;
 
   }
-
 }
 
+/* LOAD USERS IN BACKGROUND */
 
-// ======================================================
-// UPDATE STATS
-// ======================================================
+async function loadUserProfiles(){
 
-function updateStats(){
+  try{
 
-  const total = deletedPayments.length;
+    const userResponse = await apiGet(
+      USER_API + "?api=active",
+      20000
+    );
 
-  const amount = deletedPayments.reduce((sum,item)=>{
-    return sum + (Number(item.amount) || 0);
-  },0);
+    allUsers =
+      userResponse.users ||
+      userResponse.data ||
+      [];
 
-  $("totalDeleted").textContent =
-    total.toLocaleString("en-US");
+    if(!Array.isArray(allUsers)){
+      allUsers = [];
+    }
 
-  $("totalAmount").textContent =
-    amount.toLocaleString("en-US",{
-      maximumFractionDigits:2
+    buildProfiles(allUsers);
+    updateSummary();
+    renderProfileDropdown();
+    renderHistory();
+
+  }catch(error){
+
+    console.warn("User profile loading:",error);
+
+  }
+}
+
+/* PROFILE DATA */
+
+function buildProfiles(users){
+
+  const map = new Map();
+
+  deletedPayments.forEach(record=>{
+
+    const id = getUserId(record);
+    if(!id) return;
+
+    map.set(id,{
+      userId:id,
+      userName:getUserName(record),
+      profilePicture:getProfilePicture(record),
+      count:0
     });
-
-  $("showingCount").textContent =
-    total.toLocaleString("en-US");
-
-}
-
-
-// ======================================================
-// SEARCH
-// ======================================================
-
-function getFilteredPayments(){
-
-  const query = $("searchInput").value.trim().toLowerCase();
-
-  if(!query) return deletedPayments;
-
-  return deletedPayments.filter(item=>{
-
-    const content = [
-      item.paymentId,
-      item.userId,
-      item.userName,
-      item.transactionId,
-      item.paymentMethod,
-      item.currencyCode,
-      item.paymentDate,
-      item.deletedAt,
-      item.comment
-    ].join(" ").toLowerCase();
-
-    return content.includes(query);
 
   });
 
+  (Array.isArray(users) ? users : []).forEach(user=>{
+
+    const id = getUserId(user);
+    if(!id) return;
+
+    const existing = map.get(id);
+
+    if(existing){
+      existing.userName =
+        getUserName(user) || existing.userName;
+
+      existing.profilePicture =
+        getProfilePicture(user) || existing.profilePicture;
+    }
+
+  });
+
+  deletedPayments.forEach(record=>{
+
+    const profile = map.get(getUserId(record));
+
+    if(profile){
+      profile.count++;
+    }
+
+  });
+
+  allProfiles = Array.from(map.values()).sort((a,b)=>
+    a.userName.localeCompare(b.userName)
+  );
 }
 
+/* SUMMARY */
 
-// ======================================================
-// RENDER PAYMENTS
-// ======================================================
+function updateSummary(){
 
-function renderPayments(){
+  const totalAmount = deletedPayments.reduce((sum,record)=>{
 
-  const list = $("paymentList");
-  const records = getFilteredPayments();
+    return sum + (
+      Number(getValue(record,[
+        "amount",
+        "Amount",
+        "paymentAmount",
+        "Payment Amount"
+      ],0)) || 0
+    );
 
-  $("showingCount").textContent =
-    records.length.toLocaleString("en-US");
+  },0);
 
-  $("resultLabel").textContent =
-    records.length + " of " + deletedPayments.length + " records";
+  $("phTotalHistory").textContent =
+    deletedPayments.length.toLocaleString("en-BD");
 
-  if(!records.length){
+  $("phTotalUsers").textContent =
+    allProfiles.length.toLocaleString("en-BD");
 
-    list.innerHTML =
-      '<div class="dp-empty">' +
-      (
-        deletedPayments.length
-          ? "No matching payment records found."
-          : "No deleted payments found. Delete a payment from your Payment page first."
-      ) +
-      '</div>';
+  $("phTotalAmount").textContent = money(totalAmount);
 
+  updateSelectedCount();
+}
+
+function updateSelectedCount(){
+
+  if(!selectedUserId){
+    $("phSelectedRecords").textContent = "All";
     return;
+  }
+
+  const count = deletedPayments.filter(record=>
+    getUserId(record) === selectedUserId
+  ).length;
+
+  $("phSelectedRecords").textContent = count;
+}
+
+/* PROFILE DROPDOWN */
+
+function renderProfileDropdown(){
+
+  const search =
+    $("phProfileSearch").value.trim().toLowerCase();
+
+  const profiles = allProfiles.filter(profile=>
+    profile.userName.toLowerCase().includes(search) ||
+    profile.userId.toLowerCase().includes(search)
+  );
+
+  let html = `
+    <div class="ph-profile-option ${
+      !selectedUserId ? "active" : ""
+    }" data-user-id="">
+
+      <div class="ph-avatar">ALL</div>
+
+      <div class="ph-profile-info">
+        <div class="ph-profile-name">All Profiles</div>
+        <div class="ph-profile-id">Show all delete history</div>
+      </div>
+
+      <div class="ph-profile-count">${deletedPayments.length}</div>
+    </div>
+  `;
+
+  profiles.forEach(profile=>{
+
+    html += `
+      <div class="ph-profile-option ${
+        selectedUserId === profile.userId ? "active" : ""
+      }" data-user-id="${esc(profile.userId)}">
+
+        ${avatarHTML(
+          profile.userName,
+          profile.profilePicture,
+          "ph-avatar"
+        )}
+
+        <div class="ph-profile-info">
+          <div class="ph-profile-name">
+            ${esc(profile.userName)}
+          </div>
+
+          <div class="ph-profile-id">
+            ${esc(profile.userId)}
+          </div>
+        </div>
+
+        <div class="ph-profile-count">
+          ${profile.count} Deleted
+        </div>
+
+      </div>
+    `;
+
+  });
+
+  if(!profiles.length && search){
+    html += `
+      <div class="ph-dropdown-empty">
+        No matching profile found.
+      </div>
+    `;
+  }
+
+  if(!allProfiles.length){
+    html += `
+      <div class="ph-dropdown-empty">
+        No profiles found.
+      </div>
+    `;
+  }
+
+  $("phProfileOptions").innerHTML = html;
+
+  $("phProfileOptions")
+    .querySelectorAll("[data-user-id]")
+    .forEach(item=>{
+
+      item.addEventListener("click",()=>{
+        selectProfile(item.dataset.userId);
+      });
+
+    });
+}
+
+function toggleDropdown(force){
+
+  isDropdownOpen =
+    typeof force === "boolean" ? force : !isDropdownOpen;
+
+  $("phProfileDropdown").classList.toggle(
+    "show",
+    isDropdownOpen
+  );
+
+  if(isDropdownOpen){
+    renderProfileDropdown();
+    $("phProfileSearch").focus();
+  }
+}
+
+function selectProfile(userId){
+
+  selectedUserId = String(userId || "");
+  historyPage = 1;
+
+  toggleDropdown(false);
+
+  if(selectedUserId){
+
+    const profile = allProfiles.find(
+      p=>p.userId === selectedUserId
+    );
+
+    if(profile){
+
+      $("phSelectedProfile").classList.add("show");
+
+      $("phSelectedAvatar").innerHTML =
+        avatarHTML(
+          profile.userName,
+          profile.profilePicture,
+          "ph-avatar"
+        );
+
+      $("phSelectedName").textContent = profile.userName;
+
+      $("phSelectedId").textContent =
+        "User ID: " + profile.userId;
+
+      $("phProfileSearch").value = profile.userName;
+
+      $("phSelectButton").innerHTML =
+        "Change Profile <span>⌄</span>";
+    }
+
+  }else{
+
+    $("phSelectedProfile").classList.remove("show");
+    $("phProfileSearch").value = "";
+
+    $("phSelectButton").innerHTML =
+      "Select Profile <span>⌄</span>";
+  }
+
+  updateSelectedCount();
+  renderProfileDropdown();
+  renderHistory();
+}
+
+/* =========================================
+   RENDER DELETE HISTORY
+========================================= */
+
+function renderHistory(){
+
+  let list = deletedPayments.slice();
+
+  if(selectedUserId){
+
+    list = list.filter(record=>
+      getUserId(record) === selectedUserId
+    );
 
   }
 
-  list.innerHTML = records.map(item=>{
+  list.sort((a,b)=>{
 
-    const amount = Number(item.amount) || 0;
+    const da = new Date(getValue(a,[
+      "deletedAt",
+      "Deleted At",
+      "createdAt",
+      "Created At"
+    ],0)).getTime() || 0;
 
-    const amountText =
-      amount.toLocaleString("en-US",{
-        maximumFractionDigits:2
-      }) +
-      (item.currencyCode ? " " + item.currencyCode : "");
+    const db = new Date(getValue(b,[
+      "deletedAt",
+      "Deleted At",
+      "createdAt",
+      "Created At"
+    ],0)).getTime() || 0;
 
-    const rowNumber = Number(item._row);
+    return db-da;
+  });
 
-    return `
+  const total = list.length;
 
-      <article class="dp-item">
+  const pages = Math.max(
+    1,
+    Math.ceil(total/PAGE_SIZE)
+  );
 
-        <div class="dp-item-head">
+  historyPage = Math.min(
+    Math.max(1,historyPage),
+    pages
+  );
 
-          <div>
+  const start = (historyPage-1)*PAGE_SIZE;
 
-            <div class="dp-user-name">
-              ${escapeHTML(item.userName || "Unknown User")}
+  const pageItems = list.slice(
+    start,
+    start+PAGE_SIZE
+  );
+
+  $("phHistoryCount").textContent =
+    `${total} record(s) found · Page ${historyPage} of ${pages}`;
+
+  if(!total){
+
+    $("phHistoryList").innerHTML = `
+      <div class="ph-empty">
+        <div class="ph-empty-icon">🗑️</div>
+        <b>No Delete History Found</b>
+        <p>There are no deleted payment records for this selection.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  $("phHistoryList").innerHTML =
+    pageItems.map((record,index)=>{
+
+      const userId = getUserId(record);
+
+      const profile = allProfiles.find(
+        p=>p.userId === userId
+      );
+
+      const userName =
+        profile?.userName || getUserName(record);
+
+      const picture =
+        profile?.profilePicture || getProfilePicture(record);
+
+      const amount = getValue(record,[
+        "amount",
+        "Amount",
+        "paymentAmount",
+        "Payment Amount"
+      ],0);
+
+      const method = getValue(record,[
+        "paymentMethod",
+        "Payment Method",
+        "method",
+        "Method"
+      ],"—");
+
+      const transaction = getValue(record,[
+        "transactionId",
+        "Transaction ID",
+        "trxId"
+      ],"—");
+
+      const date = getValue(record,[
+        "paymentDate",
+        "Payment Date",
+        "date"
+      ],"");
+
+      const paymentId = getPaymentId(record);
+
+      const deletedAt = getValue(record,[
+        "deletedAt",
+        "Deleted At"
+      ],"");
+
+      return `
+        <div class="ph-history-card">
+
+          <div class="ph-card-user">
+
+            ${avatarHTML(
+              userName,
+              picture,
+              "ph-avatar"
+            )}
+
+            <div class="ph-card-user-info">
+              <div class="ph-card-user-name">
+                ${esc(userName)}
+              </div>
+
+              <div class="ph-card-user-id">
+                User ID: ${esc(userId)}
+              </div>
             </div>
 
-            <div class="dp-id">
-              Payment ID: ${escapeHTML(item.paymentId || "—")}
-              &nbsp; | &nbsp;
-              User ID: ${escapeHTML(item.userId || "—")}
+            <div class="ph-amount">
+              ${money(amount)}
             </div>
 
           </div>
 
-          <span class="dp-tag">DELETED</span>
+          <div class="ph-details">
+
+            <div>
+              <div class="ph-detail-label">Payment Method</div>
+              <div class="ph-detail-value">${esc(method)}</div>
+            </div>
+
+            <div>
+              <div class="ph-detail-label">Transaction ID</div>
+              <div class="ph-detail-value">${esc(transaction)}</div>
+            </div>
+
+            <div>
+              <div class="ph-detail-label">Payment Date</div>
+              <div class="ph-detail-value">
+                ${esc(formatDate(date))}
+              </div>
+            </div>
+
+            <div>
+              <div class="ph-detail-label">Payment ID</div>
+              <div class="ph-detail-value">
+                ${esc(paymentId || "—")}
+              </div>
+            </div>
+
+          </div>
+
+          <div class="ph-card-footer">
+
+            <div class="ph-date">
+              Deleted: ${esc(formatDate(deletedAt))}
+            </div>
+
+            <div class="ph-actions">
+
+              <button
+                class="ph-action-btn ph-view-btn"
+                type="button"
+                data-view="${index}">
+                View
+              </button>
+
+              <button
+                class="ph-action-btn ph-restore-btn"
+                type="button"
+                data-restore="${index}"
+                ${!paymentId ? "disabled" : ""}>
+                Restore
+              </button>
+
+              <button
+                class="ph-action-btn ph-delete-btn"
+                type="button"
+                data-permanent="${index}"
+                ${!paymentId ? "disabled" : ""}>
+                Permanent Delete
+              </button>
+
+            </div>
+
+          </div>
 
         </div>
+      `;
 
-        <div class="dp-details">
+    }).join("");
 
-          <div class="dp-detail">
-            <div class="dp-label">Payment Amount</div>
-            <div class="dp-amount">
-              ${escapeHTML(amountText)}
-            </div>
-          </div>
+  /* PAGINATION */
 
-          <div class="dp-detail">
-            <div class="dp-label">Payment Method</div>
-            <div class="dp-value">
-              ${escapeHTML(item.paymentMethod || "—")}
-            </div>
-          </div>
+  if(pages>1){
 
-          <div class="dp-detail">
-            <div class="dp-label">Payment Date</div>
-            <div class="dp-value">
-              ${escapeHTML(item.paymentDate || "—")}
-            </div>
-          </div>
-
-          <div class="dp-detail">
-            <div class="dp-label">Transaction ID</div>
-            <div class="dp-value">
-              ${escapeHTML(item.transactionId || "—")}
-            </div>
-          </div>
-
-          <div class="dp-detail">
-            <div class="dp-label">Deleted At</div>
-            <div class="dp-value">
-              ${escapeHTML(item.deletedAt || "—")}
-            </div>
-          </div>
-
-        </div>
-
-        ${
-          item.comment
-          ? `<div class="dp-comment">Comment: ${escapeHTML(item.comment)}</div>`
-          : ""
-        }
-
-        <div class="dp-actions">
+    $("phHistoryList").insertAdjacentHTML(
+      "beforeend",
+      `
+        <div class="ph-pagination">
 
           <button
-            class="dp-btn dp-delete"
-            data-id="${escapeHTML(item.paymentId)}"
-            data-row="${Number.isInteger(rowNumber) ? rowNumber : 0}"
-            onclick="askDelete(this)"
-          >
-            Permanently Delete
+            class="ph-page-btn"
+            id="phPrev"
+            ${historyPage===1?"disabled":""}>
+            Previous
+          </button>
+
+          <span style="font-size:12px;color:var(--ph-muted)">
+            Page ${historyPage} of ${pages}
+          </span>
+
+          <button
+            class="ph-page-btn"
+            id="phNext"
+            ${historyPage===pages?"disabled":""}>
+            Next
           </button>
 
         </div>
-
-      </article>
-
-    `;
-
-  }).join("");
-
-}
-
-
-// ======================================================
-// OPEN DELETE CONFIRMATION
-// ======================================================
-
-function askDelete(button){
-
-  const paymentId = button.dataset.id;
-  const deletedRow = Number(button.dataset.row);
-
-  if(
-    !paymentId ||
-    !Number.isInteger(deletedRow) ||
-    deletedRow < 2
-  ){
-
-    showToast(
-      "Invalid payment information. Please refresh.",
-      "error"
+      `
     );
 
-    return;
+    $("phPrev").addEventListener("click",()=>{
+      historyPage--;
+      renderHistory();
+    });
 
+    $("phNext").addEventListener("click",()=>{
+      historyPage++;
+      renderHistory();
+    });
   }
 
-  pendingPayment = {
-    paymentId:paymentId,
-    deletedRow:deletedRow
-  };
+  /* VIEW EVENT */
 
-  $("confirmOverlay").classList.add("show");
+  $("phHistoryList")
+    .querySelectorAll("[data-view]")
+    .forEach(button=>{
 
-}
-
-
-// ======================================================
-// CLOSE MODAL
-// ======================================================
-
-function closeModal(){
-
-  if(isDeleting) return;
-
-  pendingPayment = null;
-
-  $("confirmOverlay").classList.remove("show");
-
-}
-
-
-// ======================================================
-// PERMANENT DELETE
-// ======================================================
-
-async function permanentDelete(){
-
-  if(!pendingPayment || isDeleting) return;
-
-  isDeleting = true;
-
-  $("confirmBtn").disabled = true;
-  $("cancelBtn").disabled = true;
-
-  $("confirmBtn").textContent = "Deleting...";
-
-  try{
-
-    const result = await apiPost({
-
-      action:"permanentDeletePayment",
-
-      paymentId:pendingPayment.paymentId,
-
-      deletedRow:pendingPayment.deletedRow
+      button.addEventListener("click",()=>{
+        openPaymentDetails(
+          pageItems[Number(button.dataset.view)]
+        );
+      });
 
     });
 
-    if(!result.success){
-      throw new Error(result.message || "Delete failed.");
-    }
+  /* RESTORE EVENT */
 
-    const deletedId = pendingPayment.paymentId;
+  $("phHistoryList")
+    .querySelectorAll("[data-restore]")
+    .forEach(button=>{
 
-    $("confirmOverlay").classList.remove("show");
+      button.addEventListener("click",()=>{
+        restorePayment(
+          pageItems[Number(button.dataset.restore)]
+        );
+      });
 
-    pendingPayment = null;
+    });
 
-    showToast(
-      "Payment permanently deleted: " + deletedId,
-      "success"
+  /* PERMANENT DELETE EVENT */
+
+  $("phHistoryList")
+    .querySelectorAll("[data-permanent]")
+    .forEach(button=>{
+
+      button.addEventListener("click",()=>{
+        permanentDeletePayment(
+          pageItems[Number(button.dataset.permanent)]
+        );
+      });
+
+    });
+}
+
+/* VIEW PAYMENT DETAILS */
+
+function openPaymentDetails(record){
+
+  const userId = getUserId(record);
+
+  const profile = allProfiles.find(
+    p=>p.userId===userId
+  );
+
+  const userName =
+    profile?.userName || getUserName(record);
+
+  const picture =
+    profile?.profilePicture || getProfilePicture(record);
+
+  const amount = getValue(record,[
+    "amount",
+    "Amount",
+    "paymentAmount",
+    "Payment Amount"
+  ],0);
+
+  $("phModalAvatar").innerHTML =
+    avatarHTML(
+      userName,
+      picture,
+      "ph-modal-avatar"
     );
 
-    await loadDeletedPayments();
+  $("phModalName").textContent = userName;
+
+  $("phModalUserId").textContent =
+    "User ID: " + userId;
+
+  $("phModalAmount").textContent = money(amount);
+
+  const details = [
+
+    [
+      "Payment ID",
+      getValue(record,["paymentId","Payment ID"],"—")
+    ],
+
+    [
+      "Payment Method",
+      getValue(record,["paymentMethod","Payment Method","method","Method"],"—")
+    ],
+
+    [
+      "Transaction ID",
+      getValue(record,["transactionId","Transaction ID"],"—")
+    ],
+
+    [
+      "Payment Date",
+      formatDate(getValue(record,[
+        "paymentDate",
+        "Payment Date",
+        "date"
+      ],""))
+    ],
+
+    [
+      "Currency",
+      getValue(record,[
+        "currencyName",
+        "Currency Name",
+        "currencyCode",
+        "Currency Code"
+      ],"BDT")
+    ],
+
+    [
+      "Deleted At",
+      formatDate(getValue(record,[
+        "deletedAt",
+        "Deleted At"
+      ],""))
+    ],
+
+    [
+      "Created At",
+      formatDate(getValue(record,[
+        "createdAt",
+        "Created At"
+      ],""))
+    ],
+
+    [
+      "Updated At",
+      formatDate(getValue(record,[
+        "updatedAt",
+        "Updated At"
+      ],""))
+    ],
+
+    [
+      "Comment",
+      getValue(record,[
+        "comment",
+        "Comment",
+        "description"
+      ],"—")
+    ]
+
+  ];
+
+  $("phModalDetails").innerHTML =
+    details.map(item=>`
+      <div class="ph-modal-item">
+        <div class="ph-modal-label">
+          ${esc(item[0])}
+        </div>
+
+        <div class="ph-modal-value">
+          ${esc(item[1])}
+        </div>
+      </div>
+    `).join("");
+
+  $("phViewModal").classList.add("show");
+}
+
+function closePaymentModal(){
+  $("phViewModal").classList.remove("show");
+}
+
+/* =========================================
+   RESTORE PAYMENT
+   DELETE HISTORY -> PAYMENT HISTORY
+========================================= */
+
+async function restorePayment(record){
+
+  const paymentId = getPaymentId(record);
+
+  if(!paymentId){
+    showToast("Payment ID is missing.");
+    return;
+  }
+
+  const userName = getUserName(record);
+
+  const amount = money(getValue(record,[
+    "amount",
+    "Amount",
+    "paymentAmount",
+    "Payment Amount"
+  ],0));
+
+  const confirmed = confirm(
+    "Restore this payment?\n\n" +
+    "User: " + userName + "\n" +
+    "Amount: " + amount + "\n\n" +
+    "It will return to active payments."
+  );
+
+  if(!confirmed) return;
+
+  try{
+
+    const result = await apiAction({
+      action:"restorePayment",
+      paymentId:paymentId
+    });
+
+    if(result.success !== true){
+      throw new Error(result.message || "Payment restore failed.");
+    }
+
+    showToast("Payment restored successfully.");
+
+    deletedPayments = deletedPayments.filter(
+      item=>getPaymentId(item)!==paymentId
+    );
+
+    buildProfiles(allUsers);
+    updateSummary();
+    renderProfileDropdown();
+    renderHistory();
 
   }catch(error){
 
-    console.error("Permanent Delete Error:",error);
+    console.error("Restore payment:",error);
 
     showToast(
-      error.message || "Permanent delete failed.",
-      "error"
+      error.message || "Payment restore failed."
     );
 
-  }finally{
-
-    isDeleting = false;
-
-    $("confirmBtn").disabled = false;
-    $("cancelBtn").disabled = false;
-
-    $("confirmBtn").textContent = "Permanently Delete";
-
   }
-
 }
 
+/* =========================================
+   PERMANENT DELETE
+========================================= */
 
-// ======================================================
-// EVENTS
-// ======================================================
+async function permanentDeletePayment(record){
 
-$("refreshBtn").addEventListener(
+  const paymentId = getPaymentId(record);
+
+  if(!paymentId){
+    showToast("Payment ID is missing.");
+    return;
+  }
+
+  const userName = getUserName(record);
+
+  const amount = money(getValue(record,[
+    "amount",
+    "Amount",
+    "paymentAmount",
+    "Payment Amount"
+  ],0));
+
+  const confirmed = confirm(
+    "WARNING: Permanently delete this payment?\n\n" +
+    "User: " + userName + "\n" +
+    "Amount: " + amount + "\n\n" +
+    "This action cannot be undone."
+  );
+
+  if(!confirmed) return;
+
+  try{
+
+    const result = await apiAction({
+      action:"permanentDeletePayment",
+      paymentId:paymentId
+    });
+
+    if(result.success !== true){
+      throw new Error(result.message || "Permanent delete failed.");
+    }
+
+    showToast("Payment permanently deleted.");
+
+    deletedPayments = deletedPayments.filter(
+      item=>getPaymentId(item)!==paymentId
+    );
+
+    buildProfiles(allUsers);
+    updateSummary();
+    renderProfileDropdown();
+    renderHistory();
+
+  }catch(error){
+
+    console.error("Permanent delete:",error);
+
+    showToast(
+      error.message || "Permanent delete failed."
+    );
+
+  }
+}
+
+/* EVENTS */
+
+$("phSelectButton").addEventListener("click",()=>{
+  toggleDropdown();
+});
+
+$("phProfileSearch").addEventListener("focus",()=>{
+  if(!isDropdownOpen){
+    toggleDropdown(true);
+  }
+});
+
+$("phProfileSearch").addEventListener("input",()=>{
+  if(!isDropdownOpen){
+    toggleDropdown(true);
+  }
+
+  renderProfileDropdown();
+});
+
+$("phClearProfile").addEventListener("click",()=>{
+  selectProfile("");
+});
+
+$("phRefresh").addEventListener(
   "click",
-  loadDeletedPayments
+  loadDeleteHistory
 );
 
-$("searchInput").addEventListener(
-  "input",
-  renderPayments
-);
-
-$("cancelBtn").addEventListener(
+$("phModalClose").addEventListener(
   "click",
-  closeModal
+  closePaymentModal
 );
 
-$("confirmBtn").addEventListener(
+$("phModalDone").addEventListener(
   "click",
-  permanentDelete
+  closePaymentModal
 );
 
-$("confirmOverlay").addEventListener("click",event=>{
+$("phViewModal").addEventListener("click",event=>{
 
-  if(event.target === $("confirmOverlay")){
-    closeModal();
+  if(event.target === $("phViewModal")){
+    closePaymentModal();
   }
 
 });
 
+document.addEventListener("click",event=>{
 
-// ======================================================
-// INITIAL LOAD
-// ======================================================
+  const dropdown = $("phProfileDropdown");
+  const searchWrap = document.querySelector(".ph-search-wrap");
+  const selectButton = $("phSelectButton");
 
-loadDeletedPayments();
+  if(
+    isDropdownOpen &&
+    !dropdown.contains(event.target) &&
+    !searchWrap.contains(event.target) &&
+    !selectButton.contains(event.target)
+  ){
+    toggleDropdown(false);
+  }
+
+});
+
+document.addEventListener("keydown",event=>{
+
+  if(event.key==="Escape"){
+    toggleDropdown(false);
+    closePaymentModal();
+  }
+
+});
+
+/* INITIAL LOAD */
+
+loadDeleteHistory();
 
 </script>
-
 </body>
 </html>
