@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,28 +7,68 @@
 <title>Payment History</title>
 
 <style>
+/* =========================================
+   PAYMENT HISTORY THEME
+   INDEX DARK MODE COMPATIBILITY
+========================================= */
+
 :root{
   --ph-primary:var(--primary,#087f5b);
   --ph-accent:var(--accent,#12b886);
   --ph-bg:var(--bg,#f5f7fb);
-  --ph-card:var(--card,#fff);
+  --ph-card:var(--card,#ffffff);
   --ph-text:var(--text,#172033);
   --ph-muted:var(--muted,#8490a3);
   --ph-border:var(--border,#e8edf3);
   --ph-danger:#e05252;
   --ph-shadow:0 5px 18px rgba(20,40,60,.055);
+
+  --ph-input-bg:var(--input-bg,var(--ph-bg));
+  --ph-hover:rgba(8,127,91,.08);
+  --ph-selected:rgba(8,127,91,.12);
+  --ph-edit-bg:#eaf2ff;
+  --ph-edit-text:#2457a6;
+  --ph-delete-bg:#fff0f0;
+  --ph-delete-text:#c03939;
+}
+
+:root[data-theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+html.dark,
+body.dark,
+html.dark-mode,
+body.dark-mode,
+.dark-mode{
+  --ph-bg:var(--bg,#111827);
+  --ph-card:var(--card,#1f2937);
+  --ph-text:var(--text,#f3f4f6);
+  --ph-muted:var(--muted,#9ca3af);
+  --ph-border:var(--border,#374151);
+  --ph-input-bg:var(--input-bg,#111827);
+  --ph-shadow:0 5px 18px rgba(0,0,0,.18);
+
+  --ph-hover:rgba(18,184,134,.13);
+  --ph-selected:rgba(18,184,134,.18);
+  --ph-edit-bg:#263b59;
+  --ph-edit-text:#a9caff;
+  --ph-delete-bg:#492b32;
+  --ph-delete-text:#ffaaaa;
 }
 
 *{box-sizing:border-box}
+
+html,body{min-height:100%}
 
 body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
   background:var(--ph-bg);
   color:var(--ph-text);
+  transition:background .2s,color .2s;
 }
 
-button,input{font:inherit}
+button,input,select,textarea{font:inherit}
 
 .ph-wrap{
   width:100%;
@@ -45,16 +86,8 @@ button,input{font:inherit}
   margin-bottom:18px;
 }
 
-.ph-title{
-  font-size:24px;
-  font-weight:800;
-  margin:0 0 5px;
-}
-
-.ph-subtitle{
-  color:var(--ph-muted);
-  font-size:12px;
-}
+.ph-title{font-size:24px;font-weight:800;margin:0 0 5px}
+.ph-subtitle{color:var(--ph-muted);font-size:12px}
 
 .ph-refresh{
   border:0;
@@ -66,8 +99,6 @@ button,input{font:inherit}
   font-size:13px;
   font-weight:700;
 }
-
-/* COMPACT SUMMARY CARDS */
 
 .ph-stats{
   display:grid;
@@ -120,8 +151,6 @@ button,input{font:inherit}
   margin:0 0 14px;
 }
 
-/* PROFILE SEARCH */
-
 .ph-search-row{
   display:flex;
   gap:10px;
@@ -130,11 +159,7 @@ button,input{font:inherit}
   position:relative;
 }
 
-.ph-search-wrap{
-  flex:1;
-  min-width:0;
-  position:static;
-}
+.ph-search-wrap{flex:1;min-width:0;position:static}
 
 .ph-search{
   width:100%;
@@ -143,14 +168,12 @@ button,input{font:inherit}
   border-radius:8px;
   outline:none;
   padding:0 13px;
-  background:var(--ph-bg);
+  background:var(--ph-input-bg);
   color:var(--ph-text);
   font-size:13px;
 }
 
-.ph-search::placeholder{
-  color:var(--ph-muted);
-}
+.ph-search::placeholder{color:var(--ph-muted)}
 
 .ph-search:focus{
   border-color:var(--ph-primary);
@@ -175,13 +198,7 @@ button,input{font:inherit}
   flex-shrink:0;
 }
 
-.ph-select-btn:hover,
-.ph-refresh:hover,
-.ph-view-btn:hover{
-  opacity:.9;
-}
-
-/* PROFILE DROPDOWN */
+.ph-select-btn:hover,.ph-refresh:hover,.ph-view-btn:hover{opacity:.9}
 
 .ph-dropdown{
   display:none;
@@ -226,15 +243,11 @@ button,input{font:inherit}
   cursor:pointer;
   transition:background .15s;
   flex-shrink:0;
+  color:var(--ph-text);
 }
 
-.ph-profile-option:hover{
-  background:rgba(8,127,91,.08);
-}
-
-.ph-profile-option.active{
-  background:rgba(8,127,91,.12);
-}
+.ph-profile-option:hover{background:var(--ph-hover)}
+.ph-profile-option.active{background:var(--ph-selected)}
 
 .ph-avatar{
   width:42px;
@@ -242,7 +255,7 @@ button,input{font:inherit}
   flex:0 0 42px;
   border-radius:50%;
   overflow:hidden;
-  background:rgba(8,127,91,.12);
+  background:var(--ph-selected);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -251,17 +264,8 @@ button,input{font:inherit}
   font-weight:800;
 }
 
-.ph-avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.ph-profile-info{
-  min-width:0;
-  flex:1;
-  overflow:hidden;
-}
+.ph-avatar img{width:100%;height:100%;object-fit:cover}
+.ph-profile-info{min-width:0;flex:1;overflow:hidden}
 
 .ph-profile-name{
   font-size:13px;
@@ -295,36 +299,21 @@ button,input{font:inherit}
   font-size:13px;
 }
 
-/* SELECTED PROFILE */
-
 .ph-selected{
   display:none;
   align-items:center;
   gap:12px;
-  background:rgba(8,127,91,.07);
-  border:1px solid rgba(8,127,91,.18);
+  background:var(--ph-selected);
+  border:1px solid var(--ph-border);
   border-radius:10px;
   padding:11px;
   margin-top:13px;
 }
 
 .ph-selected.show{display:flex}
-
-.ph-selected-info{
-  flex:1;
-  min-width:0;
-}
-
-.ph-selected-name{
-  font-weight:800;
-  font-size:13px;
-}
-
-.ph-selected-id{
-  color:var(--ph-muted);
-  font-size:11px;
-  margin-top:4px;
-}
+.ph-selected-info{flex:1;min-width:0}
+.ph-selected-name{font-weight:800;font-size:13px}
+.ph-selected-id{color:var(--ph-muted);font-size:11px;margin-top:4px}
 
 .ph-clear{
   border:1px solid var(--ph-border);
@@ -338,8 +327,6 @@ button,input{font:inherit}
   flex-shrink:0;
 }
 
-/* HISTORY */
-
 .ph-history-head{
   display:flex;
   justify-content:space-between;
@@ -349,10 +336,7 @@ button,input{font:inherit}
   margin-bottom:14px;
 }
 
-.ph-history-count{
-  color:var(--ph-muted);
-  font-size:11px;
-}
+.ph-history-count{color:var(--ph-muted);font-size:11px}
 
 .ph-history-list{
   display:grid;
@@ -376,10 +360,7 @@ button,input{font:inherit}
   border-bottom:1px solid var(--ph-border);
 }
 
-.ph-card-user-info{
-  flex:1;
-  min-width:0;
-}
+.ph-card-user-info{flex:1;min-width:0}
 
 .ph-card-user-name{
   font-weight:800;
@@ -389,11 +370,7 @@ button,input{font:inherit}
   white-space:nowrap;
 }
 
-.ph-card-user-id{
-  color:var(--ph-muted);
-  font-size:10px;
-  margin-top:4px;
-}
+.ph-card-user-id{color:var(--ph-muted);font-size:10px;margin-top:4px}
 
 .ph-amount{
   color:var(--ph-primary);
@@ -409,17 +386,8 @@ button,input{font:inherit}
   padding:13px 0;
 }
 
-.ph-detail-label{
-  font-size:10px;
-  color:var(--ph-muted);
-  margin-bottom:5px;
-}
-
-.ph-detail-value{
-  font-size:12px;
-  font-weight:700;
-  overflow-wrap:anywhere;
-}
+.ph-detail-label{font-size:10px;color:var(--ph-muted);margin-bottom:5px}
+.ph-detail-value{font-size:12px;font-weight:700;overflow-wrap:anywhere}
 
 .ph-card-footer{
   display:flex;
@@ -428,24 +396,31 @@ button,input{font:inherit}
   gap:10px;
   padding-top:10px;
   border-top:1px solid var(--ph-border);
+  flex-wrap:wrap;
 }
 
-.ph-date{
-  color:var(--ph-muted);
-  font-size:10px;
+.ph-date{color:var(--ph-muted);font-size:10px}
+
+.ph-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
 }
 
-.ph-view-btn{
+.ph-action-btn{
   border:0;
   border-radius:7px;
-  background:var(--ph-primary);
-  color:white;
-  padding:8px 12px;
+  padding:8px 11px;
   cursor:pointer;
   font-size:11px;
   font-weight:700;
   white-space:nowrap;
 }
+
+.ph-view-btn{background:var(--ph-primary);color:white}
+.ph-edit-btn{background:var(--ph-edit-bg);color:var(--ph-edit-text)}
+.ph-delete-btn{background:var(--ph-delete-bg);color:var(--ph-delete-text)}
+.ph-action-btn:disabled{opacity:.5;cursor:not-allowed}
 
 .ph-empty{
   text-align:center;
@@ -457,18 +432,36 @@ button,input{font:inherit}
   grid-column:1/-1;
 }
 
-.ph-empty-icon{
-  font-size:30px;
-  margin-bottom:10px;
+.ph-empty-icon{font-size:30px;margin-bottom:10px}
+
+.ph-pagination{
+  grid-column:1/-1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:15px 0 3px;
 }
 
-/* VIEW PAYMENT MODAL */
+.ph-page-btn{
+  border:1px solid var(--ph-border);
+  border-radius:7px;
+  padding:8px 13px;
+  background:var(--ph-card);
+  color:var(--ph-text);
+  cursor:pointer;
+  font-size:11px;
+  font-weight:700;
+}
+
+.ph-page-btn:disabled{opacity:.4;cursor:not-allowed}
 
 .ph-modal{
   display:none;
   position:fixed;
   inset:0;
-  background:rgba(10,20,30,.55);
+  background:rgba(10,20,30,.65);
   z-index:9999;
   align-items:center;
   justify-content:center;
@@ -483,8 +476,9 @@ button,input{font:inherit}
   max-height:90vh;
   overflow-y:auto;
   background:var(--ph-card);
+  color:var(--ph-text);
   border-radius:15px;
-  box-shadow:0 20px 60px rgba(0,0,0,.2);
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
   padding:21px;
   animation:phPop .2s ease;
 }
@@ -501,10 +495,7 @@ button,input{font:inherit}
   margin-bottom:17px;
 }
 
-.ph-modal-title{
-  font-size:17px;
-  font-weight:800;
-}
+.ph-modal-title{font-size:17px;font-weight:800}
 
 .ph-close{
   width:32px;
@@ -529,7 +520,7 @@ button,input{font:inherit}
   margin:0 auto 10px;
   border-radius:50%;
   overflow:hidden;
-  background:rgba(8,127,91,.12);
+  background:var(--ph-selected);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -538,62 +529,18 @@ button,input{font:inherit}
   font-weight:800;
 }
 
-.ph-modal-avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
+.ph-modal-avatar img{width:100%;height:100%;object-fit:cover}
+.ph-modal-user-name{font-weight:800;font-size:15px}
+.ph-modal-user-id{font-size:11px;color:var(--ph-muted);margin-top:5px}
 
-.ph-modal-user-name{
-  font-weight:800;
-  font-size:15px;
-}
+.ph-modal-amount{text-align:center;padding:18px 0}
+.ph-modal-amount-label{font-size:11px;color:var(--ph-muted);margin-bottom:6px}
+.ph-modal-amount-value{color:var(--ph-primary);font-size:28px;font-weight:900}
 
-.ph-modal-user-id{
-  font-size:11px;
-  color:var(--ph-muted);
-  margin-top:5px;
-}
-
-.ph-modal-amount{
-  text-align:center;
-  padding:18px 0;
-}
-
-.ph-modal-amount-label{
-  font-size:11px;
-  color:var(--ph-muted);
-  margin-bottom:6px;
-}
-
-.ph-modal-amount-value{
-  color:var(--ph-primary);
-  font-size:28px;
-  font-weight:900;
-}
-
-.ph-modal-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0;
-}
-
-.ph-modal-item{
-  padding:11px 5px;
-  border-top:1px solid var(--ph-border);
-}
-
-.ph-modal-label{
-  color:var(--ph-muted);
-  font-size:10px;
-  margin-bottom:6px;
-}
-
-.ph-modal-value{
-  font-size:12px;
-  font-weight:700;
-  overflow-wrap:anywhere;
-}
+.ph-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.ph-modal-item{padding:11px 5px;border-top:1px solid var(--ph-border)}
+.ph-modal-label{color:var(--ph-muted);font-size:10px;margin-bottom:6px}
+.ph-modal-value{font-size:12px;font-weight:700;overflow-wrap:anywhere}
 
 .ph-modal-done{
   width:100%;
@@ -607,67 +554,97 @@ button,input{font:inherit}
   cursor:pointer;
 }
 
-.ph-loading{
-  text-align:center;
-  padding:35px 10px;
-  color:var(--ph-muted);
+.ph-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ph-form-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ph-form-field.full{grid-column:1/-1}
+.ph-form-field label{font-size:11px;color:var(--ph-muted);font-weight:700}
+
+.ph-form-field input,
+.ph-form-field select,
+.ph-form-field textarea{
+  width:100%;
+  min-width:0;
+  border:1px solid var(--ph-border);
+  border-radius:8px;
+  background:var(--ph-input-bg);
+  color:var(--ph-text);
+  padding:10px 11px;
   font-size:13px;
+  outline:none;
+  color-scheme:normal;
 }
 
-.ph-error{
-  color:var(--ph-danger);
-  background:rgba(224,82,82,.08);
-  padding:13px;
+.ph-form-field input:focus,
+.ph-form-field select:focus,
+.ph-form-field textarea:focus{
+  border-color:var(--ph-primary);
+  box-shadow:0 0 0 3px rgba(8,127,91,.08);
+}
+
+.ph-form-field textarea{min-height:75px;resize:vertical}
+
+.ph-form-actions{display:flex;gap:8px;margin-top:16px}
+.ph-form-actions button{
+  flex:1;
+  border:0;
+  border-radius:8px;
+  padding:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.ph-cancel-btn{background:var(--ph-bg);color:var(--ph-text)}
+.ph-save-btn{background:var(--ph-primary);color:white}
+.ph-save-btn:disabled{opacity:.6;cursor:wait}
+
+.ph-loading{text-align:center;padding:35px 10px;color:var(--ph-muted);font-size:13px}
+.ph-error{color:var(--ph-danger);background:rgba(224,82,82,.08);padding:13px;border-radius:9px;font-size:13px}
+
+.ph-toast{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:10001;
+  padding:12px 16px;
   border-radius:9px;
+  background:#172033;
+  color:white;
   font-size:13px;
+  box-shadow:0 8px 30px rgba(0,0,0,.2);
+  display:none;
+  max-width:min(420px,calc(100vw - 36px));
 }
 
-/* TABLET */
+.ph-toast.show{display:block}
+
+:root[data-theme="dark"] select,
+html.dark select,
+body.dark select,
+body.dark-mode select,
+.dark-mode select{
+  color-scheme:dark;
+}
 
 @media(max-width:900px){
-  .ph-stats{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:10px;
-  }
-
-  .ph-history-list{
-    grid-template-columns:1fr;
-  }
+  .ph-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .ph-history-list{grid-template-columns:1fr}
 }
 
-/* MOBILE */
-
 @media(max-width:520px){
-
   .ph-wrap{padding:12px}
-
   .ph-title{font-size:21px}
-
   .ph-header{margin-bottom:14px}
-
   .ph-panel{padding:12px}
 
-  /* Compact mobile cards */
   .ph-stats{
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:9px;
     margin-bottom:13px;
   }
 
-  .ph-stat{
-    min-height:76px;
-    padding:11px 12px;
-    border-radius:10px;
-  }
-
-  .ph-stat-label{
-    font-size:10px;
-    margin-bottom:6px;
-  }
-
-  .ph-stat-value{
-    font-size:18px;
-  }
+  .ph-stat{min-height:76px;padding:11px 12px;border-radius:10px}
+  .ph-stat-label{font-size:10px;margin-bottom:6px}
+  .ph-stat-value{font-size:18px}
 
   .ph-search-row{
     display:flex;
@@ -677,23 +654,9 @@ button,input{font:inherit}
     width:100%;
   }
 
-  .ph-search-wrap{
-    width:100%;
-    flex:none;
-  }
-
-  .ph-search{
-    width:100%;
-    height:44px;
-  }
-
-  .ph-select-btn{
-    width:100%;
-    min-width:0;
-    height:42px;
-    padding:0 12px;
-    font-size:12px;
-  }
+  .ph-search-wrap{width:100%;flex:none}
+  .ph-search{width:100%;height:44px}
+  .ph-select-btn{width:100%;min-width:0;height:42px;padding:0 12px;font-size:12px}
 
   .ph-dropdown{
     top:calc(100% + 7px);
@@ -707,71 +670,33 @@ button,input{font:inherit}
     border-radius:10px;
   }
 
-  .ph-profile-option{
-    width:100%;
-    padding:9px 8px;
-    gap:9px;
-  }
-
-  .ph-avatar{
-    width:38px;
-    height:38px;
-    flex:0 0 38px;
-  }
-
+  .ph-profile-option{width:100%;padding:9px 8px;gap:9px}
+  .ph-avatar{width:38px;height:38px;flex:0 0 38px}
   .ph-profile-name{font-size:12px}
-
   .ph-profile-id{font-size:10px}
-
   .ph-profile-count{font-size:10px}
-
   .ph-details{gap:10px}
-
   .ph-modal-box{padding:16px}
-
-  .ph-selected{
-    gap:9px;
-    padding:10px;
-  }
-
-  .ph-clear{
-    padding:7px 9px;
-  }
+  .ph-selected{gap:9px;padding:10px}
+  .ph-clear{padding:7px 9px}
+  .ph-card-footer{align-items:flex-start}
+  .ph-actions{width:100%}
+  .ph-action-btn{flex:1}
 }
 
-/* EXTRA SMALL MOBILE */
-
 @media(max-width:360px){
-
   .ph-wrap{padding:9px}
-
   .ph-panel{padding:10px}
-
   .ph-stats{gap:7px}
-
-  .ph-stat{
-    min-height:70px;
-    padding:9px 10px;
-  }
-
+  .ph-stat{min-height:70px;padding:9px 10px}
   .ph-stat-label{font-size:9px}
-
   .ph-stat-value{font-size:16px}
-
-  .ph-profile-option{
-    gap:7px;
-    padding:9px 6px;
-  }
-
+  .ph-profile-option{gap:7px;padding:9px 6px}
   .ph-profile-count{font-size:9px}
-
-  .ph-avatar{
-    width:36px;
-    height:36px;
-    flex-basis:36px;
-  }
-
+  .ph-avatar{width:36px;height:36px;flex-basis:36px}
   .ph-modal-grid{grid-template-columns:1fr}
+  .ph-form-grid{grid-template-columns:1fr}
+  .ph-form-field.full{grid-column:auto}
 }
 </style>
 </head>
@@ -785,47 +710,36 @@ button,input{font:inherit}
       <h1 class="ph-title">Payment History</h1>
       <div class="ph-subtitle">View and manage payment records</div>
     </div>
-    <button class="ph-refresh" id="phRefresh">↻ Refresh</button>
+    <button class="ph-refresh" id="phRefresh" type="button">↻ Refresh</button>
   </div>
 
-  <!-- SUMMARY -->
   <div class="ph-stats">
     <div class="ph-stat">
       <div class="ph-stat-label">Total History</div>
       <div class="ph-stat-value" id="phTotalHistory">0</div>
     </div>
-
     <div class="ph-stat">
       <div class="ph-stat-label">Total Users</div>
       <div class="ph-stat-value" id="phTotalUsers">0</div>
     </div>
-
     <div class="ph-stat">
       <div class="ph-stat-label">Total Payment Amount</div>
       <div class="ph-stat-value" id="phTotalAmount">৳0</div>
     </div>
-
     <div class="ph-stat">
       <div class="ph-stat-label">Selected User Records</div>
       <div class="ph-stat-value" id="phSelectedRecords">All</div>
     </div>
   </div>
 
-  <!-- PROFILE SEARCH -->
   <div class="ph-panel">
     <h3 class="ph-section-title">Search Profile</h3>
 
     <div class="ph-search-row">
-
       <div class="ph-search-wrap">
-        <input
-          type="text"
-          class="ph-search"
-          id="phProfileSearch"
+        <input type="text" class="ph-search" id="phProfileSearch"
           placeholder="Search profile by name or User ID..."
-          autocomplete="off"
-        >
-
+          autocomplete="off">
         <div class="ph-dropdown" id="phProfileDropdown">
           <div id="phProfileOptions"></div>
         </div>
@@ -834,51 +748,37 @@ button,input{font:inherit}
       <button class="ph-select-btn" id="phSelectButton" type="button">
         Select Profile <span>⌄</span>
       </button>
-
     </div>
 
     <div class="ph-selected" id="phSelectedProfile">
       <div class="ph-avatar" id="phSelectedAvatar"></div>
-
       <div class="ph-selected-info">
         <div class="ph-selected-name" id="phSelectedName"></div>
         <div class="ph-selected-id" id="phSelectedId"></div>
       </div>
-
-      <button class="ph-clear" id="phClearProfile" type="button">
-        Clear
-      </button>
+      <button class="ph-clear" id="phClearProfile" type="button">Clear</button>
     </div>
   </div>
 
-  <!-- HISTORY LIST -->
   <div class="ph-panel">
-
     <div class="ph-history-head">
-      <h3 class="ph-section-title" style="margin:0">
-        Payment History Records
-      </h3>
-
-      <div class="ph-history-count" id="phHistoryCount">
-        Loading...
-      </div>
+      <h3 class="ph-section-title" style="margin:0">Payment History Records</h3>
+      <div class="ph-history-count" id="phHistoryCount">Loading...</div>
     </div>
 
     <div class="ph-history-list" id="phHistoryList">
       <div class="ph-loading">Loading payment history...</div>
     </div>
-
   </div>
 
 </div>
 
-<!-- VIEW PAYMENT MODAL -->
+<!-- VIEW MODAL -->
 <div class="ph-modal" id="phViewModal">
   <div class="ph-modal-box">
-
     <div class="ph-modal-head">
       <div class="ph-modal-title">Payment Details</div>
-      <button class="ph-close" id="phModalClose">×</button>
+      <button class="ph-close" id="phModalClose" type="button">×</button>
     </div>
 
     <div class="ph-modal-user">
@@ -893,18 +793,74 @@ button,input{font:inherit}
     </div>
 
     <div class="ph-modal-grid" id="phModalDetails"></div>
-
-    <button class="ph-modal-done" id="phModalDone">
-      Close
-    </button>
-
+    <button class="ph-modal-done" id="phModalDone" type="button">Close</button>
   </div>
 </div>
 
-<script>
-'use strict';
+<!-- EDIT MODAL -->
+<div class="ph-modal" id="phEditModal">
+  <div class="ph-modal-box">
+    <div class="ph-modal-head">
+      <div class="ph-modal-title">Edit Payment</div>
+      <button class="ph-close" id="phEditClose" type="button">×</button>
+    </div>
 
-/* API CONFIGURATION */
+    <form id="phEditForm">
+      <input type="hidden" id="phEditPaymentId">
+
+      <div class="ph-form-grid">
+        <div class="ph-form-field full">
+          <label>User</label>
+          <select id="phEditUser" required></select>
+        </div>
+
+        <div class="ph-form-field">
+          <label>Payment Amount</label>
+          <input id="phEditAmount" type="number" min="0.01" step="0.01" required>
+        </div>
+
+        <div class="ph-form-field">
+          <label>Payment Date</label>
+          <input id="phEditDate" type="date" required>
+        </div>
+
+        <div class="ph-form-field">
+          <label>Currency</label>
+          <select id="phEditCurrency" required></select>
+        </div>
+
+        <div class="ph-form-field">
+          <label>Payment Method</label>
+          <select id="phEditMethod" required></select>
+        </div>
+
+        <div class="ph-form-field full">
+          <label>Transaction ID</label>
+          <input id="phEditTransaction" type="text">
+        </div>
+
+        <div class="ph-form-field full">
+          <label>Comment</label>
+          <textarea id="phEditComment"></textarea>
+        </div>
+      </div>
+
+      <div class="ph-form-actions">
+        <button class="ph-cancel-btn" id="phEditCancel" type="button">Cancel</button>
+        <button class="ph-save-btn" id="phEditSave" type="submit">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="ph-toast" id="phToast"></div>
+
+<script>
+"use strict";
+
+/* =====================================================
+   API CONFIGURATION
+===================================================== */
 
 const PAYMENT_API =
 "https://script.google.com/macros/s/AKfycbyQ443c6Ss6TMQgtRGRJflsi7c7WHaChZ4ywnKIJeJ0QlosFh9xzPEjTzWl9iEB44DiMw/exec";
@@ -913,20 +869,32 @@ const USER_API =
 "https://script.google.com/macros/s/AKfycbwjWuBcXNv5AeeBKC_0-n3_mXoBltK8GFaU7g3otE5JVYrSvKW6hQekc1kla1cuzY9r/exec";
 
 
-/* STATE */
+/* =====================================================
+   STATE
+===================================================== */
 
 let paymentHistory = [];
+let allPayments = [];
 let allProfiles = [];
+let allUsers = [];
+let allCurrencies = [];
+let allMethods = [];
+
 let selectedUserId = "";
 let isDropdownOpen = false;
+let historyPage = 1;
+
+const PAGE_SIZE = 25;
 
 const $ = id => document.getElementById(id);
 
 
-/* HELPERS */
+/* =====================================================
+   HELPERS
+===================================================== */
 
 function esc(value){
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
     "&":"&amp;",
     "<":"&lt;",
     ">":"&gt;",
@@ -935,18 +903,103 @@ function esc(value){
   }[c]));
 }
 
-function getValue(obj, keys, fallback=""){
+function getValue(obj,keys,fallback=""){
   for(const key of keys){
-    if(obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== ""){
+    if(
+      obj &&
+      obj[key] !== undefined &&
+      obj[key] !== null &&
+      obj[key] !== ""
+    ){
       return obj[key];
     }
   }
   return fallback;
 }
 
+function getUserId(x){
+  return String(getValue(x,[
+    "userId","User ID","userid","user_id","id"
+  ],""));
+}
+
+function getUserName(x){
+  return String(getValue(x,[
+    "userName","User Name","name","Name","username"
+  ],"Unknown User"));
+}
+
+function getProfilePicture(x){
+  return String(getValue(x,[
+    "profilePicture",
+    "Profile Picture",
+    "profilePictureUrl",
+    "Profile Picture URL",
+    "photoURL",
+    "photoUrl",
+    "imageUrl",
+    "image",
+    "avatar"
+  ],""));
+}
+
+function getPaymentId(x){
+  return String(getValue(x,[
+    "paymentId","Payment ID","payment_id"
+  ],"")).trim();
+}
+
+function getAmount(x){
+  return Number(getValue(x,[
+    "paymentAmount",
+    "Payment Amount",
+    "amount",
+    "Amount"
+  ],0)) || 0;
+}
+
+function getCurrencyId(x){
+  return String(getValue(x,[
+    "currencyId","Currency ID","currency_id","id"
+  ],""));
+}
+
+function getCurrencyCode(x){
+  return String(getValue(x,[
+    "currencyCode","Currency Code","code","Code"
+  ],""));
+}
+
+function getCurrencyName(x){
+  return String(getValue(x,[
+    "currencyName","Currency Name","name","Name"
+  ],""));
+}
+
+function getMethodId(x){
+  return String(getValue(x,[
+    "paymentMethodId",
+    "Payment Method ID",
+    "methodId",
+    "Method ID",
+    "id",
+    "ID"
+  ],""));
+}
+
+function getMethodName(x){
+  return String(getValue(x,[
+    "paymentMethod",
+    "Payment Method",
+    "method",
+    "Method",
+    "name",
+    "Name"
+  ],""));
+}
+
 function money(value){
-  const n = Number(value || 0);
-  return "৳" + n.toLocaleString("en-BD",{
+  return "৳" + Number(value || 0).toLocaleString("en-BD",{
     maximumFractionDigits:2
   });
 }
@@ -967,23 +1020,20 @@ function formatDate(value){
   });
 }
 
-function getUserId(x){
-  return String(getValue(x,["userId","User ID","userid"],""));
-}
+function toInputDate(value){
+  if(!value) return "";
 
-function getUserName(x){
-  return String(getValue(x,["userName","User Name","name","Name"],"Unknown User"));
-}
+  const d = new Date(value);
 
-function getProfilePicture(x){
-  return String(getValue(x,[
-    "profilePicture",
-    "Profile Picture",
-    "photoURL",
-    "photoUrl",
-    "image",
-    "avatar"
-  ],""));
+  if(Number.isNaN(d.getTime())){
+    return String(value).slice(0,10);
+  }
+
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+
+  return `${y}-${m}-${day}`;
 }
 
 function getImageURL(value){
@@ -1014,7 +1064,10 @@ function getImageURL(value){
 }
 
 function avatarHTML(name,picture,extraClass=""){
-  const initial = esc(String(name || "U").trim().charAt(0).toUpperCase());
+  const initial = esc(
+    String(name || "U").trim().charAt(0).toUpperCase()
+  );
+
   const image = getImageURL(picture);
 
   if(!image){
@@ -1027,29 +1080,176 @@ function avatarHTML(name,picture,extraClass=""){
         src="${esc(image)}"
         alt="${esc(name)}"
         referrerpolicy="no-referrer"
-        onerror="this.parentElement.innerHTML='${initial}'"
+        onerror="this.parentElement.textContent='${initial}'"
       >
     </div>
   `;
 }
 
-async function apiGet(url){
-  const response = await fetch(url,{
-    method:"GET",
-    cache:"no-store"
+
+/* =====================================================
+   JSONP API
+===================================================== */
+
+function apiGet(url,timeout=25000){
+
+  return new Promise((resolve,reject)=>{
+
+    const callbackName =
+      "__ph_cb_" +
+      Date.now() +
+      "_" +
+      Math.random().toString(36).slice(2);
+
+    const script = document.createElement("script");
+
+    let finished = false;
+    let timer;
+
+    function cleanup(){
+
+      if(script.parentNode){
+        script.parentNode.removeChild(script);
+      }
+
+      try{
+        delete window[callbackName];
+      }catch(e){
+        window[callbackName] = undefined;
+      }
+
+      clearTimeout(timer);
+    }
+
+    function finish(error,data){
+
+      if(finished) return;
+
+      finished = true;
+      cleanup();
+
+      if(error){
+        reject(error);
+      }else{
+        resolve(data);
+      }
+    }
+
+    window[callbackName] = data=>{
+      finish(null,data);
+    };
+
+    script.onerror = ()=>{
+      finish(
+        new Error(
+          "API connection failed. Check Apps Script deployment."
+        )
+      );
+    };
+
+    const separator = url.includes("?") ? "&" : "?";
+
+    script.src =
+      url +
+      separator +
+      "callback=" + encodeURIComponent(callbackName) +
+      "&_=" + Date.now();
+
+    timer = setTimeout(()=>{
+      finish(new Error("API response timeout."));
+    },timeout);
+
+    document.head.appendChild(script);
+
   });
 
-  if(!response.ok){
-    throw new Error("API request failed: " + response.status);
-  }
-
-  return await response.json();
 }
 
 
-/* LOAD DATA */
+/* =====================================================
+   API ACTION
+   Uses GET + JSONP because the Apps Script API
+   receives the action from e.parameter.
+===================================================== */
+
+async function apiPost(payload){
+
+  const data = {
+    ...payload,
+    requestId:
+      payload.requestId ||
+      (
+        "ph_" +
+        Date.now() +
+        "_" +
+        Math.random().toString(36).slice(2)
+      )
+  };
+
+  const query = new URLSearchParams();
+
+  Object.entries(data).forEach(([key,value])=>{
+
+    if(value !== undefined && value !== null){
+      query.set(key,String(value));
+    }
+
+  });
+
+  // Delete can require additional time because
+  // PAYMENT HISTORY sends data to DELETE HISTORY API.
+  const timeout =
+    payload.action === "deletePayment" ? 90000 : 30000;
+
+  const result = await apiGet(
+    PAYMENT_API + "?" + query.toString(),
+    timeout
+  );
+
+  if(!result || result.success !== true){
+    throw new Error(
+      result?.message || "API request failed."
+    );
+  }
+
+  return result;
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+let toastTimer;
+
+function showToast(message){
+
+  const toast = $("phToast");
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(()=>{
+    toast.classList.remove("show");
+  },3200);
+
+}
+
+
+/* =====================================================
+   LOAD PAYMENT HISTORY
+   IMPORTANT:
+   PAYMENT HISTORY API supports "payments",
+   not "history".
+===================================================== */
 
 async function loadPaymentHistory(){
+
+  $("phRefresh").disabled = true;
+  $("phRefresh").textContent = "Loading...";
 
   $("phHistoryList").innerHTML =
     `<div class="ph-loading">Loading payment history...</div>`;
@@ -1058,29 +1258,95 @@ async function loadPaymentHistory(){
 
   try{
 
-    const [historyResponse,userResponse] = await Promise.all([
-      apiGet(PAYMENT_API + "?api=history&t=" + Date.now()),
-      apiGet(USER_API + "?api=active&t=" + Date.now())
-    ]);
+    // Correct API action from the supplied Code.gs.
+    const historyResponse = await apiGet(
+      PAYMENT_API + "?api=payments",
+      30000
+    );
 
-    if(historyResponse.success === false){
-      throw new Error(historyResponse.message || "Payment history loading failed.");
+    if(!historyResponse || historyResponse.success !== true){
+      throw new Error(
+        historyResponse?.message ||
+        "Payment history loading failed."
+      );
     }
 
-    const historyData =
-      historyResponse.history ||
+    const records =
+      historyResponse.payments ||
       historyResponse.data ||
-      historyResponse.entries ||
       [];
 
-    const usersData =
-      userResponse.users ||
-      userResponse.data ||
-      [];
+    if(!Array.isArray(records)){
+      throw new Error("Invalid payment records response.");
+    }
 
-    paymentHistory = Array.isArray(historyData) ? historyData : [];
+    paymentHistory = records;
+    allPayments = records.slice();
 
-    buildProfiles(usersData);
+    // First show records immediately.
+    buildProfiles([]);
+    updateSummary();
+    renderProfileDropdown();
+    renderHistory();
+
+    // Load users, currencies and methods in parallel.
+    const results = await Promise.allSettled([
+
+      apiGet(USER_API + "?api=active",25000),
+
+      apiGet(PAYMENT_API + "?api=currencies",25000),
+
+      apiGet(PAYMENT_API + "?api=methods",25000)
+
+    ]);
+
+    if(results[0].status === "fulfilled"){
+
+      const data = results[0].value;
+
+      allUsers =
+        data.users ||
+        data.data ||
+        data.activeUsers ||
+        [];
+
+      if(!Array.isArray(allUsers)){
+        allUsers = [];
+      }
+
+    }
+
+    if(results[1].status === "fulfilled"){
+
+      const data = results[1].value;
+
+      allCurrencies =
+        data.currencies ||
+        data.data ||
+        [];
+
+      if(!Array.isArray(allCurrencies)){
+        allCurrencies = [];
+      }
+
+    }
+
+    if(results[2].status === "fulfilled"){
+
+      const data = results[2].value;
+
+      allMethods =
+        data.methods ||
+        data.data ||
+        [];
+
+      if(!Array.isArray(allMethods)){
+        allMethods = [];
+      }
+
+    }
+
+    buildProfiles(allUsers);
 
     updateSummary();
     renderProfileDropdown();
@@ -1088,7 +1354,7 @@ async function loadPaymentHistory(){
 
   }catch(error){
 
-    console.error(error);
+    console.error("Payment History:",error);
 
     $("phHistoryList").innerHTML = `
       <div class="ph-empty">
@@ -1099,26 +1365,35 @@ async function loadPaymentHistory(){
     `;
 
     $("phHistoryCount").textContent = "Loading failed";
+
+  }finally{
+
+    $("phRefresh").disabled = false;
+    $("phRefresh").textContent = "↻ Refresh";
+
   }
+
 }
 
 
-/* BUILD UNIQUE PROFILES */
+/* =====================================================
+   PROFILE DATA
+===================================================== */
 
 function buildProfiles(users){
 
-  const profileMap = new Map();
+  const map = new Map();
 
-  paymentHistory.forEach(h=>{
+  paymentHistory.forEach(record=>{
 
-    const userId = getUserId(h);
+    const id = getUserId(record);
 
-    if(!userId) return;
+    if(!id) return;
 
-    profileMap.set(userId,{
-      userId,
-      userName:getUserName(h),
-      profilePicture:getProfilePicture(h),
+    map.set(id,{
+      userId:id,
+      userName:getUserName(record),
+      profilePicture:getProfilePicture(record),
       count:0
     });
 
@@ -1126,29 +1401,27 @@ function buildProfiles(users){
 
   (Array.isArray(users) ? users : []).forEach(user=>{
 
-    const userId = getUserId(user);
+    const id = getUserId(user);
 
-    if(!userId) return;
+    if(!id) return;
 
-    const existing = profileMap.get(userId);
+    const existing = map.get(id);
 
     if(existing){
 
-      existing.userName = getUserName(user) || existing.userName;
+      existing.userName =
+        getUserName(user) || existing.userName;
 
       existing.profilePicture =
-        getProfilePicture(user) ||
-        existing.profilePicture;
+        getProfilePicture(user) || existing.profilePicture;
 
     }
 
   });
 
-  paymentHistory.forEach(h=>{
+  paymentHistory.forEach(record=>{
 
-    const userId = getUserId(h);
-
-    const profile = profileMap.get(userId);
+    const profile = map.get(getUserId(record));
 
     if(profile){
       profile.count++;
@@ -1156,75 +1429,80 @@ function buildProfiles(users){
 
   });
 
-  allProfiles = Array.from(profileMap.values());
-
-  allProfiles.sort((a,b)=>
+  allProfiles = Array.from(map.values()).sort((a,b)=>
     a.userName.localeCompare(b.userName)
   );
+
 }
 
 
-/* SUMMARY */
+/* =====================================================
+   SUMMARY
+===================================================== */
 
 function updateSummary(){
 
-  const total = paymentHistory.length;
-
-  const totalUsers = allProfiles.length;
-
-  const totalAmount = paymentHistory.reduce((sum,h)=>{
-    return sum + Number(
-      getValue(h,["amount","Amount","paymentAmount"],0)
-    );
-  },0);
+  const totalAmount = paymentHistory.reduce(
+    (sum,record)=>sum + getAmount(record),
+    0
+  );
 
   $("phTotalHistory").textContent =
-    total.toLocaleString("en-BD");
+    paymentHistory.length.toLocaleString("en-BD");
 
   $("phTotalUsers").textContent =
-    totalUsers.toLocaleString("en-BD");
+    allProfiles.length.toLocaleString("en-BD");
 
   $("phTotalAmount").textContent = money(totalAmount);
 
   updateSelectedCount();
+
 }
 
 function updateSelectedCount(){
 
   if(!selectedUserId){
+
     $("phSelectedRecords").textContent = "All";
+
     return;
   }
 
-  const count = paymentHistory.filter(h=>
-    getUserId(h) === selectedUserId
+  const count = paymentHistory.filter(record=>
+    getUserId(record) === selectedUserId
   ).length;
 
   $("phSelectedRecords").textContent = count;
+
 }
 
 
-/* PROFILE DROPDOWN */
+/* =====================================================
+   PROFILE DROPDOWN
+===================================================== */
 
 function renderProfileDropdown(){
 
-  const search = $("phProfileSearch").value
-    .trim()
-    .toLowerCase();
+  const search =
+    $("phProfileSearch").value.trim().toLowerCase();
 
-  const profiles = allProfiles.filter(p=>
-    p.userName.toLowerCase().includes(search) ||
-    p.userId.toLowerCase().includes(search)
+  const profiles = allProfiles.filter(profile=>
+    profile.userName.toLowerCase().includes(search) ||
+    profile.userId.toLowerCase().includes(search)
   );
 
   let html = `
-    <div class="ph-profile-option ${!selectedUserId ? "active" : ""}"
-         data-user-id="">
+    <div
+      class="ph-profile-option ${!selectedUserId ? "active" : ""}"
+      data-user-id=""
+    >
       <div class="ph-avatar">ALL</div>
+
       <div class="ph-profile-info">
         <div class="ph-profile-name">All Profiles</div>
         <div class="ph-profile-id">Show all payment history</div>
       </div>
+
       <div class="ph-profile-count">${paymentHistory.length}</div>
     </div>
   `;
@@ -1232,10 +1510,12 @@ function renderProfileDropdown(){
   profiles.forEach(profile=>{
 
     html += `
-      <div class="ph-profile-option ${
-        selectedUserId === profile.userId ? "active" : ""
-      }"
-      data-user-id="${esc(profile.userId)}">
+      <div
+        class="ph-profile-option ${
+          selectedUserId === profile.userId ? "active" : ""
+        }"
+        data-user-id="${esc(profile.userId)}"
+      >
 
         ${avatarHTML(
           profile.userName,
@@ -1273,7 +1553,7 @@ function renderProfileDropdown(){
   if(!allProfiles.length){
     html += `
       <div class="ph-dropdown-empty">
-        No profiles found in payment history.
+        No profiles found.
       </div>
     `;
   }
@@ -1285,12 +1565,11 @@ function renderProfileDropdown(){
     .forEach(item=>{
 
       item.addEventListener("click",()=>{
-
         selectProfile(item.dataset.userId);
-
       });
 
     });
+
 }
 
 function toggleDropdown(force){
@@ -1298,27 +1577,30 @@ function toggleDropdown(force){
   isDropdownOpen =
     typeof force === "boolean" ? force : !isDropdownOpen;
 
-  $("phProfileDropdown").classList.toggle(
-    "show",
-    isDropdownOpen
-  );
+  $("phProfileDropdown")
+    .classList.toggle("show",isDropdownOpen);
 
   if(isDropdownOpen){
+
     renderProfileDropdown();
+
     $("phProfileSearch").focus();
+
   }
+
 }
 
 function selectProfile(userId){
 
   selectedUserId = String(userId || "");
+  historyPage = 1;
 
   toggleDropdown(false);
 
   if(selectedUserId){
 
-    const profile = allProfiles.find(p=>
-      p.userId === selectedUserId
+    const profile = allProfiles.find(
+      p=>p.userId === selectedUserId
     );
 
     if(profile){
@@ -1338,7 +1620,8 @@ function selectProfile(userId){
       $("phSelectedId").textContent =
         "User ID: " + profile.userId;
 
-      $("phProfileSearch").value = profile.userName;
+      $("phProfileSearch").value =
+        profile.userName;
 
       $("phSelectButton").innerHTML =
         "Change Profile <span>⌄</span>";
@@ -1359,12 +1642,29 @@ function selectProfile(userId){
   updateSelectedCount();
 
   renderProfileDropdown();
-
   renderHistory();
+
 }
 
 
-/* RENDER PAYMENT HISTORY */
+/* =====================================================
+   ACTIVE PAYMENT LOOKUP
+===================================================== */
+
+function findActivePayment(paymentId){
+
+  const id = String(paymentId || "").trim();
+
+  return allPayments.find(record=>
+    getPaymentId(record) === id
+  ) || null;
+
+}
+
+
+/* =====================================================
+   RENDER PAYMENT HISTORY
+===================================================== */
 
 function renderHistory(){
 
@@ -1372,30 +1672,53 @@ function renderHistory(){
 
   if(selectedUserId){
 
-    list = list.filter(h=>
-      getUserId(h) === selectedUserId
+    list = list.filter(record=>
+      getUserId(record) === selectedUserId
     );
 
   }
 
   list.sort((a,b)=>{
 
-    const da = new Date(
-      getValue(a,["actionDate","createdAt","timestamp","date","paymentDate"],0)
-    ).getTime() || 0;
+    const da = new Date(getValue(
+      a,
+      ["createdAt","Created At","paymentDate","Payment Date"],
+      0
+    )).getTime() || 0;
 
-    const db = new Date(
-      getValue(b,["actionDate","createdAt","timestamp","date","paymentDate"],0)
-    ).getTime() || 0;
+    const db = new Date(getValue(
+      b,
+      ["createdAt","Created At","paymentDate","Payment Date"],
+      0
+    )).getTime() || 0;
 
-    return db - da;
+    return db-da;
 
   });
 
-  $("phHistoryCount").textContent =
-    list.length + " record(s) found";
+  const total = list.length;
 
-  if(!list.length){
+  const pages = Math.max(
+    1,
+    Math.ceil(total/PAGE_SIZE)
+  );
+
+  historyPage = Math.min(
+    Math.max(1,historyPage),
+    pages
+  );
+
+  const start = (historyPage-1)*PAGE_SIZE;
+
+  const pageItems = list.slice(
+    start,
+    start+PAGE_SIZE
+  );
+
+  $("phHistoryCount").textContent =
+    `${total} record(s) found · Page ${historyPage} of ${pages}`;
+
+  if(!total){
 
     $("phHistoryList").innerHTML = `
       <div class="ph-empty">
@@ -1408,46 +1731,49 @@ function renderHistory(){
     return;
   }
 
-  $("phHistoryList").innerHTML = list.map((h,index)=>{
+  $("phHistoryList").innerHTML = pageItems.map((record,index)=>{
 
-    const userId = getUserId(h);
+    const userId = getUserId(record);
 
-    const profile = allProfiles.find(p=>
-      p.userId === userId
+    const profile = allProfiles.find(
+      p=>p.userId === userId
     );
 
-    const userName = profile?.userName || getUserName(h);
+    const userName =
+      profile?.userName || getUserName(record);
 
     const picture =
-      profile?.profilePicture ||
-      getProfilePicture(h);
+      profile?.profilePicture || getProfilePicture(record);
 
-    const amount = getValue(
-      h,["amount","Amount","paymentAmount"],0
-    );
+    const amount = getAmount(record);
 
     const method = getValue(
-      h,["paymentMethod","method","Method"],"—"
+      record,
+      ["paymentMethod","Payment Method","method","Method"],
+      "—"
     );
 
-    const transactionId = getValue(
-      h,["transactionId","Transaction ID","trxId"],"—"
+    const transaction = getValue(
+      record,
+      ["transactionId","Transaction ID","transaction_id"],
+      "—"
     );
 
-    const paymentDate = getValue(
-      h,["paymentDate","date","Date"],""
+    const date = getValue(
+      record,
+      ["paymentDate","Payment Date","payment_date"],
+      ""
     );
+
+    const paymentId = getPaymentId(record);
 
     const historyDate = getValue(
-      h,["actionDate","createdAt","timestamp","Created At"],""
-    );
-
-    const paymentId = getValue(
-      h,["paymentId","Payment ID","historyId","entryId"],"—"
+      record,
+      ["createdAt","Created At","updatedAt","Updated At"],
+      ""
     );
 
     return `
-
       <div class="ph-history-card">
 
         <div class="ph-card-user">
@@ -1459,6 +1785,7 @@ function renderHistory(){
           )}
 
           <div class="ph-card-user-info">
+
             <div class="ph-card-user-name">
               ${esc(userName)}
             </div>
@@ -1466,6 +1793,7 @@ function renderHistory(){
             <div class="ph-card-user-id">
               User ID: ${esc(userId)}
             </div>
+
           </div>
 
           <div class="ph-amount">
@@ -1483,17 +1811,17 @@ function renderHistory(){
 
           <div>
             <div class="ph-detail-label">Transaction ID</div>
-            <div class="ph-detail-value">${esc(transactionId)}</div>
+            <div class="ph-detail-value">${esc(transaction)}</div>
           </div>
 
           <div>
             <div class="ph-detail-label">Payment Date</div>
-            <div class="ph-detail-value">${esc(formatDate(paymentDate))}</div>
+            <div class="ph-detail-value">${esc(formatDate(date))}</div>
           </div>
 
           <div>
             <div class="ph-detail-label">Payment ID</div>
-            <div class="ph-detail-value">${esc(paymentId)}</div>
+            <div class="ph-detail-value">${esc(paymentId || "—")}</div>
           </div>
 
         </div>
@@ -1501,69 +1829,158 @@ function renderHistory(){
         <div class="ph-card-footer">
 
           <div class="ph-date">
-            History: ${esc(formatDate(historyDate))}
+            Date: ${esc(formatDate(historyDate))}
           </div>
 
-          <button
-            class="ph-view-btn"
-            type="button"
-            data-view-index="${index}"
-            data-view-payment-id="${esc(paymentId)}"
-          >
-            View Payment
-          </button>
+          <div class="ph-actions">
+
+            <button
+              class="ph-action-btn ph-view-btn"
+              type="button"
+              data-view="${index}"
+            >View</button>
+
+            <button
+              class="ph-action-btn ph-edit-btn"
+              type="button"
+              data-edit="${index}"
+              ${!findActivePayment(paymentId) ? "disabled" : ""}
+            >Edit</button>
+
+            <button
+              class="ph-action-btn ph-delete-btn"
+              type="button"
+              data-delete="${index}"
+              ${!findActivePayment(paymentId) ? "disabled" : ""}
+            >Delete</button>
+
+          </div>
 
         </div>
 
       </div>
-
     `;
 
   }).join("");
 
+
+  /* PAGINATION */
+
+  if(pages > 1){
+
+    $("phHistoryList").insertAdjacentHTML(
+      "beforeend",
+      `
+        <div class="ph-pagination">
+
+          <button
+            class="ph-page-btn"
+            id="phPrev"
+            ${historyPage===1?"disabled":""}
+          >Previous</button>
+
+          <span style="font-size:12px;color:var(--ph-muted)">
+            Page ${historyPage} of ${pages}
+          </span>
+
+          <button
+            class="ph-page-btn"
+            id="phNext"
+            ${historyPage===pages?"disabled":""}
+          >Next</button>
+
+        </div>
+      `
+    );
+
+    $("phPrev").addEventListener("click",()=>{
+      historyPage--;
+      renderHistory();
+    });
+
+    $("phNext").addEventListener("click",()=>{
+      historyPage++;
+      renderHistory();
+    });
+
+  }
+
+
+  /* VIEW EVENTS */
+
   $("phHistoryList")
-    .querySelectorAll("[data-view-index]")
+    .querySelectorAll("[data-view]")
     .forEach(button=>{
 
       button.addEventListener("click",()=>{
 
-        const paymentId = button.dataset.viewPaymentId;
+        const record =
+          pageItems[Number(button.dataset.view)];
 
-        const item = list.find(h=>
-          String(getValue(
-            h,
-            ["paymentId","Payment ID","historyId","entryId"],
-            ""
-          )) === String(paymentId)
-        );
-
-        if(item) openPaymentDetails(item);
+        openPaymentDetails(record);
 
       });
 
     });
+
+
+  /* EDIT EVENTS */
+
+  $("phHistoryList")
+    .querySelectorAll("[data-edit]")
+    .forEach(button=>{
+
+      button.addEventListener("click",()=>{
+
+        const record =
+          pageItems[Number(button.dataset.edit)];
+
+        openEditPayment(record);
+
+      });
+
+    });
+
+
+  /* DELETE EVENTS */
+
+  $("phHistoryList")
+    .querySelectorAll("[data-delete]")
+    .forEach(button=>{
+
+      button.addEventListener("click",()=>{
+
+        const record =
+          pageItems[Number(button.dataset.delete)];
+
+        deletePayment(record);
+
+      });
+
+    });
+
 }
 
 
-/* PAYMENT DETAILS POPUP */
+/* =====================================================
+   VIEW PAYMENT
+===================================================== */
 
-function openPaymentDetails(h){
+function openPaymentDetails(record){
 
-  const userId = getUserId(h);
+  const userId = getUserId(record);
 
-  const profile = allProfiles.find(p=>
-    p.userId === userId
+  const profile = allProfiles.find(
+    p=>p.userId===userId
   );
 
-  const userName = profile?.userName || getUserName(h);
+  const userName =
+    profile?.userName || getUserName(record);
 
   const picture =
-    profile?.profilePicture ||
-    getProfilePicture(h);
+    profile?.profilePicture || getProfilePicture(record);
 
-  const amount = getValue(
-    h,["amount","Amount","paymentAmount"],0
-  );
+  const amount = getAmount(record);
 
   $("phModalAvatar").innerHTML =
     avatarHTML(
@@ -1577,50 +1994,84 @@ function openPaymentDetails(h){
   $("phModalUserId").textContent =
     "User ID: " + userId;
 
-  $("phModalAmount").textContent = money(amount);
+  $("phModalAmount").textContent =
+    money(amount);
 
   const details = [
 
-    ["Payment ID",getValue(
-      h,["paymentId","Payment ID","historyId","entryId"],"—"
-    )],
+    [
+      "Payment ID",
+      getPaymentId(record) || "—"
+    ],
 
-    ["Payment Method",getValue(
-      h,["paymentMethod","method","Method"],"—"
-    )],
+    [
+      "Payment Method",
+      getMethodName(record) || "—"
+    ],
 
-    ["Transaction ID",getValue(
-      h,["transactionId","Transaction ID","trxId"],"—"
-    )],
+    [
+      "Transaction ID",
+      getValue(record,[
+        "transactionId","Transaction ID"
+      ],"—")
+    ],
 
-    ["Payment Date",formatDate(getValue(
-      h,["paymentDate","date","Date"],""
-    ))],
+    [
+      "Payment Date",
+      formatDate(getValue(record,[
+        "paymentDate","Payment Date"
+      ],""))
+    ],
 
-    ["History Date",formatDate(getValue(
-      h,["actionDate","createdAt","timestamp","Created At"],""
-    ))],
+    [
+      "Currency",
+      getCurrencyName(record) ||
+      getCurrencyCode(record) ||
+      "—"
+    ],
 
-    ["Currency",getValue(
-      h,["currencyName","currencyCode"],"BDT"
-    )],
+    [
+      "Created At",
+      formatDate(getValue(record,[
+        "createdAt","Created At"
+      ],""))
+    ],
 
-    ["Description",getValue(
-      h,["comment","description","note","Description"],"—"
-    )]
+    [
+      "Updated At",
+      formatDate(getValue(record,[
+        "updatedAt","Updated At"
+      ],""))
+    ],
+
+    [
+      "Comment",
+      getValue(record,[
+        "comment","Comment","description"
+      ],"—")
+    ]
 
   ];
 
-  $("phModalDetails").innerHTML = details.map(item=>`
+  $("phModalDetails").innerHTML =
+    details.map(item=>`
 
-    <div class="ph-modal-item">
-      <div class="ph-modal-label">${esc(item[0])}</div>
-      <div class="ph-modal-value">${esc(item[1])}</div>
-    </div>
+      <div class="ph-modal-item">
 
-  `).join("");
+        <div class="ph-modal-label">
+          ${esc(item[0])}
+        </div>
+
+        <div class="ph-modal-value">
+          ${esc(item[1])}
+        </div>
+
+      </div>
+
+    `).join("");
 
   $("phViewModal").classList.add("show");
+
 }
 
 function closePaymentModal(){
@@ -1628,12 +2079,398 @@ function closePaymentModal(){
 }
 
 
-/* EVENTS */
+/* =====================================================
+   SELECT OPTION BUILDER
+===================================================== */
+
+function fillSelect(
+  selectId,
+  items,
+  valueFunction,
+  labelFunction,
+  selectedValue,
+  extraFunction
+){
+
+  const select = $(selectId);
+
+  const selected = String(selectedValue ?? "");
+
+  let html = `<option value="">Select...</option>`;
+
+  items.forEach(item=>{
+
+    const value = String(valueFunction(item) ?? "");
+
+    const label = String(labelFunction(item) ?? value);
+
+    if(!value) return;
+
+    const extra = extraFunction
+      ? extraFunction(item)
+      : {};
+
+    const dataAttributes = Object.entries(extra)
+      .map(([key,val])=>
+        `data-${key}="${esc(val)}"`
+      )
+      .join(" ");
+
+    html += `
+      <option
+        value="${esc(value)}"
+        ${value===selected?"selected":""}
+        ${dataAttributes}
+      >${esc(label)}</option>
+    `;
+
+  });
+
+  select.innerHTML = html;
+
+}
+
+
+/* =====================================================
+   OPEN EDIT MODAL
+===================================================== */
+
+function openEditPayment(historyRecord){
+
+  const paymentId = getPaymentId(historyRecord);
+
+  const payment = findActivePayment(paymentId);
+
+  if(!payment){
+
+    showToast("Active payment record not found.");
+
+    return;
+  }
+
+  $("phEditPaymentId").value = paymentId;
+
+
+  /* USER OPTIONS */
+
+  const userList = allUsers.length
+    ? allUsers
+    : allProfiles;
+
+  fillSelect(
+    "phEditUser",
+    userList,
+
+    item=>getUserId(item),
+
+    item=>getUserName(item),
+
+    getUserId(payment),
+
+    item=>({
+      username:getUserName(item)
+    })
+  );
+
+
+  /* CURRENCY OPTIONS */
+
+  fillSelect(
+    "phEditCurrency",
+    allCurrencies,
+
+    item=>getCurrencyId(item),
+
+    item=>{
+      const name = getCurrencyName(item);
+      const code = getCurrencyCode(item);
+      return name && code ? name+" ("+code+")" : name || code;
+    },
+
+    getCurrencyId(payment),
+
+    item=>({
+      code:getCurrencyCode(item),
+      name:getCurrencyName(item)
+    })
+  );
+
+
+  /* PAYMENT METHOD OPTIONS */
+
+  fillSelect(
+    "phEditMethod",
+    allMethods,
+
+    item=>getMethodId(item),
+
+    item=>getMethodName(item),
+
+    getMethodId(payment),
+
+    item=>({
+      method:getMethodName(item)
+    })
+  );
+
+
+  $("phEditAmount").value = getAmount(payment);
+
+  $("phEditDate").value = toInputDate(
+    getValue(payment,[
+      "paymentDate","Payment Date","payment_date"
+    ],"")
+  );
+
+  $("phEditTransaction").value = getValue(
+    payment,
+    ["transactionId","Transaction ID","transaction_id"],
+    ""
+  );
+
+  $("phEditComment").value = getValue(
+    payment,
+    ["comment","Comment"],
+    ""
+  );
+
+  $("phEditModal").classList.add("show");
+
+}
+
+function closeEditModal(){
+  $("phEditModal").classList.remove("show");
+}
+
+
+/* =====================================================
+   SAVE EDIT PAYMENT
+   Sends all related IDs and names to Code.gs.
+===================================================== */
+
+async function submitEditPayment(event){
+
+  event.preventDefault();
+
+  const button = $("phEditSave");
+
+  if(button.disabled) return;
+
+  const userOption =
+    $("phEditUser").selectedOptions[0];
+
+  const currencyOption =
+    $("phEditCurrency").selectedOptions[0];
+
+  const methodOption =
+    $("phEditMethod").selectedOptions[0];
+
+
+  const userId = $("phEditUser").value;
+
+  const userName =
+    userOption?.dataset.username || "";
+
+
+  const currencyId =
+    $("phEditCurrency").value;
+
+  const currencyCode =
+    currencyOption?.dataset.code || "";
+
+  const currencyName =
+    currencyOption?.dataset.name || "";
+
+
+  const paymentMethodId =
+    $("phEditMethod").value;
+
+  const paymentMethod =
+    methodOption?.dataset.method || "";
+
+
+  const payload = {
+
+    action:"editPayment",
+
+    paymentId:$("phEditPaymentId").value,
+
+    userId:userId,
+
+    userName:userName,
+
+    paymentAmount:$("phEditAmount").value,
+
+    paymentDate:$("phEditDate").value,
+
+    currencyId:currencyId,
+
+    currencyCode:currencyCode,
+
+    currencyName:currencyName,
+
+    paymentMethodId:paymentMethodId,
+
+    paymentMethod:paymentMethod,
+
+    transactionId:$("phEditTransaction").value,
+
+    comment:$("phEditComment").value
+
+  };
+
+
+  if(
+    !payload.paymentId ||
+    !payload.userId ||
+    !payload.currencyId ||
+    !payload.paymentMethodId ||
+    !(Number(payload.paymentAmount)>0) ||
+    !payload.paymentDate
+  ){
+
+    showToast("Please complete all required fields.");
+
+    return;
+  }
+
+
+  button.disabled = true;
+  button.textContent = "Saving...";
+
+  try{
+
+    const result = await apiPost(payload);
+
+    if(result.success !== true){
+
+      throw new Error(
+        result.message || "Payment update failed."
+      );
+
+    }
+
+    closeEditModal();
+
+    showToast("Payment updated successfully.");
+
+    await loadPaymentHistory();
+
+  }catch(error){
+
+    console.error("Edit Payment:",error);
+
+    showToast(
+      error.message || "Payment update failed."
+    );
+
+  }finally{
+
+    button.disabled = false;
+    button.textContent = "Save Changes";
+
+  }
+
+}
+
+
+/* =====================================================
+   DELETE PAYMENT
+   PAYMENT HISTORY API moves it to DELETE HISTORY.
+===================================================== */
+
+async function deletePayment(record){
+
+  const paymentId = getPaymentId(record);
+
+  if(!paymentId){
+
+    showToast("Payment ID is missing.");
+
+    return;
+  }
+
+  if(!findActivePayment(paymentId)){
+
+    showToast("Active payment not found.");
+
+    return;
+  }
+
+  const userName = getUserName(record);
+
+  const amount = money(getAmount(record));
+
+  const confirmed = confirm(
+
+    "Delete this payment?\n\n" +
+
+    "User: " + userName + "\n" +
+
+    "Amount: " + amount + "\n\n" +
+
+    "It will be moved to DELETE HISTORY."
+
+  );
+
+  if(!confirmed) return;
+
+
+  const buttons = Array.from(
+    document.querySelectorAll("[data-delete]")
+  );
+
+  buttons.forEach(button=>{
+    button.disabled = true;
+  });
+
+  try{
+
+    const result = await apiPost({
+
+      action:"deletePayment",
+
+      paymentId:paymentId
+
+    });
+
+    if(result.success !== true){
+
+      throw new Error(
+        result.message || "Payment delete failed."
+      );
+
+    }
+
+    showToast(
+      "Payment moved to DELETE HISTORY successfully."
+    );
+
+    await loadPaymentHistory();
+
+  }catch(error){
+
+    console.error("Delete Payment:",error);
+
+    showToast(
+      error.message || "Payment delete failed."
+    );
+
+    buttons.forEach(button=>{
+      button.disabled = false;
+    });
+
+  }
+
+}
+
+
+/* =====================================================
+   EVENTS
+===================================================== */
 
 $("phSelectButton").addEventListener("click",()=>{
-
   toggleDropdown();
-
 });
 
 $("phProfileSearch").addEventListener("focus",()=>{
@@ -1655,20 +2492,21 @@ $("phProfileSearch").addEventListener("input",()=>{
 });
 
 $("phClearProfile").addEventListener("click",()=>{
-
   selectProfile("");
-
 });
 
-$("phRefresh").addEventListener("click",()=>{
+$("phRefresh").addEventListener("click",loadPaymentHistory);
 
-  loadPaymentHistory();
 
-});
+$("phModalClose").addEventListener(
+  "click",
+  closePaymentModal
+);
 
-$("phModalClose").addEventListener("click",closePaymentModal);
-
-$("phModalDone").addEventListener("click",closePaymentModal);
+$("phModalDone").addEventListener(
+  "click",
+  closePaymentModal
+);
 
 $("phViewModal").addEventListener("click",event=>{
 
@@ -1678,10 +2516,38 @@ $("phViewModal").addEventListener("click",event=>{
 
 });
 
+
+$("phEditClose").addEventListener(
+  "click",
+  closeEditModal
+);
+
+$("phEditCancel").addEventListener(
+  "click",
+  closeEditModal
+);
+
+$("phEditForm").addEventListener(
+  "submit",
+  submitEditPayment
+);
+
+$("phEditModal").addEventListener("click",event=>{
+
+  if(event.target === $("phEditModal")){
+    closeEditModal();
+  }
+
+});
+
+
 document.addEventListener("click",event=>{
 
   const dropdown = $("phProfileDropdown");
-  const searchWrap = document.querySelector(".ph-search-wrap");
+
+  const searchWrap =
+    document.querySelector(".ph-search-wrap");
+
   const selectButton = $("phSelectButton");
 
   if(
@@ -1690,28 +2556,35 @@ document.addEventListener("click",event=>{
     !searchWrap.contains(event.target) &&
     !selectButton.contains(event.target)
   ){
+
     toggleDropdown(false);
+
   }
 
 });
+
 
 document.addEventListener("keydown",event=>{
 
   if(event.key === "Escape"){
 
     toggleDropdown(false);
+
     closePaymentModal();
+
+    closeEditModal();
 
   }
 
 });
 
 
-/* INITIAL LOAD */
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
 
 loadPaymentHistory();
 
 </script>
-
 </body>
 </html>
