@@ -37,9 +37,7 @@
   background:var(--up-primary);color:white;border-color:var(--up-primary)
 }
 #userPaymentPage .up-btn.danger{color:#dc3545}
-#userPaymentPage .up-btn:disabled{
-  opacity:.6;cursor:not-allowed
-}
+#userPaymentPage .up-btn:disabled{opacity:.6;cursor:not-allowed}
 #userPaymentPage .up-stats{
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
   gap:13px;margin-bottom:20px
@@ -218,8 +216,6 @@
 #userPaymentPage .up-mobile-details strong{
   font-size:12px;overflow-wrap:anywhere
 }
-
-/* Processing spinner */
 #userPaymentPage .up-spinner{
   display:inline-block;width:14px;height:14px;
   border:2px solid #ffffff70;border-top-color:#fff;
@@ -227,8 +223,6 @@
   animation:upSpin .7s linear infinite;margin-right:7px
 }
 @keyframes upSpin{to{transform:rotate(360deg)}}
-
-/* Success popup */
 #userPaymentPage .up-success-icon{
   width:62px;height:62px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
@@ -246,8 +240,6 @@
   display:flex;justify-content:center;margin-top:20px
 }
 #userPaymentPage .up-success-footer button{min-width:120px}
-
-/* NEW: processing and error popup spinner/icon */
 #userPaymentPage .up-process-spinner{
   width:48px;height:48px;
   border:4px solid var(--up-border);
@@ -273,7 +265,6 @@
 #userPaymentPage .up-popup-icon.error{
   background:#fdeaea;color:#dc3545
 }
-
 @media(max-width:850px){
   #userPaymentPage .up-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -324,7 +315,6 @@
     <div class="up-stat"><small>Active Users</small><strong id="upUserCount">0</strong></div>
   </div>
 
-  <!-- ADD PAYMENT -->
   <div class="up-panel">
     <div class="up-panel-head">
       <h3>Add New Payment</h3>
@@ -394,7 +384,6 @@
     </form>
   </div>
 
-  <!-- PAYMENT RECORDS -->
   <div class="up-panel">
     <div class="up-panel-head">
       <h3>Payment Records</h3>
@@ -442,7 +431,6 @@
   </div>
 </div>
 
-<!-- EDIT POPUP -->
 <div class="up-modal" id="upEditModal">
   <div class="up-modal-box">
     <div class="up-modal-head">
@@ -452,7 +440,6 @@
 
     <form id="upEditForm">
       <div class="up-form-grid">
-
         <div class="up-field full">
           <label>Select User *</label>
           <select id="upEditUser" required>
@@ -492,18 +479,13 @@
       </div>
 
       <div class="up-actions">
-        <button class="up-btn primary" type="submit" id="upEditSaveBtn">
-          Save Changes
-        </button>
-        <button class="up-btn" type="button" id="upEditCancelBtn">
-          Cancel
-        </button>
+        <button class="up-btn primary" type="submit" id="upEditSaveBtn">Save Changes</button>
+        <button class="up-btn" type="button" id="upEditCancelBtn">Cancel</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- VIEW POPUP -->
 <div class="up-modal" id="upViewModal">
   <div class="up-modal-box">
     <div class="up-modal-head">
@@ -517,24 +499,6 @@
   </div>
 </div>
 
-<!-- DELETE CONFIRMATION -->
-<div class="up-modal" id="upDeleteModal">
-  <div class="up-modal-box">
-    <div class="up-modal-head">
-      <h3>Delete Payment?</h3>
-      <button class="up-close" type="button" data-close="upDeleteModal">×</button>
-    </div>
-    <p style="font-size:13px;color:var(--up-muted);line-height:1.7">
-      Are you sure you want to delete this payment? It will be moved to Deleted Payment.
-    </p>
-    <div class="up-actions">
-      <button class="up-btn danger" type="button" id="upConfirmDelete">Delete Payment</button>
-      <button class="up-btn" type="button" data-close="upDeleteModal">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- PROCESSING POPUP -->
 <div class="up-modal" id="upProcessingModal">
   <div class="up-modal-box" style="max-width:380px;text-align:center">
     <div class="up-process-spinner"></div>
@@ -545,7 +509,6 @@
   </div>
 </div>
 
-<!-- SUCCESS POPUP -->
 <div class="up-modal" id="upSuccessModal">
   <div class="up-modal-box" style="max-width:380px;text-align:center">
     <div class="up-success-icon">✓</div>
@@ -559,7 +522,6 @@
   </div>
 </div>
 
-<!-- ERROR POPUP -->
 <div class="up-modal" id="upErrorModal">
   <div class="up-modal-box" style="max-width:380px;text-align:center">
     <div class="up-popup-icon error">!</div>
@@ -592,6 +554,9 @@ const PAYMENT_API=
 const USER_API=
 "https://script.google.com/macros/s/AKfycbwjWuBcXNv5AeeBKC_0-n3_mXoBltK8GFaU7g3otE5JVYrSvKW6hQekc1kla1cuzY9r/exec";
 
+const SETTINGS_API=
+"https://script.google.com/macros/s/AKfycbwVB-MBkDbiH6zpJ_1hut95L03t2BW-HTZCKmJHrhbhj5DeyDMNzRUyOwC3vKkyUzTr/exec";
+
 /* ================= STATE ================= */
 
 let users=[];
@@ -600,7 +565,6 @@ let methods=[];
 let payments=[];
 let selectedUser=null;
 let editingPaymentId="";
-let deletingPaymentId="";
 let currentPage=1;
 let pageSize=10;
 let editSaving=false;
@@ -661,6 +625,173 @@ function formatDate(value){
   const d=new Date(value);
   if(isNaN(d.getTime())) return String(value);
   return d.toLocaleDateString();
+}
+
+/* ================= DATA HELPERS ================= */
+
+function pick(obj,keys,fallback=""){
+  for(const key of keys){
+    if(obj && obj[key]!==undefined && obj[key]!==null && obj[key]!==""){
+      return obj[key];
+    }
+  }
+  return fallback;
+}
+
+/* Flexible field reader for Settings API response */
+function readField(obj,aliases,fallback=""){
+  if(!obj || typeof obj!=="object") return fallback;
+
+  const normalizeKey=value=>
+    String(value).toLowerCase().replace(/[^a-z0-9]/g,"");
+
+  const wanted=new Set(aliases.map(normalizeKey));
+
+  for(const key of Object.keys(obj)){
+    if(wanted.has(normalizeKey(key))){
+      const value=obj[key];
+      if(value!==undefined && value!==null && value!==""){
+        return value;
+      }
+    }
+  }
+
+  return fallback;
+}
+
+/* Method sheet: A = Method ID, B = Method Name, C = Status */
+function normalizeMethod(m){
+  if(Array.isArray(m)){
+    return {
+      methodId:String(m[0]??"").trim(),
+      name:String(m[1]??"").trim(),
+      status:String(m[2]??"Active").trim()
+    };
+  }
+
+  const id=readField(m,[
+    "methodId","method_id","id","ID",
+    "Method ID","Payment Method ID","A","0"
+  ],"");
+
+  const name=readField(m,[
+    "methodName","method_name","name","Name",
+    "Method Name","method","Method",
+    "paymentMethod","paymentMethodName",
+    "Payment Method","B","1"
+  ],"");
+
+  const status=readField(m,[
+    "status","Status","C","2"
+  ],"Active");
+
+  return {
+    ...m,
+    methodId:String(id).trim(),
+    name:String(name).trim(),
+    status:String(status).trim()
+  };
+}
+
+function normalizePayment(p){
+  const methodId=String(pick(p,[
+    "paymentMethodId","methodId","payment_method_id",
+    "Payment Method ID","method_id"
+  ],""));
+
+  return {
+    ...p,
+    paymentId:String(pick(p,["paymentId","Payment ID","id"],"")),
+    userId:String(pick(p,["userId","user_id","User ID"],"")),
+    userName:String(pick(p,["userName","user_name","User Name"],"")),
+    amount:Number(pick(p,["paymentAmount","amount","Payment Amount"],0)),
+    currencyId:String(pick(p,["currencyId","currency_id","Currency ID"],"")),
+    currencyCode:String(pick(p,["currencyCode","currency_code","Currency Code"],"")),
+    currencyName:String(pick(p,["currencyName","currency_name","Currency Name"],"")),
+    methodId:methodId,
+    paymentMethodId:methodId,
+    paymentMethod:String(pick(p,[
+      "paymentMethod","methodName","method_name",
+      "method","Payment Method","Method Name"
+    ],"")),
+    transactionId:String(pick(p,["transactionId","transaction_id","Transaction ID"],"")),
+    paymentDate:pick(p,["paymentDate","payment_date","Payment Date"],""),
+    comment:String(pick(p,["comment","Comment"],""))
+  };
+}
+
+function getCurrencyById(id){
+  return currencies.find(c=>
+    String(pick(c,["currencyId","id","ID","Currency ID"],""))===String(id)
+  );
+}
+
+/* Method ID matching - trim and case insensitive */
+function getMethodById(id){
+  const searchId=String(id??"").trim();
+  if(!searchId) return null;
+
+  return methods.find(m=>
+    String(m.methodId??"").trim()===searchId
+  )||null;
+}
+
+function getUserById(id){
+  return users.find(u=>String(u.userId)===String(id));
+}
+
+function getCurrencyFields(id){
+  const c=getCurrencyById(id)||{};
+  return {
+    currencyId:String(pick(c,["currencyId","id","ID","Currency ID"],id)),
+    currencyCode:String(pick(c,[
+      "code","currencyCode","Code","Currency Code"
+    ],"")),
+    currencyName:String(pick(c,[
+      "name","currencyName","Name","Currency Name"
+    ],""))
+  };
+}
+
+/* Send both Method ID and Method Name to backend */
+function getMethodFields(id){
+  const method=getMethodById(id);
+  const methodId=String(method?.methodId||id||"").trim();
+  const methodName=String(method?.name||"").trim();
+
+  return {
+    paymentMethodId:methodId,
+    methodId:methodId,
+    paymentMethod:methodName
+  };
+}
+
+/* Resolve Method Name for old and new payment records */
+function getPaymentMethodName(payment){
+  const savedName=String(payment.paymentMethod||"").trim();
+
+  const methodId=String(
+    payment.methodId||
+    payment.paymentMethodId||
+    ""
+  ).trim();
+
+  let method=getMethodById(methodId);
+  if(method && method.name) return method.name;
+
+  /* Older records may have stored the ID inside Payment Method */
+  method=getMethodById(savedName);
+  if(method && method.name) return method.name;
+
+  /* Try alternate ID values from the original record */
+  const rawId=String(readField(payment,[
+    "Payment Method ID","Method ID","payment_method_id","method_id"
+  ],"")).trim();
+
+  method=getMethodById(rawId);
+  if(method && method.name) return method.name;
+
+  return savedName||"—";
 }
 
 /* ================= PROCESSING POPUP ================= */
@@ -734,29 +865,85 @@ function avatarHTML(user,sizeClass=""){
 
 async function getJSON(url){
   const response=await fetch(url,{method:"GET",cache:"no-store"});
-  if(!response.ok) throw new Error("Server request failed: "+response.status);
+
+  if(!response.ok) {
+    throw new Error("Server request failed: "+response.status);
+  }
 
   const data=await response.json();
-  if(data && data.success===false) throw new Error(data.message||"API error");
+
+  if(data && data.success===false) {
+    throw new Error(data.message||"API error");
+  }
 
   return data;
 }
 
-async function postJSON(payload){
-  const response=await fetch(PAYMENT_API,{
-    method:"POST",
-    headers:{"Content-Type":"text/plain;charset=utf-8"},
-    body:JSON.stringify(payload)
+async function postJSON(payload,timeout=90000){
+  const requestId=payload.requestId ||
+    ("REQ-"+Date.now()+"-"+Math.random().toString(36).slice(2,10));
+
+  payload.requestId=requestId;
+
+  return new Promise((resolve,reject)=>{
+    const callback="__rsPaymentCallback_"+
+      Date.now()+"_"+Math.random().toString(36).slice(2,8);
+
+    const script=document.createElement("script");
+    let finished=false;
+
+    const cleanup=()=>{
+      if(finished) return;
+      finished=true;
+      clearTimeout(timer);
+      script.remove();
+
+      try{
+        delete window[callback];
+      }catch(_){
+        window[callback]=undefined;
+      }
+    };
+
+    const timer=setTimeout(()=>{
+      cleanup();
+      reject(new Error(
+        "Payment server response timeout. Please refresh and check the payment record before retrying."
+      ));
+    },timeout);
+
+    window[callback]=(data)=>{
+      cleanup();
+
+      if(!data || data.success!==true){
+        reject(new Error(data?.message||"Payment operation failed."));
+        return;
+      }
+
+      resolve(data);
+    };
+
+    script.onerror=()=>{
+      cleanup();
+      reject(new Error(
+        "Could not connect to Payment API. Check Apps Script deployment and API URL."
+      ));
+    };
+
+    const params=new URLSearchParams();
+
+    Object.keys(payload).forEach(key=>{
+      if(payload[key]!==undefined && payload[key]!==null){
+        params.set(key,String(payload[key]));
+      }
+    });
+
+    params.set("callback",callback);
+    params.set("_",String(Date.now()));
+
+    script.src=PAYMENT_API+"?"+params.toString();
+    document.head.appendChild(script);
   });
-
-  if(!response.ok) throw new Error("Server request failed: "+response.status);
-
-  const data=await response.json();
-  if(!data || data.success===false){
-    throw new Error(data?.message||"Operation failed");
-  }
-
-  return data;
 }
 
 /* ================= LOAD USERS ================= */
@@ -764,18 +951,17 @@ async function postJSON(payload){
 async function loadUsers(){
   const data=await getJSON(USER_API+"?api=active");
 
-  if(!Array.isArray(data.users)){
-    throw new Error("User API response does not contain users array.");
-  }
+  const list=Array.isArray(data.users)?data.users:
+    Array.isArray(data.data)?data.data:[];
 
-  users=data.users.map(u=>({
-    userId:String(u.userId||""),
-    userName:String(u.userName||""),
-    phone:u.phone||"",
-    gmail:u.gmail||"",
+  users=list.map(u=>({
+    userId:String(u.userId||u.id||u["User ID"]||""),
+    userName:String(u.userName||u.name||u["User Name"]||""),
+    phone:u.phone||u["Phone"]||"",
+    gmail:u.gmail||u.email||"",
     area:u.area||"",
     status:u.status||"",
-    profilePicture:u.profilePicture||""
+    profilePicture:u.profilePicture||u.profilePic||u.photo||""
   })).filter(u=>u.userId);
 
   users.sort((a,b)=>a.userName.localeCompare(b.userName));
@@ -783,19 +969,90 @@ async function loadUsers(){
 
 /* ================= LOAD PAYMENT DATA ================= */
 
+/* Currency loading kept as your original working function */
 async function loadCurrencies(){
-  const data=await getJSON(PAYMENT_API+"?api=currencies");
-  currencies=Array.isArray(data.currencies)?data.currencies:[];
+  const data=await getJSON(SETTINGS_API+"?api=currencies");
+
+  const list=Array.isArray(data.currencies)?data.currencies:
+    Array.isArray(data.data)?data.data:[];
+
+  currencies=list.map(c=>{
+    if(Array.isArray(c)){
+      return {
+        currencyId:String(c[0]||""),
+        code:String(c[1]||""),
+        name:String(c[2]||""),
+        symbol:String(c[3]||""),
+        status:String(c[4]||"Active")
+      };
+    }
+
+    return {
+      ...c,
+      currencyId:String(pick(c,[
+        "currencyId","id","ID","Currency ID","A","0"
+      ],"")),
+      code:String(pick(c,[
+        "code","currencyCode","Currency Code","Code","B","1"
+      ],"")),
+      name:String(pick(c,[
+        "name","currencyName","Currency Name","Name","C","2"
+      ],"")),
+      symbol:String(pick(c,[
+        "symbol","currencySymbol","Currency Symbol","Symbol","D","3"
+      ],"")),
+      status:String(pick(c,[
+        "status","Status","E","4"
+      ],"Active"))
+    };
+  }).filter(c=>c.currencyId);
+}
+
+/* Robust method list extraction */
+function extractMethodList(data){
+  if(Array.isArray(data)) return data;
+
+  const possibleLists=[
+    data?.methods,
+    data?.data,
+    data?.paymentMethods,
+    data?.payment_methods,
+    data?.methodList,
+    data?.method_list,
+    data?.records,
+    data?.rows
+  ];
+
+  for(const list of possibleLists){
+    if(Array.isArray(list)) return list;
+  }
+
+  /* Some APIs return one object containing a single method */
+  if(data && typeof data==="object"){
+    const single=normalizeMethod(data);
+    if(single.methodId && single.name) return [data];
+  }
+
+  return [];
 }
 
 async function loadMethods(){
-  const data=await getJSON(PAYMENT_API+"?api=methods");
-  methods=Array.isArray(data.methods)?data.methods:[];
+  const data=await getJSON(SETTINGS_API+"?api=methods");
+
+  const list=extractMethodList(data);
+
+  methods=list
+    .map(normalizeMethod)
+    .filter(m=>m.methodId && m.name);
 }
 
 async function loadPayments(){
   const data=await getJSON(PAYMENT_API+"?api=payments");
-  payments=Array.isArray(data.payments)?data.payments:[];
+
+  const list=Array.isArray(data.payments)?data.payments:
+    Array.isArray(data.data)?data.data:[];
+
+  payments=list.map(normalizePayment);
 }
 
 /* ================= USER PICKER ================= */
@@ -827,6 +1084,7 @@ function selectUser(userId){
     $("upSelectedAvatar").textContent="?";
     $("upSelectedName").textContent="Select a user";
     $("upSelectedId").textContent="Choose user account";
+
   }else{
     const img=getImageURL(selectedUser.profilePicture);
 
@@ -835,9 +1093,11 @@ function selectUser(userId){
       :escapeHTML(initials(selectedUser.userName));
 
     const avatarImg=$("upSelectedAvatar").querySelector("img");
+
     if(avatarImg){
       avatarImg.onerror=function(){
-        $("upSelectedAvatar").textContent=initials(selectedUser?.userName);
+        $("upSelectedAvatar").textContent=
+          initials(selectedUser?.userName);
       };
     }
 
@@ -869,6 +1129,7 @@ $("upUserOptions").addEventListener("click",e=>{
 
 document.addEventListener("click",e=>{
   if(!ROOT.contains(e.target)) return;
+
   if(!e.target.closest(".up-user-picker")){
     $("upUserMenu").classList.remove("open");
   }
@@ -876,47 +1137,59 @@ document.addEventListener("click",e=>{
 
 /* ================= DROPDOWNS ================= */
 
+function isActiveRecord(item){
+  const status=String(item.status||"Active").trim().toLowerCase();
+  return !["inactive","disabled","deleted","false","0"].includes(status);
+}
+
 function renderCurrencies(){
-  const options=currencies.filter(c=>
-    String(c.status||"Active").toLowerCase()!=="inactive"
-  );
+  const options=currencies.filter(isActiveRecord);
 
   const currencyHTML='<option value="">Select currency</option>'+
-    options.map(c=>`
-      <option value="${escapeHTML(c.id)}">
-        ${escapeHTML(c.code||c.name||c.id)}${c.symbol?" ("+escapeHTML(c.symbol)+")":""}
-      </option>
-    `).join("");
+    options.map(c=>{
+      const id=pick(c,["currencyId","id","ID","Currency ID"],"");
+      const code=pick(c,["code","Code","currencyCode","Currency Code"],"");
+      const name=pick(c,["name","Name","currencyName","Currency Name"],"");
+      const symbol=pick(c,["symbol","Symbol","currencySymbol","Currency Symbol"],"");
+
+      return `<option value="${escapeHTML(id)}">
+        ${escapeHTML(code||name||id)}${symbol?" ("+escapeHTML(symbol)+")":""}
+      </option>`;
+    }).join("");
 
   $("upCurrency").innerHTML=currencyHTML;
   $("upEditCurrency").innerHTML=currencyHTML;
 
-  $("upCurrencyFilter").innerHTML='<option value="">All Currencies</option>'+
-    currencies.map(c=>`
-      <option value="${escapeHTML(c.code||c.id)}">
-        ${escapeHTML(c.code||c.name||c.id)}
-      </option>
-    `).join("");
+  $("upCurrencyFilter").innerHTML=
+    '<option value="">All Currencies</option>'+
+    currencies.map(c=>{
+      const id=pick(c,["currencyId","id","ID","Currency ID"],"");
+      const code=pick(c,["code","Code","currencyCode","Currency Code"],"");
+      const name=pick(c,["name","Name","currencyName","Currency Name"],"");
+
+      return `<option value="${escapeHTML(code||id)}">
+        ${escapeHTML(code||name||id)}
+      </option>`;
+    }).join("");
 }
 
 function renderMethods(){
-  const options=methods.filter(m=>
-    String(m.status||"Active").toLowerCase()!=="inactive"
-  );
+  const options=methods.filter(isActiveRecord);
 
   const html='<option value="">Select payment method</option>'+
-    options.map(m=>`
-      <option value="${escapeHTML(m.id)}">
-        ${escapeHTML(m.name||m.id)}
-      </option>
-    `).join("");
+    options.map(m=>{
+      return `<option value="${escapeHTML(m.methodId)}">
+        ${escapeHTML(m.name)}
+      </option>`;
+    }).join("");
 
   $("upMethod").innerHTML=html;
   $("upEditMethod").innerHTML=html;
 }
 
 function renderEditUsers(){
-  $("upEditUser").innerHTML='<option value="">Select user</option>'+
+  $("upEditUser").innerHTML=
+    '<option value="">Select user</option>'+
     users.map(u=>`
       <option value="${escapeHTML(u.userId)}">
         ${escapeHTML(u.userName)} (${escapeHTML(u.userId)})
@@ -927,7 +1200,9 @@ function renderEditUsers(){
 /* ================= STATS ================= */
 
 function updateStats(){
-  const total=payments.reduce((sum,p)=>sum+Number(p.amount||0),0);
+  const total=payments.reduce(
+    (sum,p)=>sum+Number(p.amount||0),0
+  );
 
   const todayTotal=payments
     .filter(p=>String(p.paymentDate||"").slice(0,10)===today())
@@ -937,7 +1212,6 @@ function updateStats(){
   $("upTotalAmount").textContent=money(total);
   $("upTodayAmount").textContent=money(todayTotal);
   $("upUserCount").textContent=users.length;
-  $("upRecordCount").textContent=payments.length+" RECORDS";
 }
 
 /* ================= PAYMENT TABLE ================= */
@@ -947,22 +1221,29 @@ function filteredPayments(){
   const currency=$("upCurrencyFilter").value;
 
   return payments.filter(p=>{
+    const methodName=getPaymentMethodName(p);
+
     const text=[
       p.paymentId,p.userId,p.userName,p.transactionId,
-      p.paymentMethod,p.currencyCode,p.currencyName,p.comment
+      methodName,p.currencyCode,p.currencyName,p.comment
     ].join(" ").toLowerCase();
 
     const currencyMatch=!currency||
       String(p.currencyCode||p.currencyId||"")===currency;
 
     return (!q||text.includes(q))&&currencyMatch;
+
   }).sort((a,b)=>
-    String(b.paymentDate||"").localeCompare(String(a.paymentDate||""))
+    String(b.paymentDate||"").localeCompare(
+      String(a.paymentDate||"")
+    )
   );
 }
 
 function paymentUser(payment){
-  return users.find(u=>u.userId===String(payment.userId))||{
+  return users.find(
+    u=>u.userId===String(payment.userId)
+  )||{
     userId:payment.userId||"",
     userName:payment.userName||"Unknown User",
     profilePicture:""
@@ -994,11 +1275,13 @@ function renderPayments(){
 
     $("upMobileList").innerHTML=
       '<div class="up-empty">No payment records found.</div>';
+
     return;
   }
 
   $("upTableBody").innerHTML=visible.map(p=>{
     const user=paymentUser(p);
+    const methodName=getPaymentMethodName(p);
 
     return `<tr>
       <td>
@@ -1011,7 +1294,7 @@ function renderPayments(){
         </div>
       </td>
       <td><strong>${escapeHTML(p.currencyCode||p.currencyName||"")} ${money(p.amount)}</strong></td>
-      <td>${escapeHTML(p.paymentMethod||p.methodId||"—")}</td>
+      <td>${escapeHTML(methodName)}</td>
       <td>${escapeHTML(p.transactionId||"—")}</td>
       <td>${escapeHTML(formatDate(p.paymentDate))}</td>
       <td>
@@ -1026,6 +1309,7 @@ function renderPayments(){
 
   $("upMobileList").innerHTML=visible.map(p=>{
     const user=paymentUser(p);
+    const methodName=getPaymentMethodName(p);
 
     return `<div class="up-mobile-card">
       <div class="up-mobile-top">
@@ -1040,7 +1324,7 @@ function renderPayments(){
       </div>
 
       <div class="up-mobile-details">
-        <div><span>Method</span><strong>${escapeHTML(p.paymentMethod||"—")}</strong></div>
+        <div><span>Method</span><strong>${escapeHTML(methodName)}</strong></div>
         <div><span>Date</span><strong>${escapeHTML(formatDate(p.paymentDate))}</strong></div>
         <div><span>Transaction ID</span><strong>${escapeHTML(p.transactionId||"—")}</strong></div>
         <div><span>Payment ID</span><strong>${escapeHTML(p.paymentId||"—")}</strong></div>
@@ -1064,9 +1348,12 @@ function resetAddForm(){
 }
 
 function getAddPayload(){
-  if(!selectedUser) throw new Error("Please select a user.");
+  if(!selectedUser) {
+    throw new Error("Please select a user.");
+  }
 
   const amount=Number($("upAmount").value);
+
   if(!Number.isFinite(amount)||amount<=0){
     throw new Error("Enter a valid payment amount.");
   }
@@ -1078,11 +1365,18 @@ function getAddPayload(){
   if(!methodId) throw new Error("Please select payment method.");
   if(!$("upDate").value) throw new Error("Please select payment date.");
 
+  const currencyFields=getCurrencyFields(currencyId);
+  const methodFields=getMethodFields(methodId);
+
   return {
     userId:selectedUser.userId,
+    userName:selectedUser.userName,
     amount:amount,
+    paymentAmount:amount,
     currencyId:currencyId,
+    ...currencyFields,
     methodId:methodId,
+    ...methodFields,
     transactionId:$("upTransaction").value.trim(),
     paymentDate:$("upDate").value,
     comment:$("upComment").value.trim()
@@ -1108,6 +1402,7 @@ $("upPaymentForm").addEventListener("submit",async e=>{
 
   addSaving=true;
   setProcessing(btn,true,normalText);
+
   showProcessing("Please wait. Your payment is being added.");
 
   try{
@@ -1146,7 +1441,10 @@ $("upResetBtn").addEventListener("click",()=>{
 function editPayment(paymentId){
   if(editSaving) return;
 
-  const p=payments.find(x=>String(x.paymentId)===String(paymentId));
+  const p=payments.find(
+    x=>String(x.paymentId)===String(paymentId)
+  );
+
   if(!p){
     showError("Payment record not found.");
     return;
@@ -1159,7 +1457,18 @@ function editPayment(paymentId){
   $("upEditUser").value=String(p.userId||"");
   $("upEditAmount").value=p.amount??"";
   $("upEditCurrency").value=String(p.currencyId||"");
-  $("upEditMethod").value=String(p.methodId||"");
+
+  const methodId=String(
+    p.methodId||p.paymentMethodId||""
+  );
+
+  const matchedMethod=getMethodById(methodId)||
+    methods.find(m=>m.name===String(p.paymentMethod||"").trim());
+
+  $("upEditMethod").value=matchedMethod
+    ?String(matchedMethod.methodId)
+    :"";
+
   $("upEditTransaction").value=p.transactionId||"";
   $("upEditDate").value=String(p.paymentDate||"").slice(0,10);
   $("upEditComment").value=p.comment||"";
@@ -1180,30 +1489,41 @@ $("upEditForm").addEventListener("submit",async e=>{
 
   let payload;
 
-  /* Validate first */
   try{
     const amount=Number($("upEditAmount").value);
+    const userId=$("upEditUser").value;
+    const currencyId=$("upEditCurrency").value;
+    const methodId=$("upEditMethod").value;
+    const paymentDate=$("upEditDate").value;
 
     if(!Number.isFinite(amount)||amount<=0){
       throw new Error("Enter a valid payment amount.");
     }
 
+    if(!userId) throw new Error("Please select a user.");
+    if(!currencyId) throw new Error("Please select currency.");
+    if(!methodId) throw new Error("Please select payment method.");
+    if(!paymentDate) throw new Error("Please select payment date.");
+
+    const user=getUserById(userId)||{};
+    const currencyFields=getCurrencyFields(currencyId);
+    const methodFields=getMethodFields(methodId);
+
     payload={
       action:"editPayment",
       paymentId:editingPaymentId,
-      userId:$("upEditUser").value,
+      userId:userId,
+      userName:user.userName||"",
       amount:amount,
-      currencyId:$("upEditCurrency").value,
-      methodId:$("upEditMethod").value,
+      paymentAmount:amount,
+      currencyId:currencyId,
+      ...currencyFields,
+      methodId:methodId,
+      ...methodFields,
       transactionId:$("upEditTransaction").value.trim(),
-      paymentDate:$("upEditDate").value,
+      paymentDate:paymentDate,
       comment:$("upEditComment").value.trim()
     };
-
-    if(!payload.userId) throw new Error("Please select a user.");
-    if(!payload.currencyId) throw new Error("Please select currency.");
-    if(!payload.methodId) throw new Error("Please select payment method.");
-    if(!payload.paymentDate) throw new Error("Please select payment date.");
 
   }catch(err){
     showError(err.message);
@@ -1215,19 +1535,17 @@ $("upEditForm").addEventListener("submit",async e=>{
   btn.disabled=true;
   btn.innerHTML='<span class="up-spinner"></span>Processing...';
 
-  /* Close edit form immediately and show processing popup */
   closeModal("upEditModal");
+
   showProcessing("Please wait. Your payment is being updated.");
 
   try{
     const result=await postJSON(payload);
 
-    /* Refresh the latest records */
     await loadPayments();
     renderPayments();
 
     editingPaymentId="";
-
     $("upEditForm").reset();
 
     hideProcessing();
@@ -1239,10 +1557,7 @@ $("upEditForm").addEventListener("submit",async e=>{
 
   }catch(err){
     hideProcessing();
-
-    showError(
-      err.message||"Payment update failed. Please try again."
-    );
+    showError(err.message||"Payment update failed. Please try again.");
 
   }finally{
     editSaving=false;
@@ -1254,10 +1569,14 @@ $("upEditForm").addEventListener("submit",async e=>{
 /* ================= VIEW PAYMENT ================= */
 
 function viewPayment(paymentId){
-  const p=payments.find(x=>String(x.paymentId)===String(paymentId));
+  const p=payments.find(
+    x=>String(x.paymentId)===String(paymentId)
+  );
+
   if(!p) return;
 
   const user=paymentUser(p);
+  const methodName=getPaymentMethodName(p);
 
   $("upViewContent").innerHTML=`
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
@@ -1274,7 +1593,7 @@ function viewPayment(paymentId){
       <div><span>Payment ID</span><strong>${escapeHTML(p.paymentId)}</strong></div>
       <div><span>Amount</span><strong>${escapeHTML(p.currencyCode||"")} ${money(p.amount)}</strong></div>
       <div><span>Currency</span><strong>${escapeHTML(p.currencyName||p.currencyCode||"—")}</strong></div>
-      <div><span>Payment Method</span><strong>${escapeHTML(p.paymentMethod||"—")}</strong></div>
+      <div><span>Payment Method</span><strong>${escapeHTML(methodName)}</strong></div>
       <div><span>Transaction ID</span><strong>${escapeHTML(p.transactionId||"—")}</strong></div>
       <div><span>Payment Date</span><strong>${escapeHTML(formatDate(p.paymentDate))}</strong></div>
     </div>
@@ -1292,29 +1611,45 @@ function viewPayment(paymentId){
 
 /* ================= DELETE PAYMENT ================= */
 
-function openDelete(paymentId){
-  deletingPaymentId=String(paymentId);
-  $("upDeleteModal").classList.add("show");
-}
+async function deletePayment(paymentId){
+  if(deleteSaving) return;
 
-$("upConfirmDelete").addEventListener("click",async()=>{
-  if(!deletingPaymentId || deleteSaving) return;
+  const p=payments.find(
+    x=>String(x.paymentId)===String(paymentId)
+  );
 
-  const btn=$("upConfirmDelete");
-  const normalText="Delete Payment";
+  if(!p){
+    showError("Payment record not found.");
+    return;
+  }
+
+  const confirmed=window.confirm(
+    "Are you sure you want to delete this payment?\n\n"+
+    "Payment ID: "+p.paymentId+"\n"+
+    "User: "+(p.userName||p.userId)+"\n"+
+    "Amount: "+(p.currencyCode||"")+" "+money(p.amount)+
+    "\n\nThis payment will be moved to DELETE HISTORY."
+  );
+
+  if(!confirmed) return;
 
   deleteSaving=true;
-  setProcessing(btn,true,normalText);
-  showProcessing("Please wait. Your payment is being deleted.");
+
+  const buttons=ROOT.querySelectorAll(
+    '[data-action="delete"][data-id="'+CSS.escape(String(paymentId))+'"]'
+  );
+
+  buttons.forEach(b=>b.disabled=true);
+
+  showProcessing(
+    "Please wait. Payment is being moved to DELETE HISTORY."
+  );
 
   try{
     const result=await postJSON({
       action:"deletePayment",
-      paymentId:deletingPaymentId
-    });
-
-    closeModal("upDeleteModal");
-    deletingPaymentId="";
+      paymentId:String(paymentId)
+    },120000);
 
     await loadPayments();
     renderPayments();
@@ -1322,19 +1657,23 @@ $("upConfirmDelete").addEventListener("click",async()=>{
     hideProcessing();
 
     showSuccess(
-      result.message||"Payment has been deleted successfully.",
-      "Payment Deleted!"
+      result.message||"Payment moved to DELETE HISTORY successfully.",
+      "Payment Deleted"
     );
 
   }catch(err){
     hideProcessing();
-    showError(err.message||"Could not delete payment.");
+
+    showError(
+      err.message||
+      "Payment could not be deleted. Refresh and check the record before retrying."
+    );
 
   }finally{
     deleteSaving=false;
-    setProcessing(btn,false,normalText);
+    buttons.forEach(b=>b.disabled=false);
   }
-});
+}
 
 /* ================= EVENT HANDLERS ================= */
 
@@ -1347,7 +1686,7 @@ function handlePaymentAction(e){
 
   if(action==="view") viewPayment(id);
   if(action==="edit") editPayment(id);
-  if(action==="delete") openDelete(id);
+  if(action==="delete") deletePayment(id);
 }
 
 $("upTableBody").addEventListener("click",handlePaymentAction);
@@ -1394,12 +1733,12 @@ ROOT.querySelectorAll("[data-close]").forEach(btn=>{
     const modalId=btn.dataset.close;
 
     if(modalId==="upEditModal" && editSaving) return;
-    if(modalId==="upDeleteModal" && deleteSaving) return;
 
     closeModal(modalId);
 
-    if(modalId==="upEditModal") editingPaymentId="";
-    if(modalId==="upDeleteModal") deletingPaymentId="";
+    if(modalId==="upEditModal") {
+      editingPaymentId="";
+    }
   });
 });
 
@@ -1409,12 +1748,12 @@ ROOT.querySelectorAll(".up-modal").forEach(modal=>{
 
     if(modal.id==="upProcessingModal") return;
     if(modal.id==="upEditModal" && editSaving) return;
-    if(modal.id==="upDeleteModal" && deleteSaving) return;
 
     modal.classList.remove("show");
 
-    if(modal.id==="upEditModal") editingPaymentId="";
-    if(modal.id==="upDeleteModal") deletingPaymentId="";
+    if(modal.id==="upEditModal") {
+      editingPaymentId="";
+    }
   });
 });
 
@@ -1432,17 +1771,20 @@ document.addEventListener("keydown",e=>{
   ROOT.querySelectorAll(".up-modal.show").forEach(modal=>{
     if(modal.id==="upProcessingModal") return;
     if(modal.id==="upEditModal" && editSaving) return;
-    if(modal.id==="upDeleteModal" && deleteSaving) return;
 
-    if(modal.id==="upSuccessModal" || modal.id==="upErrorModal"){
+    if(
+      modal.id==="upSuccessModal" ||
+      modal.id==="upErrorModal"
+    ){
       modal.classList.remove("show");
       return;
     }
 
     modal.classList.remove("show");
 
-    if(modal.id==="upEditModal") editingPaymentId="";
-    if(modal.id==="upDeleteModal") deletingPaymentId="";
+    if(modal.id==="upEditModal") {
+      editingPaymentId="";
+    }
   });
 });
 
@@ -1457,24 +1799,33 @@ async function refreshAll(){
 
     await Promise.all([
       loadCurrencies(),
-      loadMethods(),
-      loadPayments()
+      loadMethods()
     ]);
 
-    renderUserOptions();
     renderCurrencies();
     renderMethods();
+
+    await loadPayments();
+
+    renderUserOptions();
     renderEditUsers();
     renderPayments();
 
     if(selectedUser){
-      const stillExists=users.find(u=>u.userId===selectedUser.userId);
+      const stillExists=users.find(
+        u=>u.userId===selectedUser.userId
+      );
+
       selectUser(stillExists?stillExists.userId:"");
     }
 
   }catch(err){
     console.error("User Payment load error:",err);
-    toast(err.message||"Could not load data. Check API connection.");
+
+    toast(
+      err.message||"Could not load data. Check API connection."
+    );
+
   }finally{
     showLoading(false);
     $("upRefreshBtn").disabled=false;
